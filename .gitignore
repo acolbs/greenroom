@@ -1,0 +1,11 @@
+node_modules/
+web/node_modules/
+web/dist/
+*.log
+.DS_Store
+.env
+.env.*
+*.local
+.cursor/
+web/.vite/
+**/*.tsbuildinfo

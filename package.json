@@ -1,0 +1,12 @@
+{
+  "name": "nba-offseason-gm-simulator",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "homepage": "https://acolbs.github.io/greenroom/",
+  "scripts": {
+    "dev": "npm run dev --prefix web",
+    "build": "npm run build --prefix web",
+    "deploy": "npm run deploy --prefix web"
+  }
+}
