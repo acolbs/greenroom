@@ -1,27 +1,49 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function WelcomePage() {
+  const navigate = useNavigate();
+
   return (
     <div className="welcome-page">
-      <div className="welcome-bg" aria-hidden />
-      <div className="welcome-content">
-        <p className="welcome-eyebrow">Front office simulator</p>
-        <h1 className="welcome-title">Greenroom</h1>
-        <p className="welcome-lede">
-          Model the offseason like a GM: set your team, work expiring contracts against the cap, then draft from the big board with
-          fit scoring tied to real contender rosters.
+      <div className="welcome-inner">
+        <div className="welcome-eyebrow">NBA Offseason GM Simulator</div>
+
+        <div className="welcome-logo">
+          Green<span>room</span>
+        </div>
+
+        <p className="welcome-tagline">
+          Build your championship roster. Navigate free agency, resolve
+          contracts, and run your draft board for the 2026–27 season.
         </p>
-        <div className="welcome-actions">
-          <Link to="/select-team" className="btn btn-lg btn-primary">
-            Start simulation
-          </Link>
-          <Link to="/select-team" className="btn btn-lg btn-ghost">
-            Skip intro
-          </Link>
+
+        <button
+          className="btn btn-primary btn-lg"
+          onClick={() => navigate("/select-team")}
+        >
+          Start Simulator
+        </button>
+
+        <div className="welcome-meta">
+          <span>2026–27 Season</span>
+          <span className="welcome-meta-dot" />
+          <span>$165M Salary Cap</span>
+          <span className="welcome-meta-dot" />
+          <span>30 Teams</span>
         </div>
       </div>
-      <footer className="welcome-footer">CSV-backed rosters and contracts · Professional dark UI</footer>
+
+      <footer className="welcome-footer">
+        <div className="welcome-credits">
+          <span className="welcome-credits-label">Developed by</span>
+          <span className="welcome-credits-names">
+            Anthony Colby &amp; Ali Razfar
+          </span>
+        </div>
+        <span style={{ fontSize: "0.65rem", opacity: 0.4 }}>
+          Greenroom · 2026
+        </span>
+      </footer>
     </div>
   );
 }

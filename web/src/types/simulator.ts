@@ -1,117 +1,214 @@
-export type Archetype =
-  | "PG Playmaker"
-  | "SG Shooter"
-  | "Wing Stopper"
-  | "Rim Protector"
+// ---------------------------------------------------------------------------
+// Archetype unions — derived directly from archetypes.csv values
+// ---------------------------------------------------------------------------
+
+export type OffensiveArchetype =
+  | "Athletic Finisher"
+  | "Low Minute"
+  | "Movement Shooter"
+  | "Off Screen Shooter"
+  | "Post Scorer"
+  | "Primary Ball Handler"
+  | "Roll + Cut Big"
+  | "Secondary Ball Handler"
+  | "Shot Creator"
+  | "Slasher"
+  | "Stationary Shooter"
   | "Stretch Big"
-  | "Bench Spark"
-  | "Two-Way Wing";
+  | "Versatile Big";
 
-export type Team = {
+export type DefensiveRole =
+  | "Anchor Big"
+  | "Chaser"
+  | "Helper"
+  | "Low Activity"
+  | "Mobile Big"
+  | "Point of Attack"
+  | "Wing Stopper";
+
+export type Position = "PG" | "SG" | "SF" | "PF" | "C";
+
+export type OptionType = "Player" | "Club";
+
+export type FreeAgencyDecision =
+  | "RE_SIGN"       // User re-signs an expiring player at their ACE value
+  | "LET_WALK"      // User lets an expiring player walk
+  | "PICK_UP_OPTION"  // User picks up a Club option
+  | "DECLINE_OPTION"; // User declines a Club option
+
+export type SimulatorPhase = "SELECT_TEAM" | "FREE_AGENCY" | "DRAFT" | "COMPLETE";
+
+export type TeamStrengthLabel = "Contender" | "Middle" | "Rebuilding";
+
+export interface TeamStrength {
+  score: number;
+  label: TeamStrengthLabel;
+}
+
+// ---------------------------------------------------------------------------
+// Player data
+// ---------------------------------------------------------------------------
+
+export interface PlayerStats {
+  pts: number;
+  trb: number;
+  ast: number;
+  tsPct: number;   // True Shooting %
+  bpm: number;     // Box Plus/Minus
+  vorp: number;
+  ws: number;      // Win Shares
+  usgPct: number;  // Usage %
+}
+
+export interface RosterPlayer {
+  /** BBRef player ID (e.g. "thompam01") or "draft-{rank}" for rookies. */
   id: string;
   name: string;
-  primaryColor: string;
-  secondaryColor: string;
-  salaryCap: number;
-};
-
-export type PlayerStats = {
-  pointsPerGame: number;
-  reboundsPerGame: number;
-  assistsPerGame: number;
-  fgPct: number; // 0-1
-};
-
-export type RosterPlayer = {
-  id: string;
-  name: string;
-  position: "PG" | "SG" | "SF" | "PF" | "C";
-  /** Mapped enum for draft/fit logic */
-  archetype: Archetype;
-  /** Raw `archetypes.csv` offensive label (master fallback) for display */
-  csvOffensiveArchetype: string;
-  /** Raw `archetypes.csv` defensive label (master fallback) for display */
-  csvDefensiveRole: string;
+  age: number;
+  position: Position;
+  /** Canonical team abbreviation (BKN / CHA / PHX normalized). */
+  teamAbbrev: string;
+  offensiveArchetype: OffensiveArchetype;
+  defensiveRole: DefensiveRole;
+  /** 2025-26 cap hit from Hoopshype. */
+  currentSalary: number;
+  /** 2026-27 salary from Hoopshype — null means the contract expires. */
+  nextSeasonSalary: number | null;
+  /** ACE model value. Falls back to currentSalary when ACE lookup misses. */
+  estimatedMarketSalary: number;
+  /** True when ACE lookup failed and currentSalary was used as a proxy. */
+  isSalaryEstimate: boolean;
   stats: PlayerStats;
-  currentSalary: number; // current contract salary (used to compute cap changes)
-};
+}
 
-export type ExpiringContract = {
+// ---------------------------------------------------------------------------
+// Free agency
+// ---------------------------------------------------------------------------
+
+export interface ExpiringContract {
   playerId: string;
   name: string;
-  position: "PG" | "SG" | "SF" | "PF" | "C";
+  age: number;
+  position: Position;
+  offensiveArchetype: OffensiveArchetype;
+  defensiveRole: DefensiveRole;
   currentSalary: number;
   estimatedMarketSalary: number;
-  archetype: Archetype;
-  csvOffensiveArchetype: string;
-  csvDefensiveRole: string;
+  isSalaryEstimate: boolean;
   stats: PlayerStats;
-};
+  /** Present when contract has a Player or Club option. */
+  optionType?: OptionType;
+  optionSalary?: number;
+  /**
+   * Set after automatic Player-option resolution:
+   * true  = player opted out (market > option salary) → hits free agency
+   * false = player opted in → stays on roster at optionSalary
+   * undefined = Club option (user decides) or plain UFA
+   */
+  playerOptedOut?: boolean;
+}
 
-export type FreeAgencyDecision = "RE_SIGN" | "LET_WALK";
+// ---------------------------------------------------------------------------
+// Teams
+// ---------------------------------------------------------------------------
 
-export type DraftProspect = {
+export interface Team {
+  /** Canonical abbreviation used as the primary key throughout the app. */
   id: string;
+  /** Abbreviation used in master.csv (differs for BRK/BKN, CHO/CHA, PHO/PHX). */
+  csvAbbrev: string;
+  city: string;
+  name: string;
+  conference: "East" | "West";
+}
+
+// ---------------------------------------------------------------------------
+// Draft
+// ---------------------------------------------------------------------------
+
+export interface DraftProspect {
+  /** Stable ID: "prospect-{rank}" */
+  id: string;
+  rank: number;
   name: string;
   school: string;
-  position: "PG" | "SG" | "SF" | "PF" | "C";
-  overallRank: number; // lower is better (e.g., 1..60)
-  grade: number; // 0-100
-  projectedArchetype: Archetype;
-  /** `big_board.csv` offensive label (same vocabulary as archetypes.csv) */
-  csvOffensiveArchetype: string;
-  /** `big_board.csv` defensive label */
-  csvDefensiveRole: string;
-  fitNotes: string;
-  /** True when big_board.csv supplied a simulator archetype or both offensive + defensive columns */
-  archetypeFromCsv?: boolean;
-};
+  position: Position;
+  /** 60–95 talent grade from big_board.csv */
+  grade: number;
+  offensiveArchetype: OffensiveArchetype;
+  defensiveRole: DefensiveRole;
+  notes: string;
+  /** Heuristic rookie salary computed from grade. */
+  projectedSalary: number;
+}
 
-export type TeamNeeds = Partial<Record<Archetype, number>>;
-
-/** Quality-weighted archetype mix from historical contender rosters (`top_teams` CSVs). */
-export type EliteFitModel = {
-  targetShareByArchetype: Partial<Record<Archetype, number>>;
-  priorityByArchetype: Partial<Record<Archetype, number>>;
-};
-
-export type DraftPick = {
-  prospectId: string;
-};
-
-/** One selection in the live draft simulation (CPU or user). */
-export type DraftHistoryEntry = {
+export interface DraftHistoryEntry {
   pickNumber: number;
   prospectId: string;
-  prospectName: string;
-  pickedBy: "cpu" | "user";
-};
+  /** "user" or a team abbreviation for CPU picks. */
+  pickedBy: string;
+}
 
-export type SimulatorState = {
+// ---------------------------------------------------------------------------
+// Championship Formula
+// ---------------------------------------------------------------------------
+
+export interface FormulaSlot {
+  offensiveArchetype: OffensiveArchetype;
+  defensiveRole: DefensiveRole;
+  /** Ideal count in a 9-man rotation. */
+  target: number;
+  /**
+   * 0–1 importance weight derived from how consistently this archetype
+   * appears across historical title contenders.
+   */
+  weight: number;
+}
+
+export interface ChampionshipFormula {
+  /** 9-man rotation archetype targets, ordered by weight descending. */
+  slots: FormulaSlot[];
+}
+
+export interface RosterDeficit {
+  offensiveArchetype: OffensiveArchetype;
+  defensiveRole: DefensiveRole;
+  target: number;
+  current: number;
+  /** target - current, always ≥ 1 when included in the deficits list. */
+  gap: number;
+  weight: number;
+}
+
+// ---------------------------------------------------------------------------
+// Full simulator state (Zustand store shape)
+// ---------------------------------------------------------------------------
+
+export interface SimulatorState {
+  phase: SimulatorPhase;
   selectedTeamId: string | null;
-  loadingRoster: boolean;
-  loadError: string | null;
-  capSpace: number;
+
+  // Roster & free agency
   roster: RosterPlayer[];
   expiringContracts: ExpiringContract[];
-  decisions: Record<string, FreeAgencyDecision | undefined>; // playerId -> decision
-  draftedProspects: DraftPick[];
-  draftClass: DraftProspect[];
-  // Archetype counts when the free agency phase starts (used to compute "gaps").
-  freeAgencyBaselineArchetypeCounts: Partial<Record<Archetype, number>>;
-  /** Derived from `top_teams` contender sheets — drives View B (fit) vs elite template */
-  eliteFitModel: EliteFitModel | null;
+  decisions: Record<string, FreeAgencyDecision>;
 
-  /** Phase 4 — live draft simulation (3 rounds × 30 picks max, capped by board size). */
-  draftSimulationActive: boolean;
-  draftSimulationComplete: boolean;
-  draftTotalPicks: number;
-  draftCurrentPick: number;
-  /** 1-based pick numbers when the user is on the clock (e.g. [14, 45, 78]). */
-  draftUserPickSlots: number[];
-  /** Prospects not yet taken in the sim (CPU removes picks here; user picks too). */
+  // Draft
+  draftClass: DraftProspect[];
   draftAvailableProspects: DraftProspect[];
   draftHistory: DraftHistoryEntry[];
-  draftSetupError: string | null;
-};
+  draftCurrentPick: number;
+  draftTotalPicks: number;
+  userPickNumbers: number[];
+  draftSimActive: boolean;
+  draftSimComplete: boolean;
 
+  // Analysis
+  championshipFormula: ChampionshipFormula | null;
+  rosterDeficits: RosterDeficit[];
+  teamStrength: TeamStrength;
+
+  // Async state
+  loading: boolean;
+  error: string | null;
+}
