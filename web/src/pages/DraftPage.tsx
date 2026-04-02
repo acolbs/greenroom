@@ -9,6 +9,8 @@ import type { RankedProspect, TeamStrength } from "../data/prospectRanking";
 import { TEAMS } from "../data/constants";
 import type { DraftProspect } from "../types/simulator";
 import NavBar from "../components/NavBar";
+import PlayerAvatar from "../components/PlayerAvatar";
+import ScoutChat from "../components/ScoutChat";
 
 // ── Draft setup screen ─────────────────────────────────────────────────────
 
@@ -93,56 +95,31 @@ function ProspectRow({ prospect, isRecommended, isUserTurn, tab, onDraft }: Pros
       }
     >
       <div className="draft-rank">#{prospect.rank}</div>
+      <PlayerAvatar name={prospect.name} position={prospect.position} size={36} />
 
       <div className="draft-info">
         <div className="draft-name">
           {prospect.name}
           {isRecommended && (
-            <span
-              style={{
-                marginLeft: "0.4rem",
-                fontSize: "0.65rem",
-                color: "var(--color-accent)",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-              }}
-            >
-              ★ Scout Pick
-            </span>
+            <span style={{ marginLeft: "0.4rem", fontSize: "0.6rem", color: "var(--color-accent)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>★ Scout</span>
           )}
         </div>
         <div className="draft-meta">
-          {prospect.position} · {prospect.school} · {prospect.offensiveArchetype} /{" "}
-          {prospect.defensiveRole}
+          {prospect.school} · <span style={{ color: "var(--color-accent)", opacity: 0.85 }}>{prospect.offensiveArchetype}</span>
         </div>
       </div>
 
-      <div className="draft-grade">{prospect.grade}</div>
-
-      {/* Score pill */}
-      <div
-        style={{
-          fontSize: "0.68rem",
-          fontWeight: 700,
-          color: "var(--color-text-muted)",
-          minWidth: "3.5rem",
-          textAlign: "right",
-        }}
-      >
-        {tab === "bigboard" ? (
-          <span title="Scout grade" style={{ color: "var(--color-text-muted)" }}>{prospect.grade}</span>
-        ) : (
-          <span title="Needs score" style={{ color: "var(--color-accent)" }}>{prospect.needsScore}</span>
-        )}
+      <div style={{ textAlign: "right", flexShrink: 0 }}>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 700, color: tab === "needs" ? "var(--color-accent)" : "var(--color-text-secondary)" }}>
+          {tab === "bigboard" ? prospect.rank : prospect.needsScore}
+        </div>
+        <div style={{ fontSize: "0.6rem", color: "var(--color-text-muted)", textTransform: "uppercase" }}>
+          {tab === "bigboard" ? "rank" : "score"}
+        </div>
       </div>
 
       {isUserTurn && (
-        <button
-          className="btn btn-primary"
-          style={{ fontSize: "0.72rem", padding: "0.28rem 0.7rem" }}
-          onClick={() => onDraft(prospect.id)}
-        >
+        <button className="btn btn-primary" style={{ fontSize: "0.72rem", padding: "0.3rem 0.75rem", marginLeft: "0.25rem" }} onClick={() => onDraft(prospect.id)}>
           Draft
         </button>
       )}
@@ -195,6 +172,7 @@ export default function DraftPage() {
   const deficits = useSimulatorStore((s) => s.rosterDeficits);
   const teamStrength = useSimulatorStore((s) => s.teamStrength);
   const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
+  const roster = useSimulatorStore((s) => s.roster);
   const userDraftPick = useSimulatorStore((s) => s.userDraftPick);
   const advanceToPhase = useSimulatorStore((s) => s.advanceToPhase);
 
@@ -360,99 +338,18 @@ export default function DraftPage() {
             </div>
           </div>
 
-          {/* ── Right: scout panel + deficits + history ── */}
+          {/* ── Right: Scout Chat + history ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {/* Smart Scout AI */}
-            {recommendation && (
-              <div className="scout-panel">
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <div className="scout-label">Scout Assistant</div>
-                  <TeamStrengthBadge ts={recommendation.teamStrength} />
-                </div>
-                <div>
-                  <div className="scout-name">{recommendation.prospect.name}</div>
-                  <div
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "var(--color-text-muted)",
-                      marginTop: "0.125rem",
-                    }}
-                  >
-                    #{recommendation.prospect.rank} · Grade {recommendation.prospect.grade} ·{" "}
-                    {recommendation.prospect.offensiveArchetype} /{" "}
-                    {recommendation.prospect.defensiveRole}
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.75rem",
-                      marginTop: "0.375rem",
-                      fontSize: "0.68rem",
-                      color: "var(--color-text-muted)",
-                    }}
-                  >
-                    <span>Ceiling: <strong style={{ color: "var(--color-text)" }}>{recommendation.prospect.valueScore}</strong></span>
-                    <span>Fit: <strong style={{ color: "var(--color-text)" }}>{recommendation.prospect.fitScore}</strong></span>
-                    <span>Needs: <strong style={{ color: "var(--color-accent)" }}>{recommendation.prospect.needsScore}</strong></span>
-                  </div>
-                </div>
-                <hr className="scout-divider" />
-                <div className="scout-explanation">{recommendation.explanation}</div>
-              </div>
+            {/* Scout Chat AI */}
+            {draftSimActive && (
+              <ScoutChat
+                recommendation={recommendation}
+                available={available}
+                deficits={deficits}
+                teamStrength={teamStrength}
+                roster={roster}
+              />
             )}
-
-            {/* Roster deficits */}
-            {deficits.length > 0 && (
-              <div
-                style={{
-                  background: "var(--color-surface-raised)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "8px",
-                  padding: "1rem",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "0.65rem",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.1em",
-                    color: "var(--color-text-muted)",
-                    marginBottom: "0.625rem",
-                  }}
-                >
-                  Roster Deficits
-                </div>
-                {deficits.map((d, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      fontSize: "0.75rem",
-                      padding: "0.25rem 0",
-                      borderBottom: i < deficits.length - 1 ? "1px solid var(--color-border)" : "none",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      color: "var(--color-text-muted)",
-                    }}
-                  >
-                    <span>
-                      {d.offensiveArchetype} / {d.defensiveRole}
-                    </span>
-                    <span style={{ color: "var(--color-danger)", fontWeight: 600 }}>
-                      {d.current}/{d.target}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-
             {/* Draft history */}
             <div
               style={{

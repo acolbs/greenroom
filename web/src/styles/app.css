@@ -747,16 +747,19 @@
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: 10px;
-  padding: 0.875rem 1rem;
+  padding: 1rem;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
   text-align: left;
+  display: flex;
+  flex-direction: column;
 }
 
 .team-card:hover {
   border-color: rgba(63, 185, 80, 0.5);
   background: var(--color-surface-hover);
-  box-shadow: 0 0 0 1px rgba(63, 185, 80, 0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(63, 185, 80, 0.1);
+  transform: translateY(-2px);
 }
 
 .team-card-city {

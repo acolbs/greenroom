@@ -79,3 +79,19 @@ export function teamIdFromCsvAbbrev(csvAbbrev: string): string | null {
 export function teamById(id: string): Team | undefined {
   return TEAMS.find((t) => t.id === id);
 }
+
+// ESPN CDN slug for team logos
+// Usage: https://a.espncdn.com/i/teamlogos/nba/500/{slug}.png
+const ESPN_SLUGS: Record<string, string> = {
+  ATL: "atl", BKN: "bkn", BOS: "bos", CHA: "cha", CHI: "chi",
+  CLE: "cle", DET: "det", IND: "ind", MIA: "mia", MIL: "mil",
+  NYK: "nyk", ORL: "orl", PHI: "phi", TOR: "tor", WAS: "was",
+  DAL: "dal", DEN: "den", GSW: "gs",  HOU: "hou", LAC: "lac",
+  LAL: "lal", MEM: "mem", MIN: "min", NOP: "no",  OKC: "okc",
+  PHX: "phx", POR: "por", SAC: "sac", SAS: "sa",  UTA: "uth",
+};
+
+export function teamLogoUrl(teamId: string): string {
+  const slug = ESPN_SLUGS[teamId] ?? teamId.toLowerCase();
+  return `https://a.espncdn.com/i/teamlogos/nba/500/${slug}.png`;
+}

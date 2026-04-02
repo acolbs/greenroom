@@ -4,6 +4,7 @@ import { useSimulatorStore } from "../store/simulatorStore";
 import { TEAMS } from "../data/constants";
 import type { SimulatorPhase } from "../types/simulator";
 import RosterModal from "./RosterModal";
+import TeamLogo from "./TeamLogo";
 
 function fmt(n: number): string {
   const abs = Math.abs(n);
@@ -108,6 +109,9 @@ export default function NavBar() {
               background: "none",
               border: "none",
               cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
               fontFamily: "var(--font-display)",
               fontSize: "0.82rem",
               fontWeight: 600,
@@ -118,6 +122,7 @@ export default function NavBar() {
             onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
           >
+            <TeamLogo teamId={team.id} size={22} />
             {team.city} {team.name}
           </button>
         ) : (
