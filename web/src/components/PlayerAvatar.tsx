@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 import type { Position } from "../types/simulator";
 import { headshotUrl, type HeadshotIndexPool } from "../data/headshotUrl";
-
-const POS_COLORS: Record<Position, { bg: string; text: string }> = {
-  PG: { bg: "#1a3a6e", text: "#79b8ff" },
-  SG: { bg: "#2d1f5e", text: "#c084fc" },
-  SF: { bg: "#3a2200", text: "#fb923c" },
-  PF: { bg: "#3a1a00", text: "#f97316" },
-  C: { bg: "#0d2e20", text: "#34d399" },
-};
+import { teamLogoUrl } from "../data/constants";
+import { avatarColorsForTeam } from "../data/teamAvatarTheme";
 
 export type PlayerHeadshotPool = "nba" | "prospect";
 
@@ -19,6 +13,10 @@ interface Props {
   style?: React.CSSProperties;
   /** Use prospect PNGs (draft class) vs NBA roster PNGs. Default "nba". */
   headshotPool?: PlayerHeadshotPool;
+  /**
+   * Canonical team id (e.g. BOS). When set, ring uses team colors + faded logo behind the headshot.
+   */
+  teamId?: string | null;
 }
 
 function getInitials(name: string): string {
@@ -31,23 +29,37 @@ function indexPool(pool: PlayerHeadshotPool): HeadshotIndexPool {
   return pool === "prospect" ? "prospects" : "nba";
 }
 
+function borderWithAlpha(textColor: string, alphaHex: string): string {
+  if (textColor.startsWith("#") && textColor.length === 7) {
+    return `${textColor}${alphaHex}`;
+  }
+  return textColor;
+}
+
 export default function PlayerAvatar({
   name,
   position,
   size = 44,
   style,
   headshotPool = "nba",
+  teamId = null,
 }: Props) {
-  const colors = POS_COLORS[position] ?? { bg: "#1a2230", text: "#b0bec5" };
+  const colors = avatarColorsForTeam(teamId, position);
   const fontSize = size * 0.36;
   const url = headshotUrl(name, indexPool(headshotPool));
   const [imgFailed, setImgFailed] = useState(!url);
+  const [logoFailed, setLogoFailed] = useState(false);
 
   useEffect(() => {
     setImgFailed(!url);
   }, [name, headshotPool, url]);
 
+  useEffect(() => {
+    setLogoFailed(false);
+  }, [teamId]);
+
   const showImg = url && !imgFailed;
+  const ringPx = teamId ? Math.max(2, Math.round(size * 0.075)) : 0;
 
   return (
     <div
@@ -56,37 +68,83 @@ export default function PlayerAvatar({
         height: size,
         borderRadius: "50%",
         background: colors.bg,
-        border: `1.5px solid ${colors.text}30`,
+        border: `1.5px solid ${borderWithAlpha(colors.text, "44")}`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontSize,
-        fontFamily: "var(--font-display)",
-        fontWeight: 700,
-        color: colors.text,
         flexShrink: 0,
-        letterSpacing: "0.02em",
         overflow: "hidden",
         position: "relative",
         ...style,
       }}
     >
-      {showImg ? (
+      {teamId && !logoFailed ? (
         <img
-          src={url}
+          src={teamLogoUrl(teamId)}
           alt=""
+          aria-hidden
           draggable={false}
-          onError={() => setImgFailed(true)}
+          onError={() => setLogoFailed(true)}
           style={{
+            position: "absolute",
+            inset: 0,
             width: "100%",
             height: "100%",
-            objectFit: "cover",
-            objectPosition: "center top",
+            objectFit: "contain",
+            objectPosition: "center",
+            opacity: 0.28,
+            transform: "scale(1.5)",
+            pointerEvents: "none",
+            zIndex: 0,
           }}
         />
-      ) : (
-        getInitials(name)
-      )}
+      ) : null}
+
+      <div
+        style={{
+          position: "absolute",
+          top: ringPx,
+          left: ringPx,
+          right: ringPx,
+          bottom: ringPx,
+          borderRadius: "50%",
+          overflow: "hidden",
+          zIndex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: showImg
+            ? undefined
+            : `linear-gradient(160deg, ${colors.bg}f2, ${colors.bg})`,
+        }}
+      >
+        {showImg ? (
+          <img
+            src={url}
+            alt=""
+            draggable={false}
+            onError={() => setImgFailed(true)}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: "center top",
+            }}
+          />
+        ) : (
+          <span
+            style={{
+              fontSize,
+              fontFamily: "var(--font-display)",
+              fontWeight: 700,
+              color: colors.text,
+              letterSpacing: "0.02em",
+            }}
+          >
+            {getInitials(name)}
+          </span>
+        )}
+      </div>
     </div>
   );
 }

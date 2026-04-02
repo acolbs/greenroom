@@ -13,9 +13,10 @@ interface ContractCardProps {
   contract: ExpiringContract;
   decision: FreeAgencyDecision | undefined;
   onDecide: (d: FreeAgencyDecision) => void;
+  teamId: string | null;
 }
 
-function ContractCard({ contract, decision, onDecide }: ContractCardProps) {
+function ContractCard({ contract, decision, onDecide, teamId }: ContractCardProps) {
   const isClub = contract.optionType === "Club";
   const decided = decision !== undefined;
 
@@ -35,6 +36,7 @@ function ContractCard({ contract, decision, onDecide }: ContractCardProps) {
             position={contract.position}
             size={96}
             headshotPool={contract.playerId.startsWith("draft-") ? "prospect" : "nba"}
+            teamId={teamId}
           />
         </div>
         <div className="fa-card__identity">
@@ -138,6 +140,7 @@ export default function FreeAgencyPage() {
   const makeFreeAgencyDecision = useSimulatorStore((s) => s.makeFreeAgencyDecision);
   const advanceToPhase = useSimulatorStore((s) => s.advanceToPhase);
   const payroll = useSimulatorStore(selectPayroll);
+  const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
 
   const clubOptions = expiring.filter((c) => c.optionType === "Club");
   const freeAgents = expiring.filter((c) => c.optionType !== "Club");
@@ -171,6 +174,7 @@ export default function FreeAgencyPage() {
                     contract={c}
                     decision={decisions[c.playerId]}
                     onDecide={(d) => makeFreeAgencyDecision(c.playerId, d)}
+                    teamId={selectedTeamId}
                   />
                 ))}
               </div>
@@ -192,6 +196,7 @@ export default function FreeAgencyPage() {
                     contract={c}
                     decision={decisions[c.playerId]}
                     onDecide={(d) => makeFreeAgencyDecision(c.playerId, d)}
+                    teamId={selectedTeamId}
                   />
                 ))
               )}
@@ -232,6 +237,7 @@ export default function FreeAgencyPage() {
                       position={p.position}
                       size={40}
                       headshotPool={p.id.startsWith("draft-") ? "prospect" : "nba"}
+                      teamId={p.teamAbbrev || selectedTeamId}
                     />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div className="roster-row-name">{p.name}</div>
