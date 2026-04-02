@@ -1315,3 +1315,24 @@
     transform: none;
   }
 }
+
+html.edge-force-motion .btn-primary {
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+html.edge-force-motion .btn-primary:hover {
+  transform: translateY(-1px);
+}
+
+html.edge-force-motion .btn-primary:active {
+  transform: translateY(0);
+}
+
+html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:hover {
+  transform: translateY(-1px) scale(1);
+}
+
+html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
+  transform: scale(0.97);
+}

@@ -115,7 +115,7 @@ html.action-complete-glow::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.action-complete-glow::after {
+  html.action-complete-glow:not(.edge-force-motion)::after {
     animation: none;
     opacity: 0;
   }
@@ -123,6 +123,15 @@ html.action-complete-glow::after {
   body::after {
     opacity: 0.12;
   }
+
+  html.edge-force-motion body::after {
+    opacity: 0.35;
+  }
+}
+
+/* Edge: keep milestone glow animating even under reduced-motion media */
+html.edge-force-motion.action-complete-glow::after {
+  animation: action-glow-pulse 0.85s ease-out forwards;
 }
 
 #root {
@@ -131,54 +140,6 @@ html.action-complete-glow::after {
   flex-direction: column;
   position: relative;
   z-index: 1;
-  view-transition-name: root;
-}
-
-/* Full-surface route morph (used with document.startViewTransition + useSmoothNavigate) */
-@supports (view-transition-name: root) {
-  ::view-transition-old(root) {
-    animation: route-vt-out 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  ::view-transition-new(root) {
-    animation: route-vt-in 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-}
-
-@keyframes route-vt-out {
-  from {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    filter: blur(5px);
-    transform: translateY(-10px) scale(0.993);
-  }
-}
-
-@keyframes route-vt-in {
-  from {
-    opacity: 0;
-    filter: blur(6px);
-    transform: translateY(20px) scale(0.996);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0) scale(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  @supports (view-transition-name: root) {
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation-duration: 0.001ms !important;
-      animation-timing-function: linear !important;
-    }
-  }
 }
 
 .app-layout {

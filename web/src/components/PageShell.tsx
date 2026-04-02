@@ -1,28 +1,20 @@
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useLocation, useOutlet } from "react-router-dom";
-
-function supportsViewTransition(): boolean {
-  return (
-    typeof document !== "undefined" &&
-    typeof document.startViewTransition === "function"
-  );
-}
+import { honorReducedMotion } from "../utils/motionPrefs";
 
 export default function PageShell() {
   const location = useLocation();
   const outlet = useOutlet();
-  const reduceMotion = useReducedMotion() === true;
-  const nativeTransition = !reduceMotion && supportsViewTransition();
 
-  if (nativeTransition || reduceMotion) {
+  if (honorReducedMotion()) {
     return <div className="route-transition-root">{outlet}</div>;
   }
 
   const spring = {
     type: "spring" as const,
-    stiffness: 260,
-    damping: 30,
-    mass: 0.9,
+    stiffness: 200,
+    damping: 26,
+    mass: 0.95,
   };
 
   return (
@@ -32,9 +24,9 @@ export default function PageShell() {
           key={location.pathname}
           className="route-shell"
           role="presentation"
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -18 }}
+          exit={{ opacity: 0, y: -28 }}
           transition={spring}
         >
           {outlet}

@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useSimulatorStore } from "../store/simulatorStore";
+import { honorReducedMotion } from "../utils/motionPrefs";
 
 function triggerActionGlow() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (honorReducedMotion()) return;
   const root = document.documentElement;
   root.classList.remove("action-complete-glow");
   void root.offsetWidth;
@@ -18,9 +19,7 @@ export default function PhaseTransitionGlow() {
   const draftSimComplete = useSimulatorStore((s) => s.draftSimComplete);
   const prevPhase = useRef(phase);
   const prevDraftDone = useRef(draftSimComplete);
-  const reduced =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduced = honorReducedMotion();
 
   useEffect(() => {
     if (reduced) {

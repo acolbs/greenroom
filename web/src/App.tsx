@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import WelcomePage from "./pages/WelcomePage";
 import SelectTeamPage from "./pages/SelectTeamPage";
@@ -7,8 +8,15 @@ import RosterSummaryPage from "./pages/RosterSummaryPage";
 import RequireTeam from "./components/RequireTeam";
 import PageShell from "./components/PageShell";
 import PhaseTransitionGlow from "./components/PhaseTransitionGlow";
+import { isMicrosoftEdge } from "./utils/motionPrefs";
 
 export default function App() {
+  useEffect(() => {
+    if (isMicrosoftEdge()) {
+      document.documentElement.classList.add("edge-force-motion");
+    }
+  }, []);
+
   return (
     <div className="app-layout">
       <PhaseTransitionGlow />
