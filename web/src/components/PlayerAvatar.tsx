@@ -4,9 +4,12 @@ import { headshotUrl, type HeadshotIndexPool } from "../data/headshotUrl";
 import { teamLogoUrl } from "../data/constants";
 import { avatarColorsForTeam } from "../data/teamAvatarTheme";
 import { collegeThemeForSchool, collegeLogoUrl } from "../data/collegeAvatarTheme";
-import { watermarkPlateBackground } from "../data/avatarWatermark";
 
 export type PlayerHeadshotPool = "nba" | "prospect";
+
+/** Neutral “studio headshot” plate — soft gray bands like league media day backdrops. */
+const STUDIO_PLATE_BG =
+  "linear-gradient(118deg, #eceef3 0%, #dde2eb 32%, #f2f4f8 55%, #e4e8ef 100%)";
 
 interface Props {
   name: string;
@@ -81,9 +84,6 @@ export default function PlayerAvatar({
   const showImg = url && !imgFailed;
   const showLogo = Boolean(logoSrc) && !logoFailed;
   const initialsOnLogo = !showImg && showLogo;
-  const plateBg = showLogo
-    ? watermarkPlateBackground(colors.text, colors.bg)
-    : colors.bg;
 
   return (
     <div
@@ -91,9 +91,9 @@ export default function PlayerAvatar({
         width: size,
         height: size,
         borderRadius: "50%",
-        background: plateBg,
+        background: showLogo ? STUDIO_PLATE_BG : colors.bg,
         border: showLogo
-          ? "1px solid rgba(255, 255, 255, 0.1)"
+          ? "1px solid rgba(15, 23, 42, 0.08)"
           : `1.5px solid ${borderWithAlpha(colors.text, "44")}`,
         display: "flex",
         alignItems: "center",
@@ -101,7 +101,6 @@ export default function PlayerAvatar({
         flexShrink: 0,
         overflow: "hidden",
         position: "relative",
-        boxShadow: showLogo ? "inset 0 0 24px rgba(0, 0, 0, 0.2)" : undefined,
         ...style,
       }}
     >
@@ -117,14 +116,13 @@ export default function PlayerAvatar({
             left: "50%",
             top: "50%",
             transform: "translate(-50%, -50%)",
-            width: "76%",
-            height: "76%",
+            width: "72%",
+            height: "72%",
             objectFit: "contain",
             objectPosition: "center",
-            opacity: showImg ? 0.17 : 0.28,
+            opacity: showImg ? 0.26 : 0.4,
             zIndex: 0,
             pointerEvents: "none",
-            filter: "brightness(0) invert(1)",
           }}
         />
       ) : null}
@@ -164,13 +162,11 @@ export default function PlayerAvatar({
               fontSize,
               fontFamily: "var(--font-display)",
               fontWeight: 700,
-              color: colors.text,
+              color: initialsOnLogo ? "#1e293b" : colors.text,
               letterSpacing: "0.02em",
               position: "relative",
               zIndex: 1,
-              textShadow: initialsOnLogo
-                ? "0 0 10px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.9), 0 0 1px #000"
-                : undefined,
+              textShadow: initialsOnLogo ? "0 1px 0 rgba(255,255,255,0.6)" : undefined,
             }}
           >
             {getInitials(name)}
