@@ -82,10 +82,9 @@ interface ProspectRowProps {
   isUserTurn: boolean;
   tab: DraftTab;
   onDraft: (id: string) => void;
-  teamId: string | null;
 }
 
-function ProspectRow({ prospect, isRecommended, isUserTurn, tab, onDraft, teamId }: ProspectRowProps) {
+function ProspectRow({ prospect, isRecommended, isUserTurn, tab, onDraft }: ProspectRowProps) {
   return (
     <div
       className={`draft-card${isRecommended ? " draft-card--recommended" : ""}`}
@@ -97,7 +96,7 @@ function ProspectRow({ prospect, isRecommended, isUserTurn, tab, onDraft, teamId
           position={prospect.position}
           size={88}
           headshotPool="prospect"
-          teamId={teamId}
+          school={prospect.school}
         />
       </div>
 
@@ -343,7 +342,6 @@ export default function DraftPage() {
                     isUserTurn={isUserTurn}
                     tab={activeTab}
                     onDraft={handleDraft}
-                    teamId={selectedTeamId}
                   />
                 ))
               )}

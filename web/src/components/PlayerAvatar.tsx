@@ -3,6 +3,7 @@ import type { Position } from "../types/simulator";
 import { headshotUrl, type HeadshotIndexPool } from "../data/headshotUrl";
 import { teamLogoUrl } from "../data/constants";
 import { avatarColorsForTeam } from "../data/teamAvatarTheme";
+import { collegeThemeForSchool, collegeLogoUrl } from "../data/collegeAvatarTheme";
 
 export type PlayerHeadshotPool = "nba" | "prospect";
 
@@ -14,9 +15,14 @@ interface Props {
   /** Use prospect PNGs (draft class) vs NBA roster PNGs. Default "nba". */
   headshotPool?: PlayerHeadshotPool;
   /**
-   * Canonical team id (e.g. BOS). When set, ring uses team colors + faded logo behind the headshot.
+   * Canonical NBA team id — ring colors + small corner logo (when not using college).
    */
   teamId?: string | null;
+  /**
+   * College / school name from the big board. When `headshotPool` is "prospect" and this
+   * is set, colors and logo use NCAA branding instead of `teamId`.
+   */
+  school?: string | null;
 }
 
 function getInitials(name: string): string {
@@ -43,8 +49,21 @@ export default function PlayerAvatar({
   style,
   headshotPool = "nba",
   teamId = null,
+  school = null,
 }: Props) {
-  const colors = avatarColorsForTeam(teamId, position);
+  const useCollege = headshotPool === "prospect" && Boolean(school?.trim());
+  const college = useCollege ? collegeThemeForSchool(school!) : null;
+  const colors = useCollege
+    ? { bg: college!.bg, text: college!.text }
+    : avatarColorsForTeam(teamId, position);
+
+  const logoSrc =
+    useCollege && college!.logoId != null
+      ? collegeLogoUrl(college.logoId)
+      : teamId
+        ? teamLogoUrl(teamId)
+        : null;
+
   const fontSize = size * 0.36;
   const url = headshotUrl(name, indexPool(headshotPool));
   const [imgFailed, setImgFailed] = useState(!url);
@@ -56,10 +75,11 @@ export default function PlayerAvatar({
 
   useEffect(() => {
     setLogoFailed(false);
-  }, [teamId]);
+  }, [teamId, school, headshotPool]);
 
   const showImg = url && !imgFailed;
-  const ringPx = teamId ? Math.max(2, Math.round(size * 0.075)) : 0;
+  const showLogo = Boolean(logoSrc) && !logoFailed;
+  const corner = Math.round(size * 0.3);
 
   return (
     <div
@@ -78,35 +98,10 @@ export default function PlayerAvatar({
         ...style,
       }}
     >
-      {teamId && !logoFailed ? (
-        <img
-          src={teamLogoUrl(teamId)}
-          alt=""
-          aria-hidden
-          draggable={false}
-          onError={() => setLogoFailed(true)}
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            objectPosition: "center",
-            opacity: 0.28,
-            transform: "scale(1.5)",
-            pointerEvents: "none",
-            zIndex: 0,
-          }}
-        />
-      ) : null}
-
       <div
         style={{
           position: "absolute",
-          top: ringPx,
-          left: ringPx,
-          right: ringPx,
-          bottom: ringPx,
+          inset: 0,
           borderRadius: "50%",
           overflow: "hidden",
           zIndex: 1,
@@ -145,6 +140,30 @@ export default function PlayerAvatar({
           </span>
         )}
       </div>
+
+      {showLogo ? (
+        <img
+          src={logoSrc!}
+          alt=""
+          aria-hidden
+          draggable={false}
+          onError={() => setLogoFailed(true)}
+          style={{
+            position: "absolute",
+            left: "5%",
+            bottom: "5%",
+            width: corner,
+            height: corner,
+            maxWidth: "34%",
+            maxHeight: "34%",
+            objectFit: "contain",
+            objectPosition: "left bottom",
+            zIndex: 2,
+            pointerEvents: "none",
+            filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.85))",
+          }}
+        />
+      ) : null}
     </div>
   );
 }
