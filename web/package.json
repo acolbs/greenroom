@@ -5,6 +5,7 @@
   "type": "module",
   "homepage": "https://acolbs.github.io/greenroom/",
   "scripts": {
+    "sync-headshots": "node ../scripts/sync-headshots.mjs",
     "dev": "vite",
     "build": "vite build && node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
     "preview": "vite preview",

@@ -62,7 +62,12 @@ function ContractCard({ contract, decision, onDecide }: ContractCardProps) {
     }}>
       {/* Top row: avatar + name + badges + salary */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: "0.875rem", marginBottom: "0.75rem" }}>
-        <PlayerAvatar name={contract.name} position={contract.position} size={46} />
+        <PlayerAvatar
+          name={contract.name}
+          position={contract.position}
+          size={46}
+          headshotPool={contract.playerId.startsWith("draft-") ? "prospect" : "nba"}
+        />
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
@@ -271,7 +276,12 @@ export default function FreeAgencyPage() {
               ) : (
                 roster.map((p) => (
                   <div key={p.id} className="roster-row">
-                    <PlayerAvatar name={p.name} position={p.position} size={30} />
+                    <PlayerAvatar
+                      name={p.name}
+                      position={p.position}
+                      size={30}
+                      headshotPool={p.id.startsWith("draft-") ? "prospect" : "nba"}
+                    />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div className="roster-row-name">{p.name}</div>
                       <div className="roster-row-arch">{p.offensiveArchetype}</div>

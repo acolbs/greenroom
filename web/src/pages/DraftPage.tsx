@@ -95,7 +95,12 @@ function ProspectRow({ prospect, isRecommended, isUserTurn, tab, onDraft }: Pros
       }
     >
       <div className="draft-rank">#{prospect.rank}</div>
-      <PlayerAvatar name={prospect.name} position={prospect.position} size={36} />
+      <PlayerAvatar
+        name={prospect.name}
+        position={prospect.position}
+        size={36}
+        headshotPool="prospect"
+      />
 
       <div className="draft-info">
         <div className="draft-name">
