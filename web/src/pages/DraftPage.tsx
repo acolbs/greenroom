@@ -334,7 +334,7 @@ export default function DraftPage() {
               {displayedProspects.length === 0 ? (
                 <div className="empty-state">No prospects remaining.</div>
               ) : (
-                displayedProspects.slice(0, 30).map((p) => (
+                displayedProspects.map((p) => (
                   <ProspectRow
                     key={p.id}
                     prospect={p}

@@ -4,6 +4,7 @@ import { headshotUrl, type HeadshotIndexPool } from "../data/headshotUrl";
 import { teamLogoUrl } from "../data/constants";
 import { avatarColorsForTeam } from "../data/teamAvatarTheme";
 import { collegeThemeForSchool, collegeLogoUrl } from "../data/collegeAvatarTheme";
+import { watermarkPlateBackground } from "../data/avatarWatermark";
 
 export type PlayerHeadshotPool = "nba" | "prospect";
 
@@ -80,6 +81,9 @@ export default function PlayerAvatar({
   const showImg = url && !imgFailed;
   const showLogo = Boolean(logoSrc) && !logoFailed;
   const initialsOnLogo = !showImg && showLogo;
+  const plateBg = showLogo
+    ? watermarkPlateBackground(colors.text, colors.bg)
+    : colors.bg;
 
   return (
     <div
@@ -87,14 +91,17 @@ export default function PlayerAvatar({
         width: size,
         height: size,
         borderRadius: "50%",
-        background: colors.bg,
-        border: `1.5px solid ${borderWithAlpha(colors.text, "44")}`,
+        background: plateBg,
+        border: showLogo
+          ? "1px solid rgba(255, 255, 255, 0.1)"
+          : `1.5px solid ${borderWithAlpha(colors.text, "44")}`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
         overflow: "hidden",
         position: "relative",
+        boxShadow: showLogo ? "inset 0 0 24px rgba(0, 0, 0, 0.2)" : undefined,
         ...style,
       }}
     >
@@ -110,14 +117,16 @@ export default function PlayerAvatar({
             left: "50%",
             top: "50%",
             transform: "translate(-50%, -50%)",
-            width: "86%",
-            height: "86%",
+            width: "135%",
+            height: "135%",
+            maxWidth: "none",
+            maxHeight: "none",
             objectFit: "contain",
             objectPosition: "center",
-            opacity: showImg ? 0.34 : 0.5,
+            opacity: showImg ? 0.11 : 0.2,
             zIndex: 0,
             pointerEvents: "none",
-            filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))",
+            filter: "brightness(0) invert(1)",
           }}
         />
       ) : null}
