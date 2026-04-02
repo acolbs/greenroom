@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import type { ExpiringContract, FreeAgencyDecision } from "../types/simulator";
 import NavBar from "../components/NavBar";
@@ -133,7 +133,7 @@ function ContractCard({ contract, decision, onDecide, teamId }: ContractCardProp
 }
 
 export default function FreeAgencyPage() {
-  const navigate = useNavigate();
+  const navigate = useSmoothNavigate();
   const roster = useSimulatorStore((s) => s.roster);
   const expiring = useSimulatorStore((s) => s.expiringContracts);
   const decisions = useSimulatorStore((s) => s.decisions);

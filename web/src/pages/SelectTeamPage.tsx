@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { TEAMS } from "../data/constants";
 import { useSimulatorStore } from "../store/simulatorStore";
 import NavBar from "../components/NavBar";
 import TeamLogo from "../components/TeamLogo";
 
 export default function SelectTeamPage() {
-  const navigate = useNavigate();
+  const navigate = useSmoothNavigate();
   const selectTeam = useSimulatorStore((s) => s.selectTeam);
   const loading = useSimulatorStore((s) => s.loading);
   const error = useSimulatorStore((s) => s.error);

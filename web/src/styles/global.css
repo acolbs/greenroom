@@ -131,6 +131,54 @@ html.action-complete-glow::after {
   flex-direction: column;
   position: relative;
   z-index: 1;
+  view-transition-name: root;
+}
+
+/* Full-surface route morph (used with document.startViewTransition + useSmoothNavigate) */
+@supports (view-transition-name: root) {
+  ::view-transition-old(root) {
+    animation: route-vt-out 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: route-vt-in 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes route-vt-out {
+  from {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateY(-10px) scale(0.993);
+  }
+}
+
+@keyframes route-vt-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(20px) scale(0.996);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @supports (view-transition-name: root) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.001ms !important;
+      animation-timing-function: linear !important;
+    }
+  }
 }
 
 .app-layout {
@@ -141,12 +189,37 @@ html.action-complete-glow::after {
   min-width: 0;
 }
 
-.route-shell {
+.app-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  min-height: 0;
   min-width: 0;
+}
+
+.route-transition-root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+}
+
+.route-transition-root--stacked {
+  min-height: 100dvh;
+}
+
+.route-shell {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 a {

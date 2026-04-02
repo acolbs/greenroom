@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectCurrentUserPick } from "../store/simulatorStore";
 import {
   rankProspectsForTeam,
@@ -168,7 +168,7 @@ function TeamStrengthBadge({ ts }: { ts: TeamStrength }) {
 // ── Page ───────────────────────────────────────────────────────────────────
 
 export default function DraftPage() {
-  const navigate = useNavigate();
+  const navigate = useSmoothNavigate();
   const [activeTab, setActiveTab] = useState<DraftTab>("bigboard");
 
   const draftSimActive = useSimulatorStore((s) => s.draftSimActive);

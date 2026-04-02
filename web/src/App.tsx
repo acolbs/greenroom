@@ -12,7 +12,8 @@ export default function App() {
   return (
     <div className="app-layout">
       <PhaseTransitionGlow />
-      <Routes>
+      <main className="app-main">
+        <Routes>
         <Route element={<PageShell />}>
           <Route path="/" element={<WelcomePage />} />
           <Route path="/select-team" element={<SelectTeamPage />} />
@@ -42,7 +43,8 @@ export default function App() {
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
-      </Routes>
+        </Routes>
+      </main>
     </div>
   );
 }

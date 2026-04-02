@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 
 export default function WelcomePage() {
-  const navigate = useNavigate();
+  const navigate = useSmoothNavigate();
 
   return (
     <div className="welcome-page">

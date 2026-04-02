@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import { CHAMPIONSHIP_FORMULA, computeFormulFitScore } from "../data/championshipFormula";
 import { TEAMS } from "../data/constants";
@@ -20,7 +20,7 @@ function countForSlot(
 }
 
 export default function RosterSummaryPage() {
-  const navigate = useNavigate();
+  const navigate = useSmoothNavigate();
 
   const roster = useSimulatorStore((s) => s.roster);
   const deficits = useSimulatorStore((s) => s.rosterDeficits);

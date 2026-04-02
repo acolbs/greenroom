@@ -1003,6 +1003,19 @@
   margin-bottom: 2.5rem;
 }
 
+.welcome-page .btn.btn-primary.btn-lg {
+  transition: box-shadow 0.22s ease, transform 0.22s ease, background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.welcome-page .btn.btn-primary.btn-lg:hover {
+  transform: translateY(-1px) scale(1);
+}
+
+.welcome-page .btn.btn-primary.btn-lg:active {
+  transform: scale(0.97);
+}
+
 .welcome-meta {
   display: flex;
   align-items: center;
@@ -1295,5 +1308,10 @@
   .btn-primary:active {
     transform: none;
     transition: opacity 0.15s, background 0.15s, box-shadow 0.15s;
+  }
+
+  .welcome-page .btn.btn-primary.btn-lg:hover,
+  .welcome-page .btn.btn-primary.btn-lg:active {
+    transform: none;
   }
 }

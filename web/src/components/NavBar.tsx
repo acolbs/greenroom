@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore } from "../store/simulatorStore";
 import { TEAMS } from "../data/constants";
 import type { SimulatorPhase } from "../types/simulator";
@@ -25,7 +26,7 @@ const PHASE_LABELS: Record<SimulatorPhase, string> = {
 };
 
 export default function NavBar() {
-  const navigate = useNavigate();
+  const navigate = useSmoothNavigate();
   const location = useLocation();
   const [rosterOpen, setRosterOpen] = useState(false);
 
