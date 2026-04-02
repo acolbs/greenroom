@@ -15,7 +15,7 @@ interface Props {
   /** Use prospect PNGs (draft class) vs NBA roster PNGs. Default "nba". */
   headshotPool?: PlayerHeadshotPool;
   /**
-   * Canonical NBA team id — ring colors + small corner logo (when not using college).
+   * Canonical NBA team id — ring colors + centered logo behind the headshot (when not using college).
    */
   teamId?: string | null;
   /**
@@ -79,7 +79,7 @@ export default function PlayerAvatar({
 
   const showImg = url && !imgFailed;
   const showLogo = Boolean(logoSrc) && !logoFailed;
-  const corner = Math.round(size * 0.3);
+  const initialsOnLogo = !showImg && showLogo;
 
   return (
     <div
@@ -98,6 +98,30 @@ export default function PlayerAvatar({
         ...style,
       }}
     >
+      {showLogo ? (
+        <img
+          src={logoSrc!}
+          alt=""
+          aria-hidden
+          draggable={false}
+          onError={() => setLogoFailed(true)}
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "86%",
+            height: "86%",
+            objectFit: "contain",
+            objectPosition: "center",
+            opacity: showImg ? 0.34 : 0.5,
+            zIndex: 0,
+            pointerEvents: "none",
+            filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))",
+          }}
+        />
+      ) : null}
+
       <div
         style={{
           position: "absolute",
@@ -108,9 +132,10 @@ export default function PlayerAvatar({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: showImg
-            ? undefined
-            : `linear-gradient(160deg, ${colors.bg}f2, ${colors.bg})`,
+          background:
+            showImg || initialsOnLogo
+              ? undefined
+              : `linear-gradient(160deg, ${colors.bg}f2, ${colors.bg})`,
         }}
       >
         {showImg ? (
@@ -134,36 +159,17 @@ export default function PlayerAvatar({
               fontWeight: 700,
               color: colors.text,
               letterSpacing: "0.02em",
+              position: "relative",
+              zIndex: 1,
+              textShadow: initialsOnLogo
+                ? "0 0 10px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.9), 0 0 1px #000"
+                : undefined,
             }}
           >
             {getInitials(name)}
           </span>
         )}
       </div>
-
-      {showLogo ? (
-        <img
-          src={logoSrc!}
-          alt=""
-          aria-hidden
-          draggable={false}
-          onError={() => setLogoFailed(true)}
-          style={{
-            position: "absolute",
-            left: "5%",
-            bottom: "5%",
-            width: corner,
-            height: corner,
-            maxWidth: "34%",
-            maxHeight: "34%",
-            objectFit: "contain",
-            objectPosition: "left bottom",
-            zIndex: 2,
-            pointerEvents: "none",
-            filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.85))",
-          }}
-        />
-      ) : null}
     </div>
   );
 }
