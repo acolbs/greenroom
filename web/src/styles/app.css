@@ -604,6 +604,10 @@
   color: var(--color-accent);
 }
 
+.fa-card__decision--no {
+  color: rgba(248, 81, 73, 0.82);
+}
+
 @media (max-width: 520px) {
   .fa-card__hero {
     grid-template-columns: 1fr;
