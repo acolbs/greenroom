@@ -3,9 +3,26 @@ import { parseOffensiveArchetype, parseDefensiveRole, parsePosition, toFloat } f
 import { rookieSalaryFromGrade } from "./constants";
 
 // ---------------------------------------------------------------------------
-// big_board.csv columns:
-//   Rank, Name, School, Pos, Grade, Offensive Archetype, Defensive Role, Notes
+// big_board.csv columns (current):
+//   Rank, Name, School, Pos, Year, Grade, Offensive Archetype, Defensive Role, Notes
+// Legacy: Grade held class year (Freshman) — numeric scout grade was missing.
 // ---------------------------------------------------------------------------
+
+function parseScoutGrade(row: Record<string, string>): number {
+  const raw = row["Grade"]?.trim() ?? "";
+  const n = toFloat(raw);
+  if (n >= 60 && n <= 99) return Math.round(n);
+  // Non-numeric legacy cell — default mid board grade
+  return 72;
+}
+
+function parseClassYear(row: Record<string, string>): string | undefined {
+  const y = row["Year"]?.trim();
+  if (y) return y;
+  const g = row["Grade"]?.trim() ?? "";
+  if (g && !/^-?\d+(\.\d+)?$/.test(g.replace(/,/g, ""))) return g;
+  return undefined;
+}
 
 export function parseDraftClass(rows: Record<string, string>[]): DraftProspect[] {
   const prospects: DraftProspect[] = [];
@@ -21,7 +38,8 @@ export function parseDraftClass(rows: Record<string, string>[]): DraftProspect[]
     // Skip prospects without archetype data
     if (!oa || !dr) continue;
 
-    const grade = toFloat(row["Grade"] ?? "");
+    const grade = parseScoutGrade(row);
+    const classYear = parseClassYear(row);
 
     prospects.push({
       id: `prospect-${rank}`,
@@ -30,6 +48,7 @@ export function parseDraftClass(rows: Record<string, string>[]): DraftProspect[]
       school: row["School"]?.trim() ?? "",
       position: parsePosition(row["Pos"] ?? ""),
       grade,
+      classYear,
       offensiveArchetype: oa,
       defensiveRole: dr,
       notes: row["Notes"]?.trim() ?? "",

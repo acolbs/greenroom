@@ -326,6 +326,17 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
                       <div className="player-modal__school" style={{ marginTop: "0.5rem" }}>
                         {(subject as DraftProspect).school}
                       </div>
+                      {(subject as DraftProspect).classYear ? (
+                        <div
+                          style={{
+                            marginTop: "0.25rem",
+                            fontSize: "0.78rem",
+                            color: "var(--color-text-muted)",
+                          }}
+                        >
+                          {(subject as DraftProspect).classYear}
+                        </div>
+                      ) : null}
                       <div className="player-modal__rank-large">
                         #{(subject as DraftProspect).rank}
                       </div>

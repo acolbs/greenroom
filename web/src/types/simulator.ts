@@ -152,8 +152,10 @@ export interface DraftProspect {
   name: string;
   school: string;
   position: Position;
-  /** 60–95 talent grade from big_board.csv */
+  /** 60–95 numeric scout grade (big_board `Grade` column). */
   grade: number;
+  /** College year / label when present (e.g. Freshman, International). */
+  classYear?: string;
   offensiveArchetype: OffensiveArchetype;
   defensiveRole: DefensiveRole;
   notes: string;
