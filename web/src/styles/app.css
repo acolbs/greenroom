@@ -1426,15 +1426,23 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   z-index: 500;
 }
 
-.player-modal {
+/* Centering wrapper — framer-motion animates the inner .player-modal */
+.player-modal-wrapper {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
   z-index: 501;
-  width: min(880px, 94vw);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.player-modal {
+  pointer-events: auto;
+  width: min(900px, 94vw);
   max-height: 92dvh;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--color-surface-raised);
   border: 1px solid rgba(63, 185, 80, 0.3);
   border-radius: 16px;
@@ -1442,7 +1450,7 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
     0 0 0 1px rgba(63, 185, 80, 0.08),
     0 0 60px rgba(63, 185, 80, 0.1),
     0 32px 80px rgba(0, 0, 0, 0.65);
-  padding: 2rem 2.5rem 2.5rem;
+  padding: 2.25rem 2.5rem 2.75rem;
 }
 
 /* Top accent scan-line */
@@ -1709,11 +1717,12 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   margin-top: 0.3rem;
 }
 
-/* Prospect notes */
-.player-modal__notes {
+/* Prospect notes / playstyle body text */
+.player-modal__notes,
+.player-modal__playstyle {
   font-size: 0.82rem;
   color: var(--color-text-secondary);
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
 .player-modal__no-stats {
