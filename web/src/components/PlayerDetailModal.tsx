@@ -1,5 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import type { ExpiringContract, DraftProspect, OffensiveArchetype, DefensiveRole } from "../types/simulator";
+import type {
+  ExpiringContract,
+  DraftProspect,
+  OffensiveArchetype,
+  DefensiveRole,
+  RosterDeficit,
+} from "../types/simulator";
+import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import PlayerAvatar from "./PlayerAvatar";
 
 export type ModalSubject = ExpiringContract | DraftProspect;
@@ -56,10 +63,139 @@ const DEF_DESCRIPTIONS: Record<DefensiveRole, string> = {
     "Assigned to the best perimeter scorer on the opposing team — capable of taking away shooters and slashers alike. Combines length, lateral quickness, and defensive IQ to make life miserable for star wings.",
 };
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+// ── Scout's Take logic ─────────────────────────────────────────────────────
+
+type Verdict = "yes" | "lean" | "no" | "muted";
+
+interface ScoutRecommendation {
+  verdict: Verdict;
+  label: string;
+  headline: string;
+  reasoning: string;
+}
 
 function fmt(n: number): string {
   return "$" + (n / 1_000_000).toFixed(1) + "M";
+}
+
+function fillsTeamNeed(contract: ExpiringContract, deficits: RosterDeficit[]): boolean {
+  return deficits.some(
+    (d) =>
+      d.offensiveArchetype === contract.offensiveArchetype ||
+      d.defensiveRole === contract.defensiveRole
+  );
+}
+
+function getScoutRecommendation(
+  contract: ExpiringContract,
+  deficits: RosterDeficit[],
+  payroll: number
+): ScoutRecommendation {
+  const isClub = contract.optionType === "Club";
+  const needsPlayer = fillsTeamNeed(contract, deficits);
+  const capLine = 165_000_000;
+  const taxLine = 201_000_000;
+  const spaceLeft = capLine - payroll;
+  const overTax = payroll > taxLine;
+
+  // ── Club option ──────────────────────────────────────────────────────────
+  if (isClub && contract.optionSalary) {
+    const market = contract.estimatedMarketSalary;
+    const savings = market - contract.optionSalary;
+    const savingsPct = savings / market;
+    const savingsStr = fmt(Math.abs(savings));
+
+    if (savingsPct > 0.25) {
+      return {
+        verdict: "yes",
+        label: "Strong Value — Pick Up",
+        headline: `${savingsStr} below market`,
+        reasoning: `At ${fmt(contract.optionSalary)}, this club option is ${Math.round(savingsPct * 100)}% cheaper than his estimated market value of ${fmt(market)}. That's real cap leverage — you're locking in ${fmt(market)} production at a deep discount. ${needsPlayer ? "He also directly addresses a rotation need, making this a no-brainer." : "Pick it up before he hits open market."}`,
+      };
+    }
+    if (savingsPct > 0.08) {
+      return {
+        verdict: "lean",
+        label: "Good Value — Lean Pick Up",
+        headline: `${savingsStr} savings vs market`,
+        reasoning: `The option at ${fmt(contract.optionSalary)} comes in ${Math.round(savingsPct * 100)}% below his market estimate of ${fmt(market)}. Solid value — replacing this production at open-market prices would cost meaningfully more. ${needsPlayer ? "He fills a rotation need, which strengthens the case." : "The only reason to decline is if you have a specific free agent target in mind."}`,
+      };
+    }
+    if (savingsPct < -0.10) {
+      return {
+        verdict: "no",
+        label: "Overpay — Consider Declining",
+        headline: `${savingsStr} above market`,
+        reasoning: `The option at ${fmt(contract.optionSalary)} is ${Math.round(-savingsPct * 100)}% above his estimated market value of ${fmt(market)}. Declining frees up cap space that could go toward better value. ${needsPlayer ? "Despite the positional need, overpaying locks you into a bad deal for next season." : "Unless his locker-room presence is irreplaceable, the cap math doesn't work."}`,
+      };
+    }
+    return {
+      verdict: "muted",
+      label: "Near Market Rate",
+      headline: "No strong value signal",
+      reasoning: `The option at ${fmt(contract.optionSalary)} is roughly in line with his market estimate of ${fmt(market)}. This becomes a fit decision, not a value one — ${needsPlayer ? "he does address a rotation deficit, which nudges the needle toward picking it up." : "weigh it against other offseason targets and your cap flexibility."}`,
+    };
+  }
+
+  // ── UFA / player opted out ───────────────────────────────────────────────
+  const market = contract.estimatedMarketSalary;
+  const bpm = contract.stats.bpm;
+  const signingPutsOverTax = payroll + market > taxLine;
+
+  if (bpm >= 4 && market < 20_000_000) {
+    return {
+      verdict: "yes",
+      label: "Priority Re-Sign",
+      headline: "Elite value — don't let him walk",
+      reasoning: `A +${bpm.toFixed(1)} BPM player asking for ${fmt(market)} is rare. High-impact, cost-controlled players don't last on the open market. Make him a priority re-sign before another team steps in. ${needsPlayer ? "He directly fills a rotation need on top of the value." : ""}`,
+    };
+  }
+  if (bpm >= 2 && needsPlayer && !signingPutsOverTax) {
+    return {
+      verdict: "yes",
+      label: "Re-Sign Recommended",
+      headline: "Strong fit at fair value",
+      reasoning: `A positive BPM and a direct fit with your rotation needs makes this a straightforward decision at ${fmt(market)}. You'd be paying fair market rate for a player who addresses a real gap in the lineup.`,
+    };
+  }
+  if (bpm >= 2 && needsPlayer && signingPutsOverTax) {
+    return {
+      verdict: "lean",
+      label: "Good Player, Cap Risk",
+      headline: "Re-signing pushes into tax territory",
+      reasoning: `The production warrants re-signing — a +${bpm.toFixed(1)} BPM player who fills a positional need — but at ${fmt(market)} you'd cross into luxury tax territory. If you can absorb the penalty, the fit justifies it; if not, explore tax-friendly alternatives.`,
+    };
+  }
+  if (bpm < -1 && market > 10_000_000) {
+    return {
+      verdict: "no",
+      label: "Let Him Walk",
+      reasoning: `A ${bpm.toFixed(1)} BPM at ${fmt(market)} per year is difficult to justify. You'd be committing significant cap space to below-average production — that money is better deployed on a player who actually moves the needle.`,
+      headline: "Negative value at this price",
+    };
+  }
+  if (!needsPlayer && bpm < 1) {
+    return {
+      verdict: "no",
+      label: "Not a Priority",
+      headline: "Doesn't address a team need",
+      reasoning: `The production is modest and he doesn't fill any of your priority rotation gaps. Re-signing is defensible as depth insurance, but don't sacrifice cap flexibility for a player who won't meaningfully upgrade the roster.`,
+    };
+  }
+  if (overTax) {
+    return {
+      verdict: "muted",
+      label: "Already Over Tax",
+      headline: "Proceed with caution",
+      reasoning: `You're already in luxury tax territory, so every additional dollar amplifies the penalty. If he's essential to your rotation, the cost is worth accepting. If he's depth, the tax math may not add up — look for cheaper alternatives.`,
+    };
+  }
+  return {
+    verdict: "muted",
+    label: "Situation Dependent",
+    headline: "No strong opinion either way",
+    reasoning: `The value here is reasonable but not obvious. Re-signing is defensible, but so is exploring alternatives. Weigh his re-sign against your other offseason priorities — if cap space is tight, make sure you're not locking it up for a marginal upgrade.`,
+  };
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────
@@ -133,7 +269,6 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
     <AnimatePresence>
       {subject && (
         <>
-          {/* Backdrop */}
           <motion.div
             className="modal-overlay"
             initial={{ opacity: 0 }}
@@ -142,8 +277,6 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
             transition={{ duration: 0.22 }}
             onClick={onClose}
           />
-
-          {/* Centering wrapper — keeps modal centered without CSS transform conflict */}
           <div className="player-modal-wrapper">
             <motion.div
               className="player-modal"
@@ -156,11 +289,10 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
               aria-modal="true"
               aria-label={`${subject.name} details`}
             >
-              <button
-                className="player-modal__close"
-                onClick={onClose}
-                aria-label="Close"
-              >
+              {/* Scan line — real DOM element, not ::before */}
+              <div className="player-modal__scan" />
+
+              <button className="player-modal__close" onClick={onClose} aria-label="Close">
                 ✕
               </button>
 
@@ -177,9 +309,7 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
                       school={isProspect ? (subject as DraftProspect).school : null}
                     />
                   </div>
-
                   <div className="player-modal__name">{subject.name}</div>
-
                   <div className="player-modal__meta-row">
                     <span className="card-pos">{subject.position}</span>
                     {isFA && (
@@ -188,10 +318,8 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
                       </span>
                     )}
                   </div>
-
                   <div className="player-modal__arch">{subject.offensiveArchetype}</div>
                   <div className="player-modal__def">{subject.defensiveRole}</div>
-
                   {isProspect && (
                     <>
                       <div className="player-modal__school" style={{ marginTop: "0.5rem" }}>
@@ -207,12 +335,10 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
 
                 {/* ── RIGHT ── */}
                 <div className="player-modal__right">
-                  {/* Playstyle description */}
                   <div className="player-modal__section-label">Offensive Profile</div>
                   <p className="player-modal__playstyle">
                     {OFF_DESCRIPTIONS[subject.offensiveArchetype]}
                   </p>
-
                   <div className="player-modal__section-label" style={{ marginTop: "1rem" }}>
                     Defensive Profile
                   </div>
@@ -240,6 +366,9 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
 // ── FA player right panel ──────────────────────────────────────────────────
 
 function FaPlayerRight({ contract }: { contract: ExpiringContract }) {
+  const deficits = useSimulatorStore((s) => s.rosterDeficits);
+  const payroll = useSimulatorStore(selectPayroll);
+
   const isClub = contract.optionType === "Club";
   const bpmColor =
     contract.stats.bpm >= 3
@@ -249,20 +378,16 @@ function FaPlayerRight({ contract }: { contract: ExpiringContract }) {
       : "var(--color-text-muted)";
   const bpmSign = contract.stats.bpm >= 0 ? "+" : "";
 
+  const take = getScoutRecommendation(contract, deficits, payroll);
+
   return (
     <>
       <div className="player-modal__section-label">Season Statistics</div>
       <div className="player-modal__stats">
-        <StatBar label="Points Per Game" value={contract.stats.pts} max={38} delay={0.1} />
-        <StatBar label="Rebounds Per Game" value={contract.stats.trb} max={16} delay={0.17} />
-        <StatBar label="Assists Per Game" value={contract.stats.ast} max={12} delay={0.24} />
-        <StatBar
-          label="True Shooting %"
-          value={contract.stats.tsPct * 100}
-          max={75}
-          color="var(--color-info)"
-          delay={0.31}
-        />
+        <StatBar label="Points Per Game"   value={contract.stats.pts}          max={38} delay={0.10} />
+        <StatBar label="Rebounds Per Game" value={contract.stats.trb}          max={16} delay={0.17} />
+        <StatBar label="Assists Per Game"  value={contract.stats.ast}          max={12} delay={0.24} />
+        <StatBar label="True Shooting %"   value={contract.stats.tsPct * 100} max={75} color="var(--color-info)" delay={0.31} />
       </div>
 
       <div className="player-modal__chips">
@@ -298,9 +423,7 @@ function FaPlayerRight({ contract }: { contract: ExpiringContract }) {
       <div className="player-modal__contract">
         <div className="pmodal-contract-item">
           <span className="pmodal-contract-item__label">Current</span>
-          <span className="pmodal-contract-item__val">
-            {fmt(contract.currentSalary)}
-          </span>
+          <span className="pmodal-contract-item__val">{fmt(contract.currentSalary)}</span>
         </div>
         {isClub && contract.optionSalary ? (
           <div className="pmodal-contract-item">
@@ -321,6 +444,16 @@ function FaPlayerRight({ contract }: { contract: ExpiringContract }) {
       {contract.isSalaryEstimate && (
         <p className="player-modal__salary-note">Market estimate · may vary</p>
       )}
+
+      <div className="player-modal__divider" />
+
+      {/* Scout's Take */}
+      <div className="player-modal__section-label">Scout's Take</div>
+      <div className={`scout-take scout-take--${take.verdict}`}>
+        <div className="scout-take__verdict">{take.label}</div>
+        <div className="scout-take__headline">{take.headline}</div>
+        <p className="scout-take__reasoning">{take.reasoning}</p>
+      </div>
     </>
   );
 }
@@ -345,9 +478,7 @@ function ProspectRight({ prospect }: { prospect: DraftProspect }) {
       <div className="player-modal__divider" />
 
       <div className="player-modal__section-label">Season Stats</div>
-      <div className="player-modal__no-stats">
-        College statistics not yet available
-      </div>
+      <div className="player-modal__no-stats">College statistics not yet available</div>
 
       <div className="player-modal__divider" />
 

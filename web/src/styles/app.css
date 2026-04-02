@@ -1453,18 +1453,12 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   padding: 2.25rem 2.5rem 2.75rem;
 }
 
-/* Top accent scan-line */
-.player-modal::before {
-  content: "";
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: block;
+/* Top accent scan-line — real DOM element, not ::before (sticky+overflow conflict) */
+.player-modal__scan {
   height: 2px;
-  margin: -2rem -2.5rem 1.5rem;
+  margin: -2.25rem -2.5rem 1.75rem;
   background: linear-gradient(90deg, transparent 0%, var(--color-accent) 35%, rgba(88, 161, 255, 0.65) 65%, transparent 100%);
-  box-shadow: 0 0 18px rgba(63, 185, 80, 0.4);
+  box-shadow: 0 0 18px rgba(63, 185, 80, 0.38);
   border-radius: 2px 2px 0 0;
   flex-shrink: 0;
 }
@@ -1776,6 +1770,52 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   height: 100%;
   border-radius: 3px;
   background: var(--color-accent);
+}
+
+/* Scout's Take */
+.scout-take {
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  border: 1px solid;
+  margin-top: 0.25rem;
+}
+
+.scout-take--yes   { background: rgba(63,185,80,0.07);  border-color: rgba(63,185,80,0.3); }
+.scout-take--lean  { background: rgba(63,185,80,0.04);  border-color: rgba(63,185,80,0.18); }
+.scout-take--no    { background: rgba(248,81,73,0.07);  border-color: rgba(248,81,73,0.3); }
+.scout-take--muted { background: var(--color-surface);  border-color: var(--color-border-subtle); }
+
+.scout-take__verdict {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.3rem;
+}
+
+.scout-take--yes   .scout-take__verdict { color: var(--color-accent); }
+.scout-take--lean  .scout-take__verdict { color: var(--color-accent); opacity: 0.8; }
+.scout-take--no    .scout-take__verdict { color: var(--color-danger); }
+.scout-take--muted .scout-take__verdict { color: var(--color-text-muted); }
+
+.scout-take__headline {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.45rem;
+}
+
+.scout-take--yes   .scout-take__headline { color: var(--color-accent); }
+.scout-take--lean  .scout-take__headline { color: var(--color-text); }
+.scout-take--no    .scout-take__headline { color: var(--color-danger); }
+.scout-take--muted .scout-take__headline { color: var(--color-text-muted); }
+
+.scout-take__reasoning {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
 }
 
 /* Mobile: stack columns */
