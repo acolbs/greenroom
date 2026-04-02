@@ -421,6 +421,206 @@
   white-space: nowrap;
 }
 
+/* ── Free agency player cards ──────────────────────────────────────────────── */
+
+.fa-card {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1rem 1.05rem 1rem;
+  margin-bottom: 0.65rem;
+  transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+}
+
+.fa-card--decided {
+  opacity: 0.62;
+  background: var(--color-surface);
+  border-color: var(--color-border-subtle);
+  box-shadow: none;
+}
+
+.fa-card__hero {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 0.75rem 1rem;
+  align-items: start;
+  margin-bottom: 0.85rem;
+}
+
+.fa-card__avatar {
+  justify-self: center;
+}
+
+.fa-card__identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem 1rem;
+  min-width: 0;
+}
+
+.fa-card__title-block {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.fa-card__name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+}
+
+.fa-card__name {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.fa-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.fa-card__sub {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+  margin-top: 0.35rem;
+}
+
+.fa-card__arch {
+  color: var(--color-accent);
+}
+
+.fa-card__salary {
+  text-align: right;
+  flex-shrink: 0;
+  min-width: 5.5rem;
+}
+
+.fa-card__salary-label {
+  font-size: 0.58rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.12rem;
+}
+
+.fa-card__salary-main {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1.15;
+}
+
+.fa-card__salary-sub {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  margin-top: 0.12rem;
+}
+
+.fa-card__stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem 0.25rem;
+  padding: 0.55rem 0.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 10px;
+  margin-bottom: 0.85rem;
+}
+
+.fa-card__stat {
+  text-align: center;
+  padding: 0.2rem 0.15rem;
+  min-width: 0;
+}
+
+.fa-card__stat-val {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.fa-card__stat-lbl {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.54rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.fa-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.fa-card__action-btn {
+  flex: 1 1 140px;
+  min-width: 0;
+  font-size: 0.78rem;
+  padding: 0.5rem 0.65rem;
+}
+
+.fa-card__decision {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.fa-card__decision--yes {
+  color: var(--color-accent);
+}
+
+@media (max-width: 520px) {
+  .fa-card__hero {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .fa-card__identity {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .fa-card__title-block {
+    flex: none;
+    width: 100%;
+  }
+
+  .fa-card__name-row {
+    justify-content: center;
+  }
+
+  .fa-card__badges {
+    justify-content: center;
+  }
+
+  .fa-card__salary {
+    text-align: center;
+    width: 100%;
+  }
+}
+
 /* ── Badges ────────────────────────────────────────────────────────────────── */
 
 .badge {
@@ -457,66 +657,159 @@
   border: 1px solid var(--color-accent-dim);
 }
 
-/* ── Draft board ───────────────────────────────────────────────────────────── */
+/* ── Draft board (grid of square-ish prospect cards) ───────────────────────── */
 
 .draft-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+  gap: 0.65rem;
+  align-items: stretch;
+}
+
+.draft-card {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-}
-
-.draft-row {
-  display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 0.875rem;
+  text-align: center;
+  padding: 0.85rem 0.65rem 0.7rem;
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  transition: border-color 0.15s, background 0.15s;
+  border-radius: 12px;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  min-height: 0;
+  aspect-ratio: 4 / 5;
 }
 
-.draft-row:hover {
-  border-color: rgba(63, 185, 80, 0.4);
+.draft-card:hover {
+  border-color: rgba(63, 185, 80, 0.45);
   background: var(--color-surface-hover);
 }
 
-.draft-rank {
+.draft-card--recommended {
+  border-color: var(--color-accent);
+  background: #0a1a0d;
+  box-shadow: 0 0 0 1px rgba(63, 185, 80, 0.2);
+}
+
+.draft-card__photo-wrap {
+  position: relative;
+  flex-shrink: 0;
+  margin-bottom: 0.45rem;
+}
+
+.draft-card__rank-badge {
+  position: absolute;
+  top: -0.2rem;
+  left: -0.2rem;
   font-family: var(--font-display);
-  font-size: 0.68rem;
+  font-size: 0.58rem;
   font-weight: 700;
   color: var(--color-text-muted);
-  width: 2rem;
-  text-align: right;
-  flex-shrink: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.12rem 0.32rem;
+  z-index: 1;
+  letter-spacing: 0.02em;
 }
 
-.draft-info { flex: 1; min-width: 0; }
+.draft-card--recommended .draft-card__rank-badge {
+  border-color: var(--color-accent-dim);
+  color: var(--color-accent);
+  background: rgba(63, 185, 80, 0.12);
+}
 
-.draft-name {
+.draft-card__name-block {
+  width: 100%;
+}
+
+.draft-card__name {
   font-family: var(--font-display);
-  font-size: 0.88rem;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.25;
   letter-spacing: -0.01em;
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.45em;
 }
 
-.draft-meta {
-  font-size: 0.7rem;
+.draft-card__scout-tag {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.draft-card__meta {
+  font-size: 0.62rem;
   color: var(--color-text-muted);
-  margin-top: 0.1rem;
+  line-height: 1.35;
+  margin-top: 0.2rem;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.draft-grade {
+.draft-card__meta-arch {
+  color: var(--color-accent);
+  opacity: 0.9;
+}
+
+.draft-card__footer {
+  margin-top: auto;
+  padding-top: 0.55rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.draft-card__metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.draft-card__metric-val {
   font-family: var(--font-display);
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--color-accent);
-  flex-shrink: 0;
-  min-width: 2rem;
-  text-align: center;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.draft-card__draft-btn {
+  width: 100%;
+  font-size: 0.72rem;
+  padding: 0.4rem 0.5rem;
+}
+
+@media (max-width: 960px) {
+  .draft-board {
+    grid-template-columns: repeat(auto-fill, minmax(142px, 1fr));
+  }
+
+  .draft-card {
+    aspect-ratio: auto;
+    min-height: 240px;
+  }
 }
 
 /* ── Scout panel ───────────────────────────────────────────────────────────── */

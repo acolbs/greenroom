@@ -9,30 +9,6 @@ function fmt(n: number): string {
   return "$" + (n / 1_000_000).toFixed(1) + "M";
 }
 
-function StatPill({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
-  return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      gap: "0.1rem",
-      minWidth: "2.75rem",
-    }}>
-      <span style={{
-        fontFamily: "var(--font-display)",
-        fontSize: "0.82rem",
-        fontWeight: 700,
-        color: accent ? "var(--color-accent)" : "var(--color-text)",
-      }}>
-        {value}
-      </span>
-      <span style={{ fontSize: "0.6rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-        {label}
-      </span>
-    </div>
-  );
-}
-
 interface ContractCardProps {
   contract: ExpiringContract;
   decision: FreeAgencyDecision | undefined;
@@ -51,99 +27,74 @@ function ContractCard({ contract, decision, onDecide }: ContractCardProps) {
       : "var(--color-text-muted)";
 
   return (
-    <div style={{
-      background: decided ? "var(--color-surface)" : "var(--color-surface-raised)",
-      border: `1px solid ${decided ? "var(--color-border-subtle)" : "var(--color-border)"}`,
-      borderRadius: "12px",
-      padding: "1rem",
-      marginBottom: "0.5rem",
-      opacity: decided ? 0.65 : 1,
-      transition: "opacity 0.2s, border-color 0.2s",
-    }}>
-      {/* Top row: avatar + name + badges + salary */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.875rem", marginBottom: "0.75rem" }}>
-        <PlayerAvatar
-          name={contract.name}
-          position={contract.position}
-          size={46}
-          headshotPool={contract.playerId.startsWith("draft-") ? "prospect" : "nba"}
-        />
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
-            <span style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "0.95rem",
-              fontWeight: 700,
-              letterSpacing: "-0.01em",
-            }}>{contract.name}</span>
-            <span className="card-pos">{contract.position}</span>
-            {isClub && <span className="badge badge-club-opt">Club Option</span>}
-            {contract.optionType === "Player" && contract.playerOptedOut && (
-              <span className="badge badge-opted-out">Opted Out</span>
-            )}
-          </div>
-          <div style={{ fontSize: "0.72rem", color: "var(--color-text-muted)", marginTop: "0.2rem" }}>
-            Age {contract.age} · <span style={{ color: "var(--color-accent)" }}>{contract.offensiveArchetype}</span>
-            {" · "}{contract.defensiveRole}
-          </div>
+    <div className={`fa-card${decided ? " fa-card--decided" : ""}`}>
+      <div className="fa-card__hero">
+        <div className="fa-card__avatar">
+          <PlayerAvatar
+            name={contract.name}
+            position={contract.position}
+            size={96}
+            headshotPool={contract.playerId.startsWith("draft-") ? "prospect" : "nba"}
+          />
         </div>
-
-        {/* Salary stack */}
-        <div style={{ textAlign: "right", flexShrink: 0 }}>
-          <div style={{ fontSize: "0.62rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.15rem" }}>
-            {isClub ? "Option" : "Market"}
+        <div className="fa-card__identity">
+          <div className="fa-card__title-block">
+            <div className="fa-card__name-row">
+              <span className="fa-card__name">{contract.name}</span>
+              <span className="card-pos">{contract.position}</span>
+            </div>
+            <div className="fa-card__badges">
+              {isClub && <span className="badge badge-club-opt">Club Option</span>}
+              {contract.optionType === "Player" && contract.playerOptedOut && (
+                <span className="badge badge-opted-out">Opted Out</span>
+              )}
+            </div>
+            <div className="fa-card__sub">
+              Age {contract.age} · <span className="fa-card__arch">{contract.offensiveArchetype}</span>
+              {" · "}
+              {contract.defensiveRole}
+            </div>
           </div>
-          <div style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "0.95rem",
-            fontWeight: 700,
-            color: "var(--color-accent)",
-          }}>
-            {isClub && contract.optionSalary ? fmt(contract.optionSalary) : fmt(contract.estimatedMarketSalary)}
-          </div>
-          <div style={{ fontSize: "0.68rem", color: "var(--color-text-muted)" }}>
-            {fmt(contract.currentSalary)} current
+          <div className="fa-card__salary">
+            <div className="fa-card__salary-label">{isClub ? "Option" : "Market"}</div>
+            <div className="fa-card__salary-main">
+              {isClub && contract.optionSalary ? fmt(contract.optionSalary) : fmt(contract.estimatedMarketSalary)}
+            </div>
+            <div className="fa-card__salary-sub">{fmt(contract.currentSalary)} current</div>
           </div>
         </div>
       </div>
 
-      {/* Stats row */}
-      <div style={{
-        display: "flex",
-        gap: "0.25rem",
-        padding: "0.5rem 0.625rem",
-        background: "var(--color-surface)",
-        borderRadius: "8px",
-        marginBottom: "0.75rem",
-        flexWrap: "wrap",
-      }}>
-        <StatPill label="PTS" value={contract.stats.pts.toFixed(1)} />
-        <div style={{ width: 1, background: "var(--color-border)", margin: "0.1rem 0.25rem" }} />
-        <StatPill label="REB" value={contract.stats.trb.toFixed(1)} />
-        <div style={{ width: 1, background: "var(--color-border)", margin: "0.1rem 0.25rem" }} />
-        <StatPill label="AST" value={contract.stats.ast.toFixed(1)} />
-        <div style={{ width: 1, background: "var(--color-border)", margin: "0.1rem 0.25rem" }} />
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.1rem", minWidth: "2.75rem" }}>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "0.82rem", fontWeight: 700, color: bpmColor }}>
-            {contract.stats.bpm >= 0 ? "+" : ""}{contract.stats.bpm.toFixed(1)}
+      <div className="fa-card__stats" role="group" aria-label="Season stats">
+        <div className="fa-card__stat">
+          <span className="fa-card__stat-val">{contract.stats.pts.toFixed(1)}</span>
+          <span className="fa-card__stat-lbl">PTS</span>
+        </div>
+        <div className="fa-card__stat">
+          <span className="fa-card__stat-val">{contract.stats.trb.toFixed(1)}</span>
+          <span className="fa-card__stat-lbl">REB</span>
+        </div>
+        <div className="fa-card__stat">
+          <span className="fa-card__stat-val">{contract.stats.ast.toFixed(1)}</span>
+          <span className="fa-card__stat-lbl">AST</span>
+        </div>
+        <div className="fa-card__stat">
+          <span className="fa-card__stat-val" style={{ color: bpmColor }}>
+            {contract.stats.bpm >= 0 ? "+" : ""}
+            {contract.stats.bpm.toFixed(1)}
           </span>
-          <span style={{ fontSize: "0.6rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>BPM</span>
+          <span className="fa-card__stat-lbl">BPM</span>
         </div>
-        <div style={{ width: 1, background: "var(--color-border)", margin: "0.1rem 0.25rem" }} />
-        <StatPill label="TS%" value={(contract.stats.tsPct * 100).toFixed(1)} />
+        <div className="fa-card__stat">
+          <span className="fa-card__stat-val">{(contract.stats.tsPct * 100).toFixed(1)}</span>
+          <span className="fa-card__stat-lbl">TS%</span>
+        </div>
       </div>
 
-      {/* Decision */}
       {decided ? (
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.4rem",
-          fontSize: "0.78rem",
-          color: decision === "RE_SIGN" || decision === "PICK_UP_OPTION" ? "var(--color-accent)" : "var(--color-text-muted)",
-          fontWeight: 600,
-        }}>
+        <div
+          className={`fa-card__decision${decision === "RE_SIGN" || decision === "PICK_UP_OPTION" ? " fa-card__decision--yes" : ""}`}
+        >
           <span>{decision === "RE_SIGN" || decision === "PICK_UP_OPTION" ? "✓" : "✗"}</span>
           <span>
             {decision === "RE_SIGN" && "Re-signed"}
@@ -153,22 +104,22 @@ function ContractCard({ contract, decision, onDecide }: ContractCardProps) {
           </span>
         </div>
       ) : (
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div className="fa-card__actions">
           {isClub ? (
             <>
-              <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => onDecide("PICK_UP_OPTION")}>
+              <button type="button" className="btn btn-primary fa-card__action-btn" onClick={() => onDecide("PICK_UP_OPTION")}>
                 Pick Up · {contract.optionSalary ? fmt(contract.optionSalary) : "—"}
               </button>
-              <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => onDecide("DECLINE_OPTION")}>
+              <button type="button" className="btn btn-danger fa-card__action-btn" onClick={() => onDecide("DECLINE_OPTION")}>
                 Decline Option
               </button>
             </>
           ) : (
             <>
-              <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => onDecide("RE_SIGN")}>
+              <button type="button" className="btn btn-primary fa-card__action-btn" onClick={() => onDecide("RE_SIGN")}>
                 Re-Sign · {fmt(contract.estimatedMarketSalary)}
               </button>
-              <button className="btn btn-secondary" style={{ flex: 1 }} onClick={() => onDecide("LET_WALK")}>
+              <button type="button" className="btn btn-secondary fa-card__action-btn" onClick={() => onDecide("LET_WALK")}>
                 Let Walk
               </button>
             </>
@@ -279,7 +230,7 @@ export default function FreeAgencyPage() {
                     <PlayerAvatar
                       name={p.name}
                       position={p.position}
-                      size={30}
+                      size={40}
                       headshotPool={p.id.startsWith("draft-") ? "prospect" : "nba"}
                     />
                     <div style={{ flex: 1, minWidth: 0 }}>

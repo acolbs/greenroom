@@ -87,47 +87,51 @@ interface ProspectRowProps {
 function ProspectRow({ prospect, isRecommended, isUserTurn, tab, onDraft }: ProspectRowProps) {
   return (
     <div
-      className="draft-row"
-      style={
-        isRecommended
-          ? { borderColor: "var(--color-accent)", background: "#0a1a0d" }
-          : undefined
-      }
+      className={`draft-card${isRecommended ? " draft-card--recommended" : ""}`}
     >
-      <div className="draft-rank">#{prospect.rank}</div>
-      <PlayerAvatar
-        name={prospect.name}
-        position={prospect.position}
-        size={36}
-        headshotPool="prospect"
-      />
-
-      <div className="draft-info">
-        <div className="draft-name">
-          {prospect.name}
-          {isRecommended && (
-            <span style={{ marginLeft: "0.4rem", fontSize: "0.6rem", color: "var(--color-accent)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>★ Scout</span>
-          )}
-        </div>
-        <div className="draft-meta">
-          {prospect.school} · <span style={{ color: "var(--color-accent)", opacity: 0.85 }}>{prospect.offensiveArchetype}</span>
-        </div>
+      <div className="draft-card__photo-wrap">
+        <span className="draft-card__rank-badge">#{prospect.rank}</span>
+        <PlayerAvatar
+          name={prospect.name}
+          position={prospect.position}
+          size={88}
+          headshotPool="prospect"
+        />
       </div>
 
-      <div style={{ textAlign: "right", flexShrink: 0 }}>
-        <div style={{ fontFamily: "var(--font-display)", fontSize: "0.85rem", fontWeight: 700, color: tab === "needs" ? "var(--color-accent)" : "var(--color-text-secondary)" }}>
-          {tab === "bigboard" ? prospect.rank : prospect.needsScore}
-        </div>
-        <div style={{ fontSize: "0.6rem", color: "var(--color-text-muted)", textTransform: "uppercase" }}>
-          {tab === "bigboard" ? "rank" : "score"}
-        </div>
+      <div className="draft-card__name-block">
+        <div className="draft-card__name">{prospect.name}</div>
+        {isRecommended ? (
+          <span className="draft-card__scout-tag">★ Scout</span>
+        ) : null}
+      </div>
+      <div className="draft-card__meta">
+        {prospect.school}
+        <span className="draft-card__meta-dot"> · </span>
+        <span className="draft-card__meta-arch">{prospect.offensiveArchetype}</span>
       </div>
 
-      {isUserTurn && (
-        <button className="btn btn-primary" style={{ fontSize: "0.72rem", padding: "0.3rem 0.75rem", marginLeft: "0.25rem" }} onClick={() => onDraft(prospect.id)}>
-          Draft
-        </button>
-      )}
+      <div className="draft-card__footer">
+        <div className="draft-card__metric">
+          <span className="draft-card__metric-label">
+            {tab === "bigboard" ? "Scout rank" : "Needs fit"}
+          </span>
+          <span
+            className="draft-card__metric-val"
+            style={{
+              color:
+                tab === "needs" ? "var(--color-accent)" : "var(--color-text-secondary)",
+            }}
+          >
+            {tab === "bigboard" ? prospect.rank : prospect.needsScore}
+          </span>
+        </div>
+        {isUserTurn ? (
+          <button type="button" className="btn btn-primary draft-card__draft-btn" onClick={() => onDraft(prospect.id)}>
+            Draft
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }
