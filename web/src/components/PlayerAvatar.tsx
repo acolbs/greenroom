@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
 import type { Position } from "../types/simulator";
 import { headshotUrl, type HeadshotIndexPool } from "../data/headshotUrl";
-import { teamLogoUrl } from "../data/constants";
 import { avatarColorsForTeam } from "../data/teamAvatarTheme";
-import { collegeThemeForSchool, collegeLogoUrl } from "../data/collegeAvatarTheme";
+import { collegeThemeForSchool } from "../data/collegeAvatarTheme";
 
 export type PlayerHeadshotPool = "nba" | "prospect";
-
-/** Neutral “studio headshot” plate — soft gray bands like league media day backdrops. */
-const STUDIO_PLATE_BG =
-  "linear-gradient(118deg, #eceef3 0%, #dde2eb 32%, #f2f4f8 55%, #e4e8ef 100%)";
 
 interface Props {
   name: string;
@@ -18,13 +13,11 @@ interface Props {
   style?: React.CSSProperties;
   /** Use prospect PNGs (draft class) vs NBA roster PNGs. Default "nba". */
   headshotPool?: PlayerHeadshotPool;
-  /**
-   * Canonical NBA team id — ring colors + centered logo behind the headshot (when not using college).
-   */
+  /** Canonical NBA team id — avatar ring uses team colors when set. */
   teamId?: string | null;
   /**
-   * College / school name from the big board. When `headshotPool` is "prospect" and this
-   * is set, colors and logo use NCAA branding instead of `teamId`.
+   * College / school from the big board. When `headshotPool` is "prospect" and set,
+   * colors follow school branding instead of `teamId`.
    */
   school?: string | null;
 }
@@ -58,32 +51,18 @@ export default function PlayerAvatar({
   const useCollege = headshotPool === "prospect" && Boolean(school?.trim());
   const college = useCollege ? collegeThemeForSchool(school!) : null;
   const colors = useCollege
-    ? { bg: college!.bg, text: college!.text }
+    ? { bg: college.bg, text: college.text }
     : avatarColorsForTeam(teamId, position);
-
-  const logoSrc =
-    useCollege && college!.logoId != null
-      ? collegeLogoUrl(college.logoId)
-      : teamId
-        ? teamLogoUrl(teamId)
-        : null;
 
   const fontSize = size * 0.36;
   const url = headshotUrl(name, indexPool(headshotPool));
   const [imgFailed, setImgFailed] = useState(!url);
-  const [logoFailed, setLogoFailed] = useState(false);
 
   useEffect(() => {
     setImgFailed(!url);
   }, [name, headshotPool, url]);
 
-  useEffect(() => {
-    setLogoFailed(false);
-  }, [teamId, school, headshotPool]);
-
   const showImg = url && !imgFailed;
-  const showLogo = Boolean(logoSrc) && !logoFailed;
-  const initialsOnLogo = !showImg && showLogo;
 
   return (
     <div
@@ -91,10 +70,8 @@ export default function PlayerAvatar({
         width: size,
         height: size,
         borderRadius: "50%",
-        background: showLogo ? STUDIO_PLATE_BG : colors.bg,
-        border: showLogo
-          ? "1px solid rgba(15, 23, 42, 0.08)"
-          : `1.5px solid ${borderWithAlpha(colors.text, "44")}`,
+        background: colors.bg,
+        border: `1.5px solid ${borderWithAlpha(colors.text, "44")}`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -104,29 +81,6 @@ export default function PlayerAvatar({
         ...style,
       }}
     >
-      {showLogo ? (
-        <img
-          src={logoSrc!}
-          alt=""
-          aria-hidden
-          draggable={false}
-          onError={() => setLogoFailed(true)}
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "72%",
-            height: "72%",
-            objectFit: "contain",
-            objectPosition: "center",
-            opacity: showImg ? 0.26 : 0.4,
-            zIndex: 0,
-            pointerEvents: "none",
-          }}
-        />
-      ) : null}
-
       <div
         style={{
           position: "absolute",
@@ -137,10 +91,7 @@ export default function PlayerAvatar({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background:
-            showImg || initialsOnLogo
-              ? undefined
-              : `linear-gradient(160deg, ${colors.bg}f2, ${colors.bg})`,
+          background: showImg ? undefined : `linear-gradient(160deg, ${colors.bg}f2, ${colors.bg})`,
         }}
       >
         {showImg ? (
@@ -162,11 +113,8 @@ export default function PlayerAvatar({
               fontSize,
               fontFamily: "var(--font-display)",
               fontWeight: 700,
-              color: initialsOnLogo ? "#1e293b" : colors.text,
+              color: colors.text,
               letterSpacing: "0.02em",
-              position: "relative",
-              zIndex: 1,
-              textShadow: initialsOnLogo ? "0 1px 0 rgba(255,255,255,0.6)" : undefined,
             }}
           >
             {getInitials(name)}
