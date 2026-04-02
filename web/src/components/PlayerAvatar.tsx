@@ -50,7 +50,7 @@ export default function PlayerAvatar({
 }: Props) {
   const useCollege = headshotPool === "prospect" && Boolean(school?.trim());
   const college = useCollege ? collegeThemeForSchool(school!) : null;
-  const colors = useCollege
+  const colors = useCollege && college
     ? { bg: college.bg, text: college.text }
     : avatarColorsForTeam(teamId, position);
 
