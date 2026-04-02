@@ -6,7 +6,7 @@ import type { ExpiringContract, FreeAgencyDecision } from "../types/simulator";
 import NavBar from "../components/NavBar";
 import CapBar from "../components/CapBar";
 import PlayerAvatar from "../components/PlayerAvatar";
-import PlayerDetailModal from "../components/PlayerDetailModal";
+import PlayerDetailModal, { type ModalSubject } from "../components/PlayerDetailModal";
 import { honorReducedMotion } from "../utils/motionPrefs";
 
 const FA_EASE = [0.22, 1, 0.36, 1] as const;
@@ -194,7 +194,7 @@ export default function FreeAgencyPage() {
   const payroll = useSimulatorStore(selectPayroll);
   const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
 
-  const [detailPlayer, setDetailPlayer] = useState<ExpiringContract | null>(null);
+  const [detailPlayer, setDetailPlayer] = useState<ModalSubject | null>(null);
 
   function pendingFirst(a: ExpiringContract, b: ExpiringContract): number {
     const da = decisions[a.playerId] !== undefined;
@@ -219,7 +219,7 @@ export default function FreeAgencyPage() {
   return (
     <div className="page">
       <PlayerDetailModal
-        contract={detailPlayer}
+        subject={detailPlayer}
         onClose={() => setDetailPlayer(null)}
         teamId={selectedTeamId}
       />

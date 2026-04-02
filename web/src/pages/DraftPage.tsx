@@ -13,6 +13,7 @@ import type { DraftProspect } from "../types/simulator";
 import NavBar from "../components/NavBar";
 import PlayerAvatar from "../components/PlayerAvatar";
 import ScoutChat from "../components/ScoutChat";
+import PlayerDetailModal from "../components/PlayerDetailModal";
 
 // ── Draft setup screen ─────────────────────────────────────────────────────
 
@@ -84,6 +85,7 @@ interface ProspectRowProps {
   isUserTurn: boolean;
   tab: DraftTab;
   onDraft: (id: string) => void;
+  onOpen: (p: DraftProspect) => void;
   motionOk: boolean;
 }
 
@@ -93,11 +95,17 @@ function ProspectRow({
   isUserTurn,
   tab,
   onDraft,
+  onOpen,
   motionOk,
 }: ProspectRowProps) {
   return (
     <div
       className={`draft-card${isRecommended ? " draft-card--recommended" : ""}`}
+      onClick={() => onOpen(prospect)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && onOpen(prospect)}
+      style={{ cursor: "pointer" }}
     >
       <div className="draft-card__photo-wrap">
         <span className="draft-card__rank-badge">#{prospect.rank}</span>
@@ -141,7 +149,7 @@ function ProspectRow({
           <motion.button
             type="button"
             className="btn btn-primary draft-card__draft-btn"
-            onClick={() => onDraft(prospect.id)}
+            onClick={(e) => { e.stopPropagation(); onDraft(prospect.id); }}
             whileTap={motionOk ? { scale: 0.94 } : undefined}
             transition={{ type: "spring", stiffness: 520, damping: 28 }}
           >
@@ -186,6 +194,7 @@ function TeamStrengthBadge({ ts }: { ts: TeamStrength }) {
 export default function DraftPage() {
   const navigate = useSmoothNavigate();
   const [activeTab, setActiveTab] = useState<DraftTab>("bigboard");
+  const [detailProspect, setDetailProspect] = useState<DraftProspect | null>(null);
   const motionOk = !honorReducedMotion();
 
   const draftSimActive = useSimulatorStore((s) => s.draftSimActive);
@@ -261,6 +270,11 @@ export default function DraftPage() {
           : { duration: 0 }
       }
     >
+      <PlayerDetailModal
+        subject={detailProspect}
+        onClose={() => setDetailProspect(null)}
+        teamId={selectedTeamId}
+      />
       <NavBar />
 
       <div className="page-content">
@@ -390,6 +404,7 @@ export default function DraftPage() {
                         isUserTurn={isUserTurn}
                         tab={activeTab}
                         onDraft={handleDraft}
+                        onOpen={setDetailProspect}
                         motionOk={motionOk}
                       />
                     </motion.div>
