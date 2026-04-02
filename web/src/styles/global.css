@@ -22,10 +22,10 @@ html {
   --color-text-secondary: #b0bec5;
   --color-text-muted:     #6b7a8a;
 
-  --color-accent:         #3fb950;
-  --color-accent-hover:   #56d467;
-  --color-accent-dim:     #1a3626;
-  --color-accent-subtle:  #0e2018;
+  --color-accent:         #06b6d4;
+  --color-accent-hover:   #22d3ee;
+  --color-accent-dim:     #083344;
+  --color-accent-subtle:  #041820;
 
   --color-danger:         #f85149;
   --color-danger-dim:     #3a1414;
@@ -34,10 +34,10 @@ html {
   --color-info:           #58a6ff;
 
   /* Futuristic glow (accent + cool rim) */
-  --glow-accent:          0 0 28px rgba(63, 185, 80, 0.22);
-  --glow-accent-tight:    0 0 14px rgba(63, 185, 80, 0.35);
-  --glow-info:            0 0 36px rgba(88, 161, 255, 0.08);
-  --glow-border:          0 0 1px rgba(63, 185, 80, 0.15);
+  --glow-accent:          0 0 28px rgba(6, 182, 212, 0.28);
+  --glow-accent-tight:    0 0 14px rgba(6, 182, 212, 0.42);
+  --glow-info:            0 0 36px rgba(88, 161, 255, 0.1);
+  --glow-border:          0 0 1px rgba(6, 182, 212, 0.18);
 
   /* ── Typography ────────────────────────────────────────── */
   --font-display: "DM Sans", system-ui, sans-serif;
@@ -70,9 +70,9 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(ellipse 120% 70% at 50% -30%, rgba(63, 185, 80, 0.09), transparent 52%),
+    radial-gradient(ellipse 120% 70% at 50% -30%, rgba(6, 182, 212, 0.09), transparent 52%),
     radial-gradient(ellipse 55% 45% at 100% 20%, rgba(88, 161, 255, 0.06), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(63, 185, 80, 0.04), transparent 45%);
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(6, 182, 212, 0.04), transparent 45%);
 }
 
 body::after {
@@ -98,7 +98,7 @@ html.action-complete-glow::after {
   z-index: 9999;
   background: radial-gradient(
     circle at 50% 42%,
-    rgba(63, 185, 80, 0.28) 0%,
+    rgba(6, 182, 212, 0.28) 0%,
     rgba(88, 161, 255, 0.06) 38%,
     transparent 58%
   );

@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import type { ExpiringContract, FreeAgencyDecision } from "../types/simulator";
 import NavBar from "../components/NavBar";
 import CapBar from "../components/CapBar";
 import PlayerAvatar from "../components/PlayerAvatar";
+import PlayerDetailModal from "../components/PlayerDetailModal";
 import { honorReducedMotion } from "../utils/motionPrefs";
 
 const FA_EASE = [0.22, 1, 0.36, 1] as const;
@@ -21,11 +23,12 @@ interface ContractCardProps {
   contract: ExpiringContract;
   decision: FreeAgencyDecision | undefined;
   onDecide: (d: FreeAgencyDecision) => void;
+  onOpen: () => void;
   teamId: string | null;
   motionOk: boolean;
 }
 
-function ContractCard({ contract, decision, onDecide, teamId, motionOk }: ContractCardProps) {
+function ContractCard({ contract, decision, onDecide, onOpen, teamId, motionOk }: ContractCardProps) {
   const isClub = contract.optionType === "Club";
   const decided = decision !== undefined;
   const kept = decision !== undefined && isKept(decision);
@@ -43,138 +46,139 @@ function ContractCard({ contract, decision, onDecide, teamId, motionOk }: Contra
       : " fa-card--outcome-no"
     : "";
 
+  function handleDecide(e: React.MouseEvent, d: FreeAgencyDecision) {
+    e.stopPropagation();
+    onDecide(d);
+  }
+
   return (
-    <div className={`fa-card${decided ? " fa-card--decided" : ""}${outcomeClass}`}>
-      <div className="fa-card__hero">
-        <div className="fa-card__avatar">
-          <PlayerAvatar
-            name={contract.name}
-            position={contract.position}
-            size={96}
-            headshotPool={contract.playerId.startsWith("draft-") ? "prospect" : "nba"}
-            teamId={teamId}
-          />
+    <div
+      className={`fa-card${decided ? " fa-card--decided" : ""}${outcomeClass}`}
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && onOpen()}
+    >
+      <div className="fa-card__avatar">
+        <PlayerAvatar
+          name={contract.name}
+          position={contract.position}
+          size={48}
+          headshotPool={contract.playerId.startsWith("draft-") ? "prospect" : "nba"}
+          teamId={teamId}
+        />
+      </div>
+
+      <div className="fa-card__body">
+        <div className="fa-card__top">
+          <span className="fa-card__name">{contract.name}</span>
+          <span className="card-pos">{contract.position}</span>
+          <span className="fa-card__arch">{contract.offensiveArchetype}</span>
+          <span className="fa-card__sub">Age {contract.age} · {contract.defensiveRole}</span>
+          <div className="fa-card__badges">
+            {isClub && <span className="badge badge-club-opt">Club Opt</span>}
+            {contract.optionType === "Player" && contract.playerOptedOut && (
+              <span className="badge badge-opted-out">Opted Out</span>
+            )}
+          </div>
         </div>
-        <div className="fa-card__identity">
-          <div className="fa-card__title-block">
-            <div className="fa-card__name-row">
-              <span className="fa-card__name">{contract.name}</span>
-              <span className="card-pos">{contract.position}</span>
+
+        <div className="fa-card__bottom">
+          <div className="fa-card__stats" role="group" aria-label="Season stats">
+            <div className="fa-card__stat">
+              <span className="fa-card__stat-val">{contract.stats.pts.toFixed(1)}</span>
+              <span className="fa-card__stat-lbl">PTS</span>
             </div>
-            <div className="fa-card__badges">
-              {isClub && <span className="badge badge-club-opt">Club Option</span>}
-              {contract.optionType === "Player" && contract.playerOptedOut && (
-                <span className="badge badge-opted-out">Opted Out</span>
-              )}
+            <div className="fa-card__stat">
+              <span className="fa-card__stat-val">{contract.stats.trb.toFixed(1)}</span>
+              <span className="fa-card__stat-lbl">REB</span>
             </div>
-            <div className="fa-card__sub">
-              Age {contract.age} · <span className="fa-card__arch">{contract.offensiveArchetype}</span>
-              {" · "}
-              {contract.defensiveRole}
+            <div className="fa-card__stat">
+              <span className="fa-card__stat-val">{contract.stats.ast.toFixed(1)}</span>
+              <span className="fa-card__stat-lbl">AST</span>
+            </div>
+            <div className="fa-card__stat">
+              <span className="fa-card__stat-val" style={{ color: bpmColor }}>
+                {contract.stats.bpm >= 0 ? "+" : ""}{contract.stats.bpm.toFixed(1)}
+              </span>
+              <span className="fa-card__stat-lbl">BPM</span>
             </div>
           </div>
-          <div className="fa-card__salary">
-            <div className="fa-card__salary-label">{isClub ? "Option" : "Market"}</div>
-            <div className="fa-card__salary-main">
-              {isClub && contract.optionSalary ? fmt(contract.optionSalary) : fmt(contract.estimatedMarketSalary)}
+
+          <div className="fa-card__right">
+            <div className="fa-card__salary">
+              <div className="fa-card__salary-label">{isClub ? "Option" : "Market"}</div>
+              <div className="fa-card__salary-main">
+                {isClub && contract.optionSalary ? fmt(contract.optionSalary) : fmt(contract.estimatedMarketSalary)}
+              </div>
+              <div className="fa-card__salary-sub">{fmt(contract.currentSalary)} cur</div>
             </div>
-            <div className="fa-card__salary-sub">{fmt(contract.currentSalary)} current</div>
+
+            {decided ? (
+              <motion.div
+                className={`fa-card__decision${kept ? " fa-card__decision--yes" : " fa-card__decision--no"}`}
+                initial={motionOk ? { opacity: 0, x: 8 } : false}
+                animate={{ opacity: 1, x: 0 }}
+                transition={motionOk ? { duration: 0.28, ease: FA_EASE } : { duration: 0 }}
+              >
+                <span>{kept ? "✓" : "✗"}</span>
+                <span>
+                  {decision === "RE_SIGN" && "Re-signed"}
+                  {decision === "LET_WALK" && "Let walk"}
+                  {decision === "PICK_UP_OPTION" && "Picked up"}
+                  {decision === "DECLINE_OPTION" && "Declined"}
+                </span>
+              </motion.div>
+            ) : (
+              <div className="fa-card__actions" onClick={(e) => e.stopPropagation()}>
+                {isClub ? (
+                  <>
+                    <motion.button
+                      type="button"
+                      className="btn btn-primary fa-card__action-btn"
+                      onClick={(e) => handleDecide(e, "PICK_UP_OPTION")}
+                      whileTap={motionOk ? { scale: 0.97 } : undefined}
+                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
+                    >
+                      Pick Up
+                    </motion.button>
+                    <motion.button
+                      type="button"
+                      className="btn btn-danger fa-card__action-btn"
+                      onClick={(e) => handleDecide(e, "DECLINE_OPTION")}
+                      whileTap={motionOk ? { scale: 0.97 } : undefined}
+                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
+                    >
+                      Decline
+                    </motion.button>
+                  </>
+                ) : (
+                  <>
+                    <motion.button
+                      type="button"
+                      className="btn btn-primary fa-card__action-btn"
+                      onClick={(e) => handleDecide(e, "RE_SIGN")}
+                      whileTap={motionOk ? { scale: 0.97 } : undefined}
+                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
+                    >
+                      Re-Sign
+                    </motion.button>
+                    <motion.button
+                      type="button"
+                      className="btn btn-secondary fa-card__action-btn"
+                      onClick={(e) => handleDecide(e, "LET_WALK")}
+                      whileTap={motionOk ? { scale: 0.97 } : undefined}
+                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
+                    >
+                      Let Walk
+                    </motion.button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      <div className="fa-card__stats" role="group" aria-label="Season stats">
-        <div className="fa-card__stat">
-          <span className="fa-card__stat-val">{contract.stats.pts.toFixed(1)}</span>
-          <span className="fa-card__stat-lbl">PTS</span>
-        </div>
-        <div className="fa-card__stat">
-          <span className="fa-card__stat-val">{contract.stats.trb.toFixed(1)}</span>
-          <span className="fa-card__stat-lbl">REB</span>
-        </div>
-        <div className="fa-card__stat">
-          <span className="fa-card__stat-val">{contract.stats.ast.toFixed(1)}</span>
-          <span className="fa-card__stat-lbl">AST</span>
-        </div>
-        <div className="fa-card__stat">
-          <span className="fa-card__stat-val" style={{ color: bpmColor }}>
-            {contract.stats.bpm >= 0 ? "+" : ""}
-            {contract.stats.bpm.toFixed(1)}
-          </span>
-          <span className="fa-card__stat-lbl">BPM</span>
-        </div>
-        <div className="fa-card__stat">
-          <span className="fa-card__stat-val">{(contract.stats.tsPct * 100).toFixed(1)}</span>
-          <span className="fa-card__stat-lbl">TS%</span>
-        </div>
-      </div>
-
-      {decided ? (
-        <motion.div
-          className={`fa-card__decision${kept ? " fa-card__decision--yes" : " fa-card__decision--no"}`}
-          initial={motionOk ? { opacity: 0, y: 6 } : false}
-          animate={{ opacity: 1, y: 0 }}
-          transition={
-            motionOk
-              ? { duration: 0.3, ease: FA_EASE }
-              : { duration: 0 }
-          }
-        >
-          <span>{kept ? "✓" : "✗"}</span>
-          <span>
-            {decision === "RE_SIGN" && "Re-signed"}
-            {decision === "LET_WALK" && "Let walk"}
-            {decision === "PICK_UP_OPTION" && "Option picked up"}
-            {decision === "DECLINE_OPTION" && "Option declined"}
-          </span>
-        </motion.div>
-      ) : (
-        <div className="fa-card__actions">
-          {isClub ? (
-            <>
-              <motion.button
-                type="button"
-                className="btn btn-primary fa-card__action-btn"
-                onClick={() => onDecide("PICK_UP_OPTION")}
-                whileTap={motionOk ? { scale: 0.97 } : undefined}
-                transition={{ type: "spring", stiffness: 480, damping: 28 }}
-              >
-                Pick Up · {contract.optionSalary ? fmt(contract.optionSalary) : "—"}
-              </motion.button>
-              <motion.button
-                type="button"
-                className="btn btn-danger fa-card__action-btn"
-                onClick={() => onDecide("DECLINE_OPTION")}
-                whileTap={motionOk ? { scale: 0.97 } : undefined}
-                transition={{ type: "spring", stiffness: 480, damping: 28 }}
-              >
-                Decline Option
-              </motion.button>
-            </>
-          ) : (
-            <>
-              <motion.button
-                type="button"
-                className="btn btn-primary fa-card__action-btn"
-                onClick={() => onDecide("RE_SIGN")}
-                whileTap={motionOk ? { scale: 0.97 } : undefined}
-                transition={{ type: "spring", stiffness: 480, damping: 28 }}
-              >
-                Re-Sign · {fmt(contract.estimatedMarketSalary)}
-              </motion.button>
-              <motion.button
-                type="button"
-                className="btn btn-secondary fa-card__action-btn"
-                onClick={() => onDecide("LET_WALK")}
-                whileTap={motionOk ? { scale: 0.97 } : undefined}
-                transition={{ type: "spring", stiffness: 480, damping: 28 }}
-              >
-                Let Walk
-              </motion.button>
-            </>
-          )}
-        </div>
-      )}
     </div>
   );
 }
@@ -189,6 +193,8 @@ export default function FreeAgencyPage() {
   const advanceToPhase = useSimulatorStore((s) => s.advanceToPhase);
   const payroll = useSimulatorStore(selectPayroll);
   const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
+
+  const [detailPlayer, setDetailPlayer] = useState<ExpiringContract | null>(null);
 
   function pendingFirst(a: ExpiringContract, b: ExpiringContract): number {
     const da = decisions[a.playerId] !== undefined;
@@ -212,6 +218,11 @@ export default function FreeAgencyPage() {
 
   return (
     <div className="page">
+      <PlayerDetailModal
+        contract={detailPlayer}
+        onClose={() => setDetailPlayer(null)}
+        teamId={selectedTeamId}
+      />
       <NavBar />
 
       <div className="page-content">
@@ -239,6 +250,7 @@ export default function FreeAgencyPage() {
                     contract={c}
                     decision={decisions[c.playerId]}
                     onDecide={(d) => makeFreeAgencyDecision(c.playerId, d)}
+                    onOpen={() => setDetailPlayer(c)}
                     teamId={selectedTeamId}
                     motionOk={motionOk}
                   />
@@ -262,6 +274,7 @@ export default function FreeAgencyPage() {
                     contract={c}
                     decision={decisions[c.playerId]}
                     onDecide={(d) => makeFreeAgencyDecision(c.playerId, d)}
+                    onOpen={() => setDetailPlayer(c)}
                     teamId={selectedTeamId}
                     motionOk={motionOk}
                   />
