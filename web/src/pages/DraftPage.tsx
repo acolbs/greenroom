@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
+import { honorReducedMotion } from "../utils/motionPrefs";
 import { useSimulatorStore, selectCurrentUserPick } from "../store/simulatorStore";
 import {
   rankProspectsForTeam,
@@ -82,9 +84,17 @@ interface ProspectRowProps {
   isUserTurn: boolean;
   tab: DraftTab;
   onDraft: (id: string) => void;
+  motionOk: boolean;
 }
 
-function ProspectRow({ prospect, isRecommended, isUserTurn, tab, onDraft }: ProspectRowProps) {
+function ProspectRow({
+  prospect,
+  isRecommended,
+  isUserTurn,
+  tab,
+  onDraft,
+  motionOk,
+}: ProspectRowProps) {
   return (
     <div
       className={`draft-card${isRecommended ? " draft-card--recommended" : ""}`}
@@ -128,9 +138,15 @@ function ProspectRow({ prospect, isRecommended, isUserTurn, tab, onDraft }: Pros
           </span>
         </div>
         {isUserTurn ? (
-          <button type="button" className="btn btn-primary draft-card__draft-btn" onClick={() => onDraft(prospect.id)}>
+          <motion.button
+            type="button"
+            className="btn btn-primary draft-card__draft-btn"
+            onClick={() => onDraft(prospect.id)}
+            whileTap={motionOk ? { scale: 0.94 } : undefined}
+            transition={{ type: "spring", stiffness: 520, damping: 28 }}
+          >
             Draft
-          </button>
+          </motion.button>
         ) : null}
       </div>
     </div>
@@ -170,6 +186,7 @@ function TeamStrengthBadge({ ts }: { ts: TeamStrength }) {
 export default function DraftPage() {
   const navigate = useSmoothNavigate();
   const [activeTab, setActiveTab] = useState<DraftTab>("bigboard");
+  const motionOk = !honorReducedMotion();
 
   const draftSimActive = useSimulatorStore((s) => s.draftSimActive);
   const draftSimComplete = useSimulatorStore((s) => s.draftSimComplete);
@@ -231,8 +248,19 @@ export default function DraftPage() {
   const round = Math.ceil(draftCurrentPick / 30);
   const pickInRound = ((draftCurrentPick - 1) % 30) + 1;
 
+  const draftEase = [0.22, 1, 0.36, 1] as const;
+
   return (
-    <div className="page">
+    <motion.div
+      className="page"
+      initial={motionOk ? { opacity: 0, y: 20 } : false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={
+        motionOk
+          ? { duration: 0.45, ease: draftEase }
+          : { duration: 0 }
+      }
+    >
       <NavBar />
 
       <div className="page-content">
@@ -334,16 +362,39 @@ export default function DraftPage() {
               {displayedProspects.length === 0 ? (
                 <div className="empty-state">No prospects remaining.</div>
               ) : (
-                displayedProspects.map((p) => (
-                  <ProspectRow
-                    key={p.id}
-                    prospect={p}
-                    isRecommended={recommendation?.prospect.id === p.id}
-                    isUserTurn={isUserTurn}
-                    tab={activeTab}
-                    onDraft={handleDraft}
-                  />
-                ))
+                <AnimatePresence initial={false}>
+                  {displayedProspects.map((p) => (
+                    <motion.div
+                      key={p.id}
+                      initial={motionOk ? { opacity: 0, y: 8 } : false}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={
+                        motionOk
+                          ? { opacity: 0, x: -28, scale: 0.97 }
+                          : { opacity: 0 }
+                      }
+                      transition={
+                        motionOk
+                          ? {
+                              opacity: { duration: 0.22 },
+                              x: { duration: 0.28, ease: draftEase },
+                              scale: { duration: 0.28, ease: draftEase },
+                              y: { duration: 0.2 },
+                            }
+                          : { duration: 0 }
+                      }
+                    >
+                      <ProspectRow
+                        prospect={p}
+                        isRecommended={recommendation?.prospect.id === p.id}
+                        isUserTurn={isUserTurn}
+                        tab={activeTab}
+                        onDraft={handleDraft}
+                        motionOk={motionOk}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               )}
             </div>
           </div>
@@ -412,6 +463,6 @@ export default function DraftPage() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
