@@ -8,8 +8,6 @@ import PlayerAvatar from "../components/PlayerAvatar";
 import { honorReducedMotion } from "../utils/motionPrefs";
 
 const FA_EASE = [0.22, 1, 0.36, 1] as const;
-const FA_BORDER_PENDING = "rgba(30, 39, 51, 1)";
-const FA_SHADOW_PENDING = "0 2px 12px rgba(0, 0, 0, 0.18)";
 
 function isKept(d: FreeAgencyDecision): boolean {
   return d === "RE_SIGN" || d === "PICK_UP_OPTION";
@@ -39,36 +37,14 @@ function ContractCard({ contract, decision, onDecide, teamId, motionOk }: Contra
       ? "var(--color-danger)"
       : "var(--color-text-muted)";
 
-  const cardAnimate = !decided
-    ? {
-        opacity: 1,
-        scale: 1,
-        borderColor: FA_BORDER_PENDING,
-        boxShadow: FA_SHADOW_PENDING,
-      }
-    : kept
-    ? {
-        opacity: 0.62,
-        scale: 1,
-        borderColor: "rgba(63, 185, 80, 0.32)",
-        boxShadow:
-          "0 0 0 1px rgba(63, 185, 80, 0.2), 0 0 28px rgba(63, 185, 80, 0.07), 0 2px 12px rgba(0, 0, 0, 0.12)",
-      }
-    : {
-        opacity: 0.62,
-        scale: 1,
-        borderColor: "rgba(248, 81, 73, 0.28)",
-        boxShadow:
-          "0 0 0 1px rgba(248, 81, 73, 0.16), 0 0 24px rgba(248, 81, 73, 0.06), 0 2px 12px rgba(0, 0, 0, 0.12)",
-      };
+  const outcomeClass = decided
+    ? kept
+      ? " fa-card--outcome-yes"
+      : " fa-card--outcome-no"
+    : "";
 
   return (
-    <motion.div
-      className={`fa-card${decided ? " fa-card--decided" : ""}`}
-      initial={false}
-      animate={cardAnimate}
-      transition={motionOk ? { duration: 0.38, ease: FA_EASE } : { duration: 0 }}
-    >
+    <div className={`fa-card${decided ? " fa-card--decided" : ""}${outcomeClass}`}>
       <div className="fa-card__hero">
         <div className="fa-card__avatar">
           <PlayerAvatar
@@ -199,7 +175,7 @@ function ContractCard({ contract, decision, onDecide, teamId, motionOk }: Contra
           )}
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 
