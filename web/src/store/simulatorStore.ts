@@ -388,9 +388,9 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
 
       set({
         roster,
-        expiringContracts: state.expiringContracts.filter(
-          (c) => c.playerId !== playerId
-        ),
+        // Keep contract in the list so the FA card stays mounted and outcome
+        // animations can run; UI uses `decisions` to show resolved state.
+        expiringContracts: state.expiringContracts,
         decisions: { ...state.decisions, [playerId]: decision },
         capSpace: computeCapSpace(roster),
         rosterDeficits: computeRosterDeficits(roster),

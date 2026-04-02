@@ -190,8 +190,19 @@ export default function FreeAgencyPage() {
   const payroll = useSimulatorStore(selectPayroll);
   const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
 
-  const clubOptions = expiring.filter((c) => c.optionType === "Club");
-  const freeAgents = expiring.filter((c) => c.optionType !== "Club");
+  function pendingFirst(a: ExpiringContract, b: ExpiringContract): number {
+    const da = decisions[a.playerId] !== undefined;
+    const db = decisions[b.playerId] !== undefined;
+    if (da === db) return 0;
+    return da ? 1 : -1;
+  }
+
+  const clubOptions = expiring
+    .filter((c) => c.optionType === "Club")
+    .sort(pendingFirst);
+  const freeAgents = expiring
+    .filter((c) => c.optionType !== "Club")
+    .sort(pendingFirst);
   const pendingCount = expiring.filter((c) => decisions[c.playerId] === undefined).length;
 
   function handleAdvanceToDraft() {
