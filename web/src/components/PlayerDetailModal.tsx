@@ -5,6 +5,7 @@ import type {
   OffensiveArchetype,
   DefensiveRole,
   RosterDeficit,
+  ProspectCollegeStats,
 } from "../types/simulator";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import PlayerAvatar from "./PlayerAvatar";
@@ -460,7 +461,70 @@ function FaPlayerRight({ contract }: { contract: ExpiringContract }) {
 
 // ── Prospect right panel ───────────────────────────────────────────────────
 
+function ProspectCollegeStatsPanel({ s }: { s: ProspectCollegeStats }) {
+  const tsDisplay = s.tsPct * 100;
+  const metaParts = [
+    s.seasonYear && s.seasonYear !== "—" ? s.seasonYear : null,
+    s.teamAbbr || null,
+    s.confAbbr ? s.confAbbr : null,
+    s.games > 0 ? `${s.games} GP` : null,
+    s.mpPerGame > 0 ? `${s.mpPerGame.toFixed(1)} MPG` : null,
+  ].filter(Boolean);
+
+  return (
+    <>
+      <div className="player-modal__section-label">Season Statistics</div>
+      {metaParts.length > 0 && (
+        <p
+          className="player-modal__salary-note"
+          style={{ marginTop: 0, marginBottom: "0.75rem" }}
+        >
+          {metaParts.join(" · ")}
+          {s.classYear ? ` · ${s.classYear}` : ""}
+        </p>
+      )}
+      <div className="player-modal__stats">
+        <StatBar label="Points Per Game" value={s.pts} max={38} delay={0.1} />
+        <StatBar label="Rebounds Per Game" value={s.trb} max={16} delay={0.17} />
+        <StatBar label="Assists Per Game" value={s.ast} max={12} delay={0.24} />
+        <StatBar
+          label="True Shooting %"
+          value={tsDisplay}
+          max={75}
+          color="var(--color-info)"
+          delay={0.31}
+        />
+      </div>
+
+      <div className="player-modal__chips">
+        <div className="pmodal-chip">
+          <span className="pmodal-chip__label">PTS</span>
+          <span className="pmodal-chip__val">{s.pts.toFixed(1)}</span>
+        </div>
+        <div className="pmodal-chip">
+          <span className="pmodal-chip__label">REB</span>
+          <span className="pmodal-chip__val">{s.trb.toFixed(1)}</span>
+        </div>
+        <div className="pmodal-chip">
+          <span className="pmodal-chip__label">AST</span>
+          <span className="pmodal-chip__val">{s.ast.toFixed(1)}</span>
+        </div>
+        <div className="pmodal-chip">
+          <span className="pmodal-chip__label">TS%</span>
+          <span className="pmodal-chip__val">{tsDisplay.toFixed(1)}</span>
+        </div>
+        <div className="pmodal-chip">
+          <span className="pmodal-chip__label">STL</span>
+          <span className="pmodal-chip__val">{s.stl.toFixed(1)}</span>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function ProspectRight({ prospect }: { prospect: DraftProspect }) {
+  const s = prospect.collegeStats;
+
   return (
     <>
       <div className="player-modal__section-label">Scout Grade</div>
@@ -477,8 +541,14 @@ function ProspectRight({ prospect }: { prospect: DraftProspect }) {
 
       <div className="player-modal__divider" />
 
-      <div className="player-modal__section-label">Season Stats</div>
-      <div className="player-modal__no-stats">College statistics not yet available</div>
+      {s ? (
+        <ProspectCollegeStatsPanel s={s} />
+      ) : (
+        <>
+          <div className="player-modal__section-label">Season Statistics</div>
+          <div className="player-modal__no-stats">College statistics not yet available</div>
+        </>
+      )}
 
       <div className="player-modal__divider" />
 

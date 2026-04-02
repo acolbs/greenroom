@@ -17,6 +17,10 @@ import { parseMasterRows, buildTeamRoster } from "../data/parseMaster";
 import type { MasterRow } from "../data/parseMaster";
 import { parseDraftClass } from "../data/parseBigBoard";
 import {
+  applyProspectCollegeStats,
+  parseProspectStatsByRank,
+} from "../data/parseProspectStats";
+import {
   CHAMPIONSHIP_FORMULA,
   computeRosterDeficits,
 } from "../data/championshipFormula";
@@ -46,20 +50,25 @@ function loadAllData(): Promise<LoadedData> {
   if (dataCache) return dataCache;
 
   dataCache = (async (): Promise<LoadedData> => {
-    const [masterText, statsText, contractsText, optionsText, bigBoardText] =
+    const [masterText, statsText, contractsText, optionsText, bigBoardText, prospectStatsText] =
       await Promise.all([
         fetchText("data/master.csv"),
         fetchText("data/2025-2026_Stats.csv"),
         fetchText("data/hoopshype_contracts.csv"),
         fetchText("data/options_contracts.csv"),
         fetchText("data/big_board.csv"),
+        fetchText("data/prospect_stats.csv"),
       ]);
 
     const masterRows = parseMasterRows(parseCsv(masterText));
     const contractMap = parseHoopshypeContracts(parseCsv(contractsText));
     const optionRows = parseOptionsContracts(parseCsv(optionsText));
     const aceMap = buildAceLookup(parseCsv(statsText));
-    const draftClass = parseDraftClass(parseCsv(bigBoardText));
+    const prospectStatsByRank = parseProspectStatsByRank(parseCsv(prospectStatsText));
+    const draftClass = applyProspectCollegeStats(
+      parseDraftClass(parseCsv(bigBoardText)),
+      prospectStatsByRank
+    );
 
     return { masterRows, contractMap, optionRows, aceMap, draftClass };
   })();

@@ -126,6 +126,25 @@ export interface Team {
 // Draft
 // ---------------------------------------------------------------------------
 
+/** Per-game college line from prospect_stats.csv (when sr_found / data present). */
+export interface ProspectCollegeStats {
+  seasonYear: string;
+  teamAbbr: string;
+  confAbbr: string;
+  classYear: string;
+  games: number;
+  gamesStarted: number;
+  mpPerGame: number;
+  pts: number;
+  trb: number;
+  ast: number;
+  stl: number;
+  blk: number;
+  tov: number;
+  /** 0–1 (CSV may use .578) */
+  tsPct: number;
+}
+
 export interface DraftProspect {
   /** Stable ID: "prospect-{rank}" */
   id: string;
@@ -140,6 +159,8 @@ export interface DraftProspect {
   notes: string;
   /** Heuristic rookie salary computed from grade. */
   projectedSalary: number;
+  /** Merged from prospect_stats.csv by Rank when available. */
+  collegeStats?: ProspectCollegeStats;
 }
 
 export interface DraftHistoryEntry {
