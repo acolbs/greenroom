@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { honorReducedMotion } from "../utils/motionPrefs";
@@ -7,13 +7,15 @@ import {
   rankProspectsForTeam,
   getSmartRecommendation,
 } from "../data/prospectRanking";
-import type { RankedProspect, TeamStrength } from "../data/prospectRanking";
+import type { RankedProspect } from "../data/prospectRanking";
 import { TEAMS } from "../data/constants";
-import type { DraftProspect } from "../types/simulator";
+import type { DraftProspect, Position } from "../types/simulator";
 import NavBar from "../components/NavBar";
 import PlayerAvatar from "../components/PlayerAvatar";
 import ScoutChat from "../components/ScoutChat";
 import PlayerDetailModal from "../components/PlayerDetailModal";
+import TeamLogo from "../components/TeamLogo";
+import Tooltip from "../components/Tooltip";
 
 // ── Draft setup screen ─────────────────────────────────────────────────────
 
@@ -75,9 +77,65 @@ function DraftSetup() {
   );
 }
 
+// ── Horizontal pick history strip ──────────────────────────────────────────
+
+interface PickStripProps {
+  history: { pickNumber: number; prospectId: string; pickedBy: string }[];
+  draftClass: DraftProspect[];
+  selectedTeamId: string | null;
+}
+
+function PickStrip({ history, draftClass, selectedTeamId }: PickStripProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
+  }, [history.length]);
+
+  if (history.length === 0) return null;
+
+  return (
+    <div className="pick-strip-wrap">
+      <div className="pick-strip-label">Pick History</div>
+      <div className="pick-strip" ref={scrollRef}>
+        {history.map((entry) => {
+          const prospect = draftClass.find((p) => p.id === entry.prospectId);
+          const isUser = entry.pickedBy === selectedTeamId;
+          const team = TEAMS.find((t) => t.id === entry.pickedBy);
+
+          return (
+            <div
+              key={entry.pickNumber}
+              className={`pick-strip__item${isUser ? " pick-strip__item--user" : ""}`}
+              title={`#${entry.pickNumber} · ${prospect?.name ?? "Unknown"} · ${isUser ? "You" : team?.name ?? entry.pickedBy}`}
+            >
+              <span className="pick-strip__num">#{entry.pickNumber}</span>
+              <PlayerAvatar
+                name={prospect?.name ?? "?"}
+                position={prospect?.position ?? "PG"}
+                size={40}
+                headshotPool="prospect"
+                school={prospect?.school}
+              />
+              {team && (
+                <div className="pick-strip__logo">
+                  <TeamLogo teamId={team.id} size={16} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ── Prospect row ───────────────────────────────────────────────────────────
 
 type DraftTab = "bigboard" | "needs";
+type GradeFilter = "ALL" | "ELITE" | "HIGH" | "MID" | "DEV";
 
 interface ProspectRowProps {
   prospect: RankedProspect;
@@ -132,9 +190,17 @@ function ProspectRow({
 
       <div className="draft-card__footer">
         <div className="draft-card__metric">
-          <span className="draft-card__metric-label">
-            {tab === "bigboard" ? "Scout rank" : "Needs fit"}
-          </span>
+          <Tooltip
+            text={
+              tab === "bigboard"
+                ? "Overall scout ranking — lower number = better prospect (1 = top of class)"
+                : "How well this prospect fills your team's biggest positional and archetype gaps. Higher = better fit."
+            }
+          >
+            <span className="draft-card__metric-label">
+              {tab === "bigboard" ? "Scout rank" : "Needs fit"}
+            </span>
+          </Tooltip>
           <span
             className="draft-card__metric-val"
             style={{
@@ -161,32 +227,23 @@ function ProspectRow({
   );
 }
 
-// ── Team strength badge ─────────────────────────────────────────────────────
+// ── Filter bar ─────────────────────────────────────────────────────────────
 
-function TeamStrengthBadge({ ts }: { ts: TeamStrength }) {
-  const color =
-    ts.label === "Contender"
-      ? "var(--color-accent)"
-      : ts.label === "Middle"
-      ? "#d4a017"
-      : "var(--color-danger)";
+const GRADE_FILTER_LABELS: Record<GradeFilter, string> = {
+  ALL: "All Grades",
+  ELITE: "Elite 90+",
+  HIGH: "High 80s",
+  MID: "Mid 70s",
+  DEV: "Dev <70",
+};
 
-  return (
-    <span
-      style={{
-        fontSize: "0.65rem",
-        fontWeight: 700,
-        textTransform: "uppercase",
-        letterSpacing: "0.08em",
-        color,
-        border: `1px solid ${color}`,
-        borderRadius: "4px",
-        padding: "0.1rem 0.4rem",
-      }}
-    >
-      {ts.label}
-    </span>
-  );
+function gradeMatchesFilter(grade: number, filter: GradeFilter): boolean {
+  if (filter === "ALL") return true;
+  if (filter === "ELITE") return grade >= 90;
+  if (filter === "HIGH") return grade >= 80 && grade < 90;
+  if (filter === "MID") return grade >= 70 && grade < 80;
+  if (filter === "DEV") return grade < 70;
+  return true;
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────
@@ -195,6 +252,8 @@ export default function DraftPage() {
   const navigate = useSmoothNavigate();
   const [activeTab, setActiveTab] = useState<DraftTab>("bigboard");
   const [detailProspect, setDetailProspect] = useState<DraftProspect | null>(null);
+  const [posFilter, setPosFilter] = useState<Position | "ALL">("ALL");
+  const [gradeFilter, setGradeFilter] = useState<GradeFilter>("ALL");
   const motionOk = !honorReducedMotion();
 
   const draftSimActive = useSimulatorStore((s) => s.draftSimActive);
@@ -215,6 +274,11 @@ export default function DraftPage() {
   const currentUserPick = useSimulatorStore(selectCurrentUserPick);
   const isUserTurn = currentUserPick !== null;
 
+  // Which CPU team is on the clock right now
+  const cpuTeam = !isUserTurn && draftSimActive
+    ? TEAMS[(draftCurrentPick - 1) % 30]
+    : null;
+
   // Rank all available prospects
   const ranked = draftSimActive
     ? rankProspectsForTeam(available, deficits, teamStrength)
@@ -228,6 +292,13 @@ export default function DraftPage() {
 
   const displayedProspects =
     activeTab === "bigboard" ? bigBoard : needsBoard;
+
+  // Apply filters
+  const filteredProspects = displayedProspects.filter((p) => {
+    if (posFilter !== "ALL" && p.position !== posFilter) return false;
+    if (!gradeMatchesFilter(p.grade, gradeFilter)) return false;
+    return true;
+  });
 
   const recommendation = draftSimActive
     ? getSmartRecommendation(available, deficits, teamStrength)
@@ -278,24 +349,55 @@ export default function DraftPage() {
       <NavBar />
 
       <div className="page-content">
-        {/* Pick indicator */}
+
+        {/* ── Full-width pick history strip ── */}
+        {draftSimActive && (
+          <PickStrip
+            history={history}
+            draftClass={draftClass}
+            selectedTeamId={selectedTeamId}
+          />
+        )}
+
+        {/* ── Pick indicator / CPU banner ── */}
         {!draftSimComplete && (
-          <div className={`pick-indicator${isUserTurn ? " user-pick" : ""}`}>
-            <div>
-              <div className="pick-num">{draftCurrentPick}</div>
-              <div className="pick-label">
-                Round {round}, Pick {pickInRound}
+          isUserTurn ? (
+            <div className="pick-indicator user-pick">
+              <div>
+                <div className="pick-num">{draftCurrentPick}</div>
+                <div className="pick-label">
+                  Round {round}, Pick {pickInRound}
+                </div>
+              </div>
+              <div>
+                <div className="pick-status yours">Your pick</div>
+                <div className="pick-label">
+                  Your picks: {userPickNumbers.join(", ")}
+                </div>
               </div>
             </div>
-            <div>
-              <div className={`pick-status${isUserTurn ? " yours" : ""}`}>
-                {isUserTurn ? "Your pick" : "CPU picking…"}
+          ) : (
+            <div className="cpu-banner">
+              {cpuTeam && (
+                <div className="cpu-banner__logo">
+                  <TeamLogo teamId={cpuTeam.id} size={32} />
+                </div>
+              )}
+              <div className="cpu-banner__info">
+                <div className="cpu-banner__team">
+                  {cpuTeam ? `${cpuTeam.city} ${cpuTeam.name}` : "CPU"}
+                </div>
+                <div className="cpu-banner__status">CPU is picking…</div>
               </div>
-              <div className="pick-label">
+              <div className="cpu-banner__pick">
+                <div className="pick-num" style={{ fontSize: "1.3rem" }}>{draftCurrentPick}</div>
+                <div className="pick-label">Round {round}, Pick {pickInRound}</div>
+              </div>
+              <div style={{ marginLeft: "auto", fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
                 Your picks: {userPickNumbers.join(", ")}
               </div>
             </div>
-          </div>
+          )
         )}
 
         {draftSimComplete && (
@@ -321,8 +423,41 @@ export default function DraftPage() {
         )}
 
         <div className="split-layout">
-          {/* ── Left: draft board with tabs ── */}
+          {/* ── Left: draft board with filters + tabs ── */}
           <div>
+            {/* Filter bar */}
+            {draftSimActive && (
+              <div className="filter-bar">
+                <div className="filter-group">
+                  {(["ALL", "PG", "SG", "SF", "PF", "C"] as const).map((pos) => (
+                    <button
+                      key={pos}
+                      className={`filter-chip${posFilter === pos ? " filter-chip--active" : ""}`}
+                      onClick={() => setPosFilter(pos)}
+                    >
+                      {pos === "ALL" ? "All" : pos}
+                    </button>
+                  ))}
+                </div>
+                <div className="filter-group">
+                  {(["ALL", "ELITE", "HIGH", "MID", "DEV"] as GradeFilter[]).map((g) => (
+                    <button
+                      key={g}
+                      className={`filter-chip${gradeFilter === g ? " filter-chip--active" : ""}`}
+                      onClick={() => setGradeFilter(g)}
+                    >
+                      {GRADE_FILTER_LABELS[g]}
+                    </button>
+                  ))}
+                </div>
+                {(posFilter !== "ALL" || gradeFilter !== "ALL") && (
+                  <span style={{ fontSize: "0.68rem", color: "var(--color-text-muted)", alignSelf: "center" }}>
+                    {filteredProspects.length} shown
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Tab bar */}
             <div
               style={{
@@ -373,11 +508,15 @@ export default function DraftPage() {
             </div>
 
             <div className="draft-board">
-              {displayedProspects.length === 0 ? (
-                <div className="empty-state">No prospects remaining.</div>
+              {filteredProspects.length === 0 ? (
+                <div className="empty-state">
+                  {displayedProspects.length === 0
+                    ? "No prospects remaining."
+                    : "No prospects match the current filters."}
+                </div>
               ) : (
                 <AnimatePresence initial={false}>
-                  {displayedProspects.map((p) => (
+                  {filteredProspects.map((p) => (
                     <motion.div
                       key={p.id}
                       initial={motionOk ? { opacity: 0, y: 8 } : false}
@@ -426,7 +565,7 @@ export default function DraftPage() {
                 roster={roster}
               />
             )}
-            {/* Draft history */}
+            {/* Draft history (vertical, right panel) */}
             <div
               style={{
                 background: "var(--color-surface-raised)",
@@ -481,3 +620,4 @@ export default function DraftPage() {
     </motion.div>
   );
 }
+

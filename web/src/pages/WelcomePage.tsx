@@ -1,5 +1,28 @@
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 
+const HOW_TO_STEPS = [
+  {
+    num: 1,
+    title: "Pick Your Team",
+    desc: "Choose any of the 30 NBA franchises and take control of their offseason.",
+  },
+  {
+    num: 2,
+    title: "Handle Contracts",
+    desc: "Pick up club options, re-sign free agents, and shape your cap situation.",
+  },
+  {
+    num: 3,
+    title: "Run the Draft",
+    desc: "Make your picks across 3 rounds (90 total). CPU teams fill all other slots.",
+  },
+  {
+    num: 4,
+    title: "See Your Score",
+    desc: "Get a championship readiness rating based on the formula used by title contenders.",
+  },
+];
+
 export default function WelcomePage() {
   const navigate = useSmoothNavigate();
 
@@ -16,6 +39,17 @@ export default function WelcomePage() {
           Build your championship roster. Navigate free agency, resolve
           contracts, and run your draft board for the 2026–27 season.
         </p>
+
+        {/* How to play steps */}
+        <div className="welcome-steps">
+          {HOW_TO_STEPS.map((step) => (
+            <div key={step.num} className="welcome-step">
+              <div className="welcome-step__num">{step.num}</div>
+              <div className="welcome-step__title">{step.title}</div>
+              <div className="welcome-step__desc">{step.desc}</div>
+            </div>
+          ))}
+        </div>
 
         <button
           className="btn btn-primary btn-lg"

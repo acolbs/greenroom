@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useSimulatorStore } from "../store/simulatorStore";
 import type { Position, RosterPlayer } from "../types/simulator";
+import PlayerAvatar from "./PlayerAvatar";
 
 const POSITION_ORDER: Position[] = ["PG", "SG", "SF", "PF", "C"];
 
@@ -13,6 +15,8 @@ interface Props {
 
 export default function RosterModal({ onClose }: Props) {
   const roster = useSimulatorStore((s) => s.roster);
+  const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const byPosition: Record<Position, RosterPlayer[]> = {
     PG: [], SG: [], SF: [], PF: [], C: [],
@@ -23,7 +27,6 @@ export default function RosterModal({ onClose }: Props) {
     if (byPosition[pos]) byPosition[pos].push(p);
   }
 
-  // Sort each group by salary desc
   for (const pos of POSITION_ORDER) {
     byPosition[pos].sort((a, b) => b.currentSalary - a.currentSalary);
   }
@@ -35,6 +38,10 @@ export default function RosterModal({ onClose }: Props) {
     PF: "Power Forward",
     C: "Center",
   };
+
+  function toggleExpand(id: string) {
+    setExpandedId((prev) => (prev === id ? null : id));
+  }
 
   return (
     <>
@@ -89,7 +96,7 @@ export default function RosterModal({ onClose }: Props) {
               Current Roster
             </div>
             <div style={{ fontSize: "0.72rem", color: "var(--color-text-muted)", marginTop: "0.1rem" }}>
-              {roster.length} players · by position
+              {roster.length} players · click a player for details
             </div>
           </div>
           <button
@@ -160,66 +167,129 @@ export default function RosterModal({ onClose }: Props) {
                   </div>
 
                   {/* Players */}
-                  {players.map((p) => (
-                    <div
-                      key={p.id}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.625rem",
-                        padding: "0.5rem 0",
-                        borderBottom: "1px solid var(--color-border-subtle)",
-                      }}
-                    >
-                      {/* Pos chip */}
-                      <span className="card-pos" style={{ flexShrink: 0 }}>{p.position}</span>
+                  {players.map((p) => {
+                    const isExpanded = expandedId === p.id;
+                    const isRookie = String(p.id).startsWith("draft-");
+                    const bpmColor =
+                      p.stats.bpm >= 3
+                        ? "var(--color-accent)"
+                        : p.stats.bpm < 0
+                        ? "var(--color-danger)"
+                        : "var(--color-text-muted)";
 
-                      {/* Name + archetype */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
+                    return (
+                      <div key={p.id} className="roster-modal-row">
+                        {/* Main row */}
                         <div
-                          style={{
-                            fontFamily: "var(--font-display)",
-                            fontSize: "0.85rem",
-                            fontWeight: 600,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
+                          className="roster-modal-row__main"
+                          onClick={() => toggleExpand(p.id)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => e.key === "Enter" && toggleExpand(p.id)}
                         >
-                          {p.name}
-                          {String(p.id).startsWith("draft-") && (
-                            <span className="badge badge-rookie" style={{ marginLeft: "0.4rem" }}>
-                              Rookie
+                          {/* Avatar */}
+                          <PlayerAvatar
+                            name={p.name}
+                            position={p.position}
+                            size={36}
+                            headshotPool={isRookie ? "prospect" : "nba"}
+                            teamId={p.teamAbbrev || selectedTeamId}
+                          />
+
+                          {/* Name + archetype */}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              style={{
+                                fontFamily: "var(--font-display)",
+                                fontSize: "0.85rem",
+                                fontWeight: 600,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {p.name}
+                              {isRookie && (
+                                <span className="badge badge-rookie" style={{ marginLeft: "0.4rem" }}>
+                                  Rookie
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ fontSize: "0.68rem", color: "var(--color-text-muted)", marginTop: "0.1rem" }}>
+                              <span style={{ color: "var(--color-accent)" }}>{p.offensiveArchetype}</span>
+                            </div>
+                          </div>
+
+                          {/* Salary + expand chevron */}
+                          <div style={{ textAlign: "right", flexShrink: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <div>
+                              <div
+                                style={{
+                                  fontFamily: "var(--font-display)",
+                                  fontSize: "0.82rem",
+                                  fontWeight: 700,
+                                  color: "var(--color-text-secondary)",
+                                }}
+                              >
+                                {fmt(p.currentSalary)}
+                              </div>
+                              {!isRookie && (
+                                <div style={{ fontSize: "0.62rem", color: "var(--color-text-muted)" }}>
+                                  Age {p.age}
+                                </div>
+                              )}
+                            </div>
+                            <span
+                              style={{
+                                fontSize: "0.6rem",
+                                color: "var(--color-text-muted)",
+                                transition: "transform 0.2s",
+                                transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                                display: "inline-block",
+                              }}
+                            >
+                              ▾
                             </span>
-                          )}
+                          </div>
                         </div>
-                        <div style={{ fontSize: "0.68rem", color: "var(--color-text-muted)", marginTop: "0.1rem" }}>
-                          <span style={{ color: "var(--color-accent)" }}>{p.offensiveArchetype}</span>
-                          {" · "}
-                          {p.defensiveRole}
-                        </div>
-                      </div>
 
-                      {/* Salary */}
-                      <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <div
-                          style={{
-                            fontFamily: "var(--font-display)",
-                            fontSize: "0.82rem",
-                            fontWeight: 700,
-                            color: "var(--color-text-secondary)",
-                          }}
-                        >
-                          {fmt(p.currentSalary)}
-                        </div>
-                        {!String(p.id).startsWith("draft-") && (
-                          <div style={{ fontSize: "0.62rem", color: "var(--color-text-muted)" }}>
-                            Age {p.age}
+                        {/* Expanded detail */}
+                        {isExpanded && (
+                          <div className="roster-modal-row__expand">
+                            <div className="roster-modal-expand__role">
+                              {p.defensiveRole}
+                            </div>
+                            {!isRookie && (
+                              <div className="roster-modal-expand__stats">
+                                <div className="roster-modal-expand__stat">
+                                  <span className="roster-modal-expand__val">{p.stats.pts.toFixed(1)}</span>
+                                  <span className="roster-modal-expand__lbl">PTS</span>
+                                </div>
+                                <div className="roster-modal-expand__stat">
+                                  <span className="roster-modal-expand__val">{p.stats.trb.toFixed(1)}</span>
+                                  <span className="roster-modal-expand__lbl">REB</span>
+                                </div>
+                                <div className="roster-modal-expand__stat">
+                                  <span className="roster-modal-expand__val">{p.stats.ast.toFixed(1)}</span>
+                                  <span className="roster-modal-expand__lbl">AST</span>
+                                </div>
+                                <div className="roster-modal-expand__stat">
+                                  <span className="roster-modal-expand__val" style={{ color: bpmColor }}>
+                                    {p.stats.bpm >= 0 ? "+" : ""}{p.stats.bpm.toFixed(1)}
+                                  </span>
+                                  <span className="roster-modal-expand__lbl">BPM</span>
+                                </div>
+                              </div>
+                            )}
+                            <div className="roster-modal-expand__market">
+                              Est. Market: <strong>{fmt(p.estimatedMarketSalary)}</strong>
+                              <span style={{ opacity: 0.55, fontSize: "0.6rem", marginLeft: "0.3rem" }}>AI estimate</span>
+                            </div>
                           </div>
                         )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               );
             })

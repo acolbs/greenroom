@@ -2,11 +2,12 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
-import type { ExpiringContract, FreeAgencyDecision } from "../types/simulator";
+import type { ExpiringContract, FreeAgencyDecision, RosterPlayer } from "../types/simulator";
 import NavBar from "../components/NavBar";
 import CapBar from "../components/CapBar";
 import PlayerAvatar from "../components/PlayerAvatar";
 import PlayerDetailModal, { type ModalSubject } from "../components/PlayerDetailModal";
+import Tooltip from "../components/Tooltip";
 import { honorReducedMotion } from "../utils/motionPrefs";
 
 const FA_EASE = [0.22, 1, 0.36, 1] as const;
@@ -87,21 +88,29 @@ function ContractCard({ contract, decision, onDecide, onOpen, teamId, motionOk }
           <div className="fa-card__stats" role="group" aria-label="Season stats">
             <div className="fa-card__stat">
               <span className="fa-card__stat-val">{contract.stats.pts.toFixed(1)}</span>
-              <span className="fa-card__stat-lbl">PTS</span>
+              <Tooltip text="Points Per Game">
+                <span className="fa-card__stat-lbl">PTS</span>
+              </Tooltip>
             </div>
             <div className="fa-card__stat">
               <span className="fa-card__stat-val">{contract.stats.trb.toFixed(1)}</span>
-              <span className="fa-card__stat-lbl">REB</span>
+              <Tooltip text="Rebounds Per Game">
+                <span className="fa-card__stat-lbl">REB</span>
+              </Tooltip>
             </div>
             <div className="fa-card__stat">
               <span className="fa-card__stat-val">{contract.stats.ast.toFixed(1)}</span>
-              <span className="fa-card__stat-lbl">AST</span>
+              <Tooltip text="Assists Per Game">
+                <span className="fa-card__stat-lbl">AST</span>
+              </Tooltip>
             </div>
             <div className="fa-card__stat">
               <span className="fa-card__stat-val" style={{ color: bpmColor }}>
                 {contract.stats.bpm >= 0 ? "+" : ""}{contract.stats.bpm.toFixed(1)}
               </span>
-              <span className="fa-card__stat-lbl">BPM</span>
+              <Tooltip text="Box Plus/Minus — net points contributed per 100 possessions vs. league average. Positive = above average.">
+                <span className="fa-card__stat-lbl">BPM</span>
+              </Tooltip>
             </div>
           </div>
 
@@ -216,6 +225,10 @@ export default function FreeAgencyPage() {
     navigate("/draft");
   }
 
+  function openRosterPlayer(p: RosterPlayer) {
+    setDetailPlayer(p);
+  }
+
   return (
     <div className="page">
       <PlayerDetailModal
@@ -320,7 +333,14 @@ export default function FreeAgencyPage() {
                 <div className="empty-state">No committed players yet.</div>
               ) : (
                 roster.map((p) => (
-                  <div key={p.id} className="roster-row">
+                  <div
+                    key={p.id}
+                    className="roster-row roster-row--clickable"
+                    onClick={() => openRosterPlayer(p)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === "Enter" && openRosterPlayer(p)}
+                  >
                     <PlayerAvatar
                       name={p.name}
                       position={p.position}

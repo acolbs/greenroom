@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type {
   ExpiringContract,
   DraftProspect,
+  RosterPlayer,
   OffensiveArchetype,
   DefensiveRole,
   RosterDeficit,
@@ -10,10 +11,20 @@ import type {
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import PlayerAvatar from "./PlayerAvatar";
 
-export type ModalSubject = ExpiringContract | DraftProspect;
+export type ModalSubject = ExpiringContract | DraftProspect | RosterPlayer;
+
+// ── Type guards ────────────────────────────────────────────────────────────
+
+function isProspect(s: ModalSubject): s is DraftProspect {
+  return "rank" in s;
+}
 
 function isFaPlayer(s: ModalSubject): s is ExpiringContract {
-  return "stats" in s;
+  return "playerId" in s;
+}
+
+function isRosterPlayerSubject(s: ModalSubject): s is RosterPlayer {
+  return "teamAbbrev" in s;
 }
 
 // ── Playstyle descriptions ─────────────────────────────────────────────────
@@ -96,10 +107,8 @@ function getScoutRecommendation(
   const needsPlayer = fillsTeamNeed(contract, deficits);
   const capLine = 165_000_000;
   const taxLine = 201_000_000;
-  const spaceLeft = capLine - payroll;
   const overTax = payroll > taxLine;
 
-  // ── Club option ──────────────────────────────────────────────────────────
   if (isClub && contract.optionSalary) {
     const market = contract.estimatedMarketSalary;
     const savings = market - contract.optionSalary;
@@ -138,7 +147,6 @@ function getScoutRecommendation(
     };
   }
 
-  // ── UFA / player opted out ───────────────────────────────────────────────
   const market = contract.estimatedMarketSalary;
   const bpm = contract.stats.bpm;
   const signingPutsOverTax = payroll + market > taxLine;
@@ -254,6 +262,23 @@ function GradeBar({ grade }: { grade: number }) {
   );
 }
 
+/** Prominent market value card used in FA and roster detail views. */
+function MarketValueCard({
+  value,
+  note,
+}: {
+  value: number;
+  note: string;
+}) {
+  return (
+    <div className="market-value-card">
+      <div className="market-value-card__label">Est. Market Value</div>
+      <div className="market-value-card__val">{fmt(value)}</div>
+      <div className="market-value-card__note">{note}</div>
+    </div>
+  );
+}
+
 // ── Main modal ─────────────────────────────────────────────────────────────
 
 interface Props {
@@ -263,8 +288,21 @@ interface Props {
 }
 
 export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
-  const isProspect = subject ? !isFaPlayer(subject) : false;
-  const isFA = subject ? isFaPlayer(subject) : false;
+  const subjectIsProspect = subject ? isProspect(subject) : false;
+  const subjectIsFA = subject ? isFaPlayer(subject) : false;
+  const subjectIsRoster = subject ? isRosterPlayerSubject(subject) : false;
+
+  const headshotPool = subjectIsProspect
+    ? "prospect"
+    : subjectIsRoster && (subject as RosterPlayer).id.startsWith("draft-")
+    ? "prospect"
+    : "nba";
+
+  const avatarTeamId = subjectIsFA
+    ? teamId
+    : subjectIsRoster
+    ? (subject as RosterPlayer).teamAbbrev
+    : null;
 
   return (
     <AnimatePresence>
@@ -290,7 +328,7 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
               aria-modal="true"
               aria-label={`${subject.name} details`}
             >
-              {/* Scan line — real DOM element, not ::before */}
+              {/* Scan line */}
               <div className="player-modal__scan" />
 
               <button className="player-modal__close" onClick={onClose} aria-label="Close">
@@ -305,23 +343,23 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
                       name={subject.name}
                       position={subject.position}
                       size={160}
-                      headshotPool={isProspect ? "prospect" : "nba"}
-                      teamId={isFA ? teamId : null}
-                      school={isProspect ? (subject as DraftProspect).school : null}
+                      headshotPool={headshotPool}
+                      teamId={avatarTeamId}
+                      school={subjectIsProspect ? (subject as DraftProspect).school : null}
                     />
                   </div>
                   <div className="player-modal__name">{subject.name}</div>
                   <div className="player-modal__meta-row">
                     <span className="card-pos">{subject.position}</span>
-                    {isFA && (
+                    {!subjectIsProspect && (
                       <span className="player-modal__age">
-                        Age {(subject as ExpiringContract).age}
+                        Age {(subject as ExpiringContract | RosterPlayer).age}
                       </span>
                     )}
                   </div>
                   <div className="player-modal__arch">{subject.offensiveArchetype}</div>
                   <div className="player-modal__def">{subject.defensiveRole}</div>
-                  {isProspect && (
+                  {subjectIsProspect && (
                     <>
                       <div className="player-modal__school" style={{ marginTop: "0.5rem" }}>
                         {(subject as DraftProspect).school}
@@ -360,8 +398,10 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
 
                   <div className="player-modal__divider" />
 
-                  {isFA ? (
+                  {subjectIsFA ? (
                     <FaPlayerRight contract={subject as ExpiringContract} />
+                  ) : subjectIsRoster ? (
+                    <RosterPlayerRight player={subject as RosterPlayer} />
                   ) : (
                     <ProspectRight prospect={subject as DraftProspect} />
                   )}
@@ -429,7 +469,13 @@ function FaPlayerRight({ contract }: { contract: ExpiringContract }) {
 
       <div className="player-modal__divider" />
 
-      <div className="player-modal__section-label">
+      {/* Prominent market value */}
+      <MarketValueCard
+        value={contract.estimatedMarketSalary}
+        note="AI estimate · based on production & market trends"
+      />
+
+      <div className="player-modal__section-label" style={{ marginTop: "1.25rem" }}>
         {isClub ? "Club Option" : "Free Agency"}
       </div>
       <div className="player-modal__contract">
@@ -439,23 +485,13 @@ function FaPlayerRight({ contract }: { contract: ExpiringContract }) {
         </div>
         {isClub && contract.optionSalary ? (
           <div className="pmodal-contract-item">
-            <span className="pmodal-contract-item__label">Option</span>
+            <span className="pmodal-contract-item__label">Option Salary</span>
             <span className="pmodal-contract-item__val pmodal-contract-item__val--accent">
               {fmt(contract.optionSalary)}
             </span>
           </div>
-        ) : (
-          <div className="pmodal-contract-item">
-            <span className="pmodal-contract-item__label">Est. Market</span>
-            <span className="pmodal-contract-item__val pmodal-contract-item__val--accent">
-              {fmt(contract.estimatedMarketSalary)}
-            </span>
-          </div>
-        )}
+        ) : null}
       </div>
-      {contract.isSalaryEstimate && (
-        <p className="player-modal__salary-note">Market estimate · may vary</p>
-      )}
 
       <div className="player-modal__divider" />
 
@@ -465,6 +501,80 @@ function FaPlayerRight({ contract }: { contract: ExpiringContract }) {
         <div className="scout-take__verdict">{take.label}</div>
         <div className="scout-take__headline">{take.headline}</div>
         <p className="scout-take__reasoning">{take.reasoning}</p>
+      </div>
+    </>
+  );
+}
+
+// ── Roster player right panel ──────────────────────────────────────────────
+
+function RosterPlayerRight({ player }: { player: RosterPlayer }) {
+  const isRookie = player.id.startsWith("draft-");
+  const bpmColor =
+    player.stats.bpm >= 3
+      ? "var(--color-accent)"
+      : player.stats.bpm < 0
+      ? "var(--color-danger)"
+      : "var(--color-text-muted)";
+  const bpmSign = player.stats.bpm >= 0 ? "+" : "";
+
+  return (
+    <>
+      {!isRookie && (
+        <>
+          <div className="player-modal__section-label">Season Statistics</div>
+          <div className="player-modal__stats">
+            <StatBar label="Points Per Game"   value={player.stats.pts}          max={38} delay={0.10} />
+            <StatBar label="Rebounds Per Game" value={player.stats.trb}          max={16} delay={0.17} />
+            <StatBar label="Assists Per Game"  value={player.stats.ast}          max={12} delay={0.24} />
+            <StatBar label="True Shooting %"   value={player.stats.tsPct * 100} max={75} color="var(--color-info)" delay={0.31} />
+          </div>
+          <div className="player-modal__chips">
+            <div className="pmodal-chip">
+              <span className="pmodal-chip__label">BPM</span>
+              <span className="pmodal-chip__val" style={{ color: bpmColor }}>
+                {bpmSign}{player.stats.bpm.toFixed(1)}
+              </span>
+            </div>
+            <div className="pmodal-chip">
+              <span className="pmodal-chip__label">PTS</span>
+              <span className="pmodal-chip__val">{player.stats.pts.toFixed(1)}</span>
+            </div>
+            <div className="pmodal-chip">
+              <span className="pmodal-chip__label">REB</span>
+              <span className="pmodal-chip__val">{player.stats.trb.toFixed(1)}</span>
+            </div>
+            <div className="pmodal-chip">
+              <span className="pmodal-chip__label">AST</span>
+              <span className="pmodal-chip__val">{player.stats.ast.toFixed(1)}</span>
+            </div>
+            <div className="pmodal-chip">
+              <span className="pmodal-chip__label">TS%</span>
+              <span className="pmodal-chip__val">{(player.stats.tsPct * 100).toFixed(1)}</span>
+            </div>
+          </div>
+          <div className="player-modal__divider" />
+        </>
+      )}
+
+      {/* Prominent market value */}
+      <MarketValueCard
+        value={player.estimatedMarketSalary}
+        note="AI estimate · based on production & market trends"
+      />
+
+      <div className="player-modal__section-label" style={{ marginTop: "1.25rem" }}>
+        Contract
+      </div>
+      <div className="player-modal__contract">
+        <div className="pmodal-contract-item">
+          <span className="pmodal-contract-item__label">
+            {isRookie ? "Rookie Salary" : "Current Salary"}
+          </span>
+          <span className="pmodal-contract-item__val pmodal-contract-item__val--accent">
+            {fmt(player.currentSalary)}
+          </span>
+        </div>
       </div>
     </>
   );
@@ -563,14 +673,11 @@ function ProspectRight({ prospect }: { prospect: DraftProspect }) {
 
       <div className="player-modal__divider" />
 
-      <div className="player-modal__section-label">Projected Contract</div>
-      <div className="player-modal__contract">
-        <div className="pmodal-contract-item">
-          <span className="pmodal-contract-item__label">Rookie Salary</span>
-          <span className="pmodal-contract-item__val pmodal-contract-item__val--accent">
-            {fmt(prospect.projectedSalary)}
-          </span>
-        </div>
+      {/* Prominent market value for prospects */}
+      <div className="market-value-card market-value-card--prospect">
+        <div className="market-value-card__label">Est. Rookie Contract</div>
+        <div className="market-value-card__val">{fmt(prospect.projectedSalary)}</div>
+        <div className="market-value-card__note">AI estimate · based on scout grade formula</div>
       </div>
     </>
   );
