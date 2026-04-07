@@ -146,7 +146,6 @@
 .cap-bar-fill {
   height: 100%;
   border-radius: 3px;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--color-accent);
 }
 
@@ -450,8 +449,6 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  /* Don’t transition box-shadow/border here — conflicts with outcome keyframes */
-  transition: opacity 0.2s ease, border-color 0.15s, background 0.15s;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -489,70 +486,18 @@
   background: var(--color-surface);
 }
 
-@keyframes fa-card-outcome-yes {
-  0% {
-    border-color: var(--color-border-subtle);
-    box-shadow: none;
-  }
-  45% {
-    border-color: rgba(63, 185, 80, 0.52);
-    box-shadow:
-      0 0 0 2px rgba(63, 185, 80, 0.32),
-      0 0 40px rgba(63, 185, 80, 0.16);
-  }
-  100% {
-    border-color: rgba(63, 185, 80, 0.38);
-    box-shadow:
-      0 0 0 1px rgba(63, 185, 80, 0.26),
-      0 0 24px rgba(63, 185, 80, 0.1),
-      0 2px 10px rgba(0, 0, 0, 0.14);
-  }
-}
-
-@keyframes fa-card-outcome-no {
-  0% {
-    border-color: var(--color-border-subtle);
-    box-shadow: none;
-  }
-  45% {
-    border-color: rgba(248, 81, 73, 0.48);
-    box-shadow:
-      0 0 0 2px rgba(248, 81, 73, 0.26),
-      0 0 36px rgba(248, 81, 73, 0.13);
-  }
-  100% {
-    border-color: rgba(248, 81, 73, 0.34);
-    box-shadow:
-      0 0 0 1px rgba(248, 81, 73, 0.2),
-      0 0 22px rgba(248, 81, 73, 0.08),
-      0 2px 10px rgba(0, 0, 0, 0.14);
-  }
-}
-
 .fa-card.fa-card--decided.fa-card--outcome-yes {
-  animation: fa-card-outcome-yes 0.58s ease-out forwards;
+  border-color: rgba(63, 185, 80, 0.34);
+  box-shadow:
+    0 0 0 1px rgba(63, 185, 80, 0.22),
+    0 0 18px rgba(63, 185, 80, 0.07);
 }
 
 .fa-card.fa-card--decided.fa-card--outcome-no {
-  animation: fa-card-outcome-no 0.58s ease-out forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html:not(.edge-force-motion) .fa-card.fa-card--decided.fa-card--outcome-yes {
-    animation: none;
-    border-color: rgba(63, 185, 80, 0.34);
-    box-shadow:
-      0 0 0 1px rgba(63, 185, 80, 0.22),
-      0 0 18px rgba(63, 185, 80, 0.07);
-  }
-
-  html:not(.edge-force-motion) .fa-card.fa-card--decided.fa-card--outcome-no {
-    animation: none;
-    border-color: rgba(248, 81, 73, 0.3);
-    box-shadow:
-      0 0 0 1px rgba(248, 81, 73, 0.18),
-      0 0 16px rgba(248, 81, 73, 0.06);
-  }
+  border-color: rgba(248, 81, 73, 0.3);
+  box-shadow:
+    0 0 0 1px rgba(248, 81, 73, 0.18),
+    0 0 16px rgba(248, 81, 73, 0.06);
 }
 
 /* Compact card sub-elements */
@@ -1426,7 +1371,7 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   z-index: 500;
 }
 
-/* Centering wrapper — framer-motion animates the inner .player-modal */
+/* Centering wrapper for .player-modal */
 .player-modal-wrapper {
   position: fixed;
   inset: 0;

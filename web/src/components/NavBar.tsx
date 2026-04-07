@@ -73,7 +73,6 @@ export default function NavBar() {
             ? "var(--color-text-muted)"
             : "var(--color-border)",
           letterSpacing: "0.01em",
-          transition: "color 0.15s, background 0.15s",
           borderBottom: active ? "2px solid var(--color-accent)" : "2px solid transparent",
         }}
         onMouseEnter={(e) => {
@@ -118,10 +117,7 @@ export default function NavBar() {
               fontWeight: 600,
               color: "var(--color-text-secondary)",
               padding: "0 0.25rem",
-              transition: "color 0.15s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
           >
             <TeamLogo teamId={team.id} size={22} />
             {team.city} {team.name}
@@ -173,10 +169,7 @@ export default function NavBar() {
                 display: "flex",
                 alignItems: "center",
                 gap: "0.4rem",
-                transition: "border-color 0.15s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-text-muted)")}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-border)")}
             >
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ opacity: 0.7 }}>
                 <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />

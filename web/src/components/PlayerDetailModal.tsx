@@ -1,4 +1,3 @@
-import { motion, AnimatePresence } from "framer-motion";
 import type {
   ExpiringContract,
   DraftProspect,
@@ -206,7 +205,6 @@ function StatBar({
   value,
   max,
   color,
-  delay = 0,
 }: {
   label: string;
   value: number;
@@ -222,12 +220,9 @@ function StatBar({
         <span className="pmodal-stat-bar__val">{value.toFixed(1)}</span>
       </div>
       <div className="pmodal-stat-bar__track">
-        <motion.div
+        <div
           className="pmodal-stat-bar__fill"
-          style={{ background: color ?? "var(--color-accent)" }}
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay }}
+          style={{ background: color ?? "var(--color-accent)", width: `${pct}%` }}
         />
       </div>
     </div>
@@ -242,11 +237,9 @@ function GradeBar({ grade }: { grade: number }) {
       <div className="pmodal-grade-bar-wrap">
         <div className="pmodal-grade-bar-label">Scout Grade (55–98)</div>
         <div className="pmodal-grade-bar-track">
-          <motion.div
+          <div
             className="pmodal-grade-bar-fill"
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+            style={{ width: `${pct}%` }}
           />
         </div>
       </div>
@@ -266,30 +259,19 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
   const isProspect = subject ? !isFaPlayer(subject) : false;
   const isFA = subject ? isFaPlayer(subject) : false;
 
+  if (!subject) return null;
+
   return (
-    <AnimatePresence>
-      {subject && (
-        <>
-          <motion.div
-            className="modal-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            onClick={onClose}
-          />
-          <div className="player-modal-wrapper">
-            <motion.div
-              className="player-modal"
-              initial={{ opacity: 0, scale: 0.9, y: 40 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 20 }}
-              transition={{ type: "spring", stiffness: 360, damping: 28 }}
-              onClick={(e) => e.stopPropagation()}
-              role="dialog"
-              aria-modal="true"
-              aria-label={`${subject.name} details`}
-            >
+    <>
+      <div className="modal-overlay" onClick={onClose} />
+      <div className="player-modal-wrapper">
+        <div
+          className="player-modal"
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${subject.name} details`}
+        >
               {/* Scan line — real DOM element, not ::before */}
               <div className="player-modal__scan" />
 
@@ -367,11 +349,9 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
                   )}
                 </div>
               </div>
-            </motion.div>
-          </div>
-        </>
-      )}
-    </AnimatePresence>
+        </div>
+      </div>
+    </>
   );
 }
 

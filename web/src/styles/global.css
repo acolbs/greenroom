@@ -89,55 +89,6 @@ body::after {
   mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, black 12%, transparent 72%);
 }
 
-/* Milestone pulse (phase change / draft complete) */
-html.action-complete-glow::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  background: radial-gradient(
-    circle at 50% 42%,
-    rgba(63, 185, 80, 0.28) 0%,
-    rgba(88, 161, 255, 0.06) 38%,
-    transparent 58%
-  );
-  animation: action-glow-pulse 0.85s ease-out forwards;
-}
-
-@keyframes action-glow-pulse {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  35% {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    transform: scale(1.08);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html.action-complete-glow:not(.edge-force-motion)::after {
-    animation: none;
-    opacity: 0;
-  }
-
-  body::after {
-    opacity: 0.12;
-  }
-
-  html.edge-force-motion body::after {
-    opacity: 0.35;
-  }
-}
-
-/* Edge: keep milestone glow animating even under reduced-motion media */
-html.edge-force-motion.action-complete-glow::after {
-  animation: action-glow-pulse 0.85s ease-out forwards;
-}
 
 #root {
   min-height: 100dvh;
@@ -172,22 +123,6 @@ html.edge-force-motion.action-complete-glow::after {
   position: relative;
 }
 
-.route-transition-root--stacked {
-  min-height: 100dvh;
-}
-
-.route-shell {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  min-width: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-gutter: stable;
-}
 
 a {
   color: inherit;

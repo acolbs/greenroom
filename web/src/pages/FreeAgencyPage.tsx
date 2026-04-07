@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
@@ -7,9 +6,6 @@ import NavBar from "../components/NavBar";
 import CapBar from "../components/CapBar";
 import PlayerAvatar from "../components/PlayerAvatar";
 import PlayerDetailModal, { type ModalSubject } from "../components/PlayerDetailModal";
-import { honorReducedMotion } from "../utils/motionPrefs";
-
-const FA_EASE = [0.22, 1, 0.36, 1] as const;
 
 function isKept(d: FreeAgencyDecision): boolean {
   return d === "RE_SIGN" || d === "PICK_UP_OPTION";
@@ -25,10 +21,9 @@ interface ContractCardProps {
   onDecide: (d: FreeAgencyDecision) => void;
   onOpen: () => void;
   teamId: string | null;
-  motionOk: boolean;
 }
 
-function ContractCard({ contract, decision, onDecide, onOpen, teamId, motionOk }: ContractCardProps) {
+function ContractCard({ contract, decision, onDecide, onOpen, teamId }: ContractCardProps) {
   const isClub = contract.optionType === "Club";
   const decided = decision !== undefined;
   const kept = decision !== undefined && isKept(decision);
@@ -115,11 +110,8 @@ function ContractCard({ contract, decision, onDecide, onOpen, teamId, motionOk }
             </div>
 
             {decided ? (
-              <motion.div
+              <div
                 className={`fa-card__decision${kept ? " fa-card__decision--yes" : " fa-card__decision--no"}`}
-                initial={motionOk ? { opacity: 0, x: 8 } : false}
-                animate={{ opacity: 1, x: 0 }}
-                transition={motionOk ? { duration: 0.28, ease: FA_EASE } : { duration: 0 }}
               >
                 <span>{kept ? "✓" : "✗"}</span>
                 <span>
@@ -128,50 +120,42 @@ function ContractCard({ contract, decision, onDecide, onOpen, teamId, motionOk }
                   {decision === "PICK_UP_OPTION" && "Picked up"}
                   {decision === "DECLINE_OPTION" && "Declined"}
                 </span>
-              </motion.div>
+              </div>
             ) : (
               <div className="fa-card__actions" onClick={(e) => e.stopPropagation()}>
                 {isClub ? (
                   <>
-                    <motion.button
+                    <button
                       type="button"
                       className="btn btn-primary fa-card__action-btn"
                       onClick={(e) => handleDecide(e, "PICK_UP_OPTION")}
-                      whileTap={motionOk ? { scale: 0.97 } : undefined}
-                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
                     >
                       Pick Up
-                    </motion.button>
-                    <motion.button
+                    </button>
+                    <button
                       type="button"
                       className="btn btn-danger fa-card__action-btn"
                       onClick={(e) => handleDecide(e, "DECLINE_OPTION")}
-                      whileTap={motionOk ? { scale: 0.97 } : undefined}
-                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
                     >
                       Decline
-                    </motion.button>
+                    </button>
                   </>
                 ) : (
                   <>
-                    <motion.button
+                    <button
                       type="button"
                       className="btn btn-primary fa-card__action-btn"
                       onClick={(e) => handleDecide(e, "RE_SIGN")}
-                      whileTap={motionOk ? { scale: 0.97 } : undefined}
-                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
                     >
                       Re-Sign
-                    </motion.button>
-                    <motion.button
+                    </button>
+                    <button
                       type="button"
                       className="btn btn-secondary fa-card__action-btn"
                       onClick={(e) => handleDecide(e, "LET_WALK")}
-                      whileTap={motionOk ? { scale: 0.97 } : undefined}
-                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
                     >
                       Let Walk
-                    </motion.button>
+                    </button>
                   </>
                 )}
               </div>
@@ -184,7 +168,6 @@ function ContractCard({ contract, decision, onDecide, onOpen, teamId, motionOk }
 }
 
 export default function FreeAgencyPage() {
-  const motionOk = !honorReducedMotion();
   const navigate = useSmoothNavigate();
   const roster = useSimulatorStore((s) => s.roster);
   const expiring = useSimulatorStore((s) => s.expiringContracts);
@@ -229,13 +212,7 @@ export default function FreeAgencyPage() {
         <div className="split-layout">
 
           {/* ── Left: decisions ── */}
-          <motion.div
-            initial={motionOk ? { opacity: 0, y: 14 } : false}
-            animate={{ opacity: 1, y: 0 }}
-            transition={
-              motionOk ? { duration: 0.4, ease: FA_EASE, delay: 0.04 } : { duration: 0 }
-            }
-          >
+          <div>
             {clubOptions.length > 0 && (
               <div style={{ marginBottom: "1.75rem" }}>
                 <div className="section-header">
@@ -252,7 +229,6 @@ export default function FreeAgencyPage() {
                     onDecide={(d) => makeFreeAgencyDecision(c.playerId, d)}
                     onOpen={() => setDetailPlayer(c)}
                     teamId={selectedTeamId}
-                    motionOk={motionOk}
                   />
                 ))}
               </div>
@@ -276,7 +252,6 @@ export default function FreeAgencyPage() {
                     onDecide={(d) => makeFreeAgencyDecision(c.playerId, d)}
                     onOpen={() => setDetailPlayer(c)}
                     teamId={selectedTeamId}
-                    motionOk={motionOk}
                   />
                 ))
               )}
@@ -288,27 +263,18 @@ export default function FreeAgencyPage() {
                   {pendingCount} decision{pendingCount !== 1 ? "s" : ""} remaining
                 </span>
               )}
-              <motion.button
+              <button
                 className="btn btn-primary btn-lg"
                 style={{ marginLeft: "auto" }}
                 onClick={handleAdvanceToDraft}
-                whileTap={motionOk ? { scale: 0.98 } : undefined}
-                transition={{ type: "spring", stiffness: 450, damping: 26 }}
               >
                 Advance to Draft →
-              </motion.button>
+              </button>
             </div>
-          </motion.div>
+          </div>
 
           {/* ── Right: cap + roster ── */}
-          <motion.div
-            className="roster-panel"
-            initial={motionOk ? { opacity: 0, y: 10 } : false}
-            animate={{ opacity: 1, y: 0 }}
-            transition={
-              motionOk ? { duration: 0.38, ease: FA_EASE, delay: 0.1 } : { duration: 0 }
-            }
-          >
+          <div className="roster-panel">
             <CapBar payroll={payroll} />
 
             <div>
@@ -338,7 +304,7 @@ export default function FreeAgencyPage() {
                 ))
               )}
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </div>
