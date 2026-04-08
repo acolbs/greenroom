@@ -50,7 +50,7 @@ function DraftSetup() {
       <h2>Set Up Draft</h2>
       <p className="draft-setup-desc">
         Enter the pick numbers your team owns (e.g. <strong>15, 45, 75</strong>
-        ). The draft has 90 total picks across 3 rounds. CPU teams will auto-pick
+        ). The draft has 60 total picks across 2 rounds. CPU teams will auto-pick
         all other slots.
       </p>
 

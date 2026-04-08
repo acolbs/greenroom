@@ -14,7 +14,7 @@ const HOW_TO_STEPS = [
   {
     num: 3,
     title: "Run the Draft",
-    desc: "Make your picks across 3 rounds (90 total). CPU teams fill all other slots.",
+    desc: "Make your picks across 2 rounds (60 total). CPU teams fill all other slots.",
   },
   {
     num: 4,

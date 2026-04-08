@@ -2134,12 +2134,6 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
 .cpu-banner__status {
   font-size: 0.7rem;
   color: var(--color-text-muted);
-  animation: cpu-pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes cpu-pulse {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 1; }
 }
 
 .cpu-banner__pick {

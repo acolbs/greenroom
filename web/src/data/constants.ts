@@ -13,9 +13,9 @@ export const SECOND_APRON = 222_000_000;
 // Draft config
 // ---------------------------------------------------------------------------
 
-export const DRAFT_ROUNDS = 3;
+export const DRAFT_ROUNDS = 2;
 export const DRAFT_PICKS_PER_ROUND = 30;
-export const TOTAL_DRAFT_PICKS = DRAFT_ROUNDS * DRAFT_PICKS_PER_ROUND; // 90
+export const TOTAL_DRAFT_PICKS = DRAFT_ROUNDS * DRAFT_PICKS_PER_ROUND; // 60
 
 // ---------------------------------------------------------------------------
 // Rookie salary heuristic: maps grade (60–95) → annual salary
