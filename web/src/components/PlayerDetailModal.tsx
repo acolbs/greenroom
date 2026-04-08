@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+// framer-motion removed — static render for performance
 import type {
   ExpiringContract,
   DraftProspect,
@@ -214,7 +214,6 @@ function StatBar({
   value,
   max,
   color,
-  delay = 0,
 }: {
   label: string;
   value: number;
@@ -230,12 +229,9 @@ function StatBar({
         <span className="pmodal-stat-bar__val">{value.toFixed(1)}</span>
       </div>
       <div className="pmodal-stat-bar__track">
-        <motion.div
+        <div
           className="pmodal-stat-bar__fill"
-          style={{ background: color ?? "var(--color-accent)" }}
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay }}
+          style={{ background: color ?? "var(--color-accent)", width: `${pct}%` }}
         />
       </div>
     </div>
@@ -250,12 +246,7 @@ function GradeBar({ grade }: { grade: number }) {
       <div className="pmodal-grade-bar-wrap">
         <div className="pmodal-grade-bar-label">Scout Grade (55–98)</div>
         <div className="pmodal-grade-bar-track">
-          <motion.div
-            className="pmodal-grade-bar-fill"
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-          />
+          <div className="pmodal-grade-bar-fill" style={{ width: `${pct}%` }} />
         </div>
       </div>
     </div>
@@ -304,25 +295,17 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
     ? (subject as RosterPlayer).teamAbbrev
     : null;
 
+  if (!subject) return null;
+
   return (
-    <AnimatePresence>
-      {subject && (
-        <>
-          <motion.div
+    <>
+          <div
             className="modal-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
             onClick={onClose}
           />
           <div className="player-modal-wrapper">
-            <motion.div
+            <div
               className="player-modal"
-              initial={{ opacity: 0, scale: 0.9, y: 40 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 20 }}
-              transition={{ type: "spring", stiffness: 360, damping: 28 }}
               onClick={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
@@ -407,11 +390,9 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
-        </>
-      )}
-    </AnimatePresence>
+    </>
   );
 }
 
@@ -571,114 +552,4 @@ function RosterPlayerRight({ player }: { player: RosterPlayer }) {
           <span className="pmodal-contract-item__label">
             {isRookie ? "Rookie Salary" : "Current Salary"}
           </span>
-          <span className="pmodal-contract-item__val pmodal-contract-item__val--accent">
-            {fmt(player.currentSalary)}
-          </span>
-        </div>
-      </div>
-    </>
-  );
-}
-
-// ── Prospect right panel ───────────────────────────────────────────────────
-
-function ProspectCollegeStatsPanel({ s }: { s: ProspectCollegeStats }) {
-  const tsDisplay = s.tsPct * 100;
-  const metaParts = [
-    s.seasonYear && s.seasonYear !== "—" ? s.seasonYear : null,
-    s.teamAbbr || null,
-    s.confAbbr ? s.confAbbr : null,
-    s.games > 0 ? `${s.games} GP` : null,
-    s.mpPerGame > 0 ? `${s.mpPerGame.toFixed(1)} MPG` : null,
-  ].filter(Boolean);
-
-  return (
-    <>
-      <div className="player-modal__section-label">Season Statistics</div>
-      {metaParts.length > 0 && (
-        <p
-          className="player-modal__salary-note"
-          style={{ marginTop: 0, marginBottom: "0.75rem" }}
-        >
-          {metaParts.join(" · ")}
-          {s.classYear ? ` · ${s.classYear}` : ""}
-        </p>
-      )}
-      <div className="player-modal__stats">
-        <StatBar label="Points Per Game" value={s.pts} max={38} delay={0.1} />
-        <StatBar label="Rebounds Per Game" value={s.trb} max={16} delay={0.17} />
-        <StatBar label="Assists Per Game" value={s.ast} max={12} delay={0.24} />
-        <StatBar
-          label="True Shooting %"
-          value={tsDisplay}
-          max={75}
-          color="var(--color-info)"
-          delay={0.31}
-        />
-      </div>
-
-      <div className="player-modal__chips">
-        <div className="pmodal-chip">
-          <span className="pmodal-chip__label">PTS</span>
-          <span className="pmodal-chip__val">{s.pts.toFixed(1)}</span>
-        </div>
-        <div className="pmodal-chip">
-          <span className="pmodal-chip__label">REB</span>
-          <span className="pmodal-chip__val">{s.trb.toFixed(1)}</span>
-        </div>
-        <div className="pmodal-chip">
-          <span className="pmodal-chip__label">AST</span>
-          <span className="pmodal-chip__val">{s.ast.toFixed(1)}</span>
-        </div>
-        <div className="pmodal-chip">
-          <span className="pmodal-chip__label">TS%</span>
-          <span className="pmodal-chip__val">{tsDisplay.toFixed(1)}</span>
-        </div>
-        <div className="pmodal-chip">
-          <span className="pmodal-chip__label">STL</span>
-          <span className="pmodal-chip__val">{s.stl.toFixed(1)}</span>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function ProspectRight({ prospect }: { prospect: DraftProspect }) {
-  const s = prospect.collegeStats;
-
-  return (
-    <>
-      <div className="player-modal__section-label">Scout Grade</div>
-      <GradeBar grade={prospect.grade} />
-
-      {prospect.notes && (
-        <>
-          <div className="player-modal__section-label" style={{ marginTop: "1.25rem" }}>
-            Scout Notes
-          </div>
-          <p className="player-modal__playstyle">{prospect.notes}</p>
-        </>
-      )}
-
-      <div className="player-modal__divider" />
-
-      {s ? (
-        <ProspectCollegeStatsPanel s={s} />
-      ) : (
-        <>
-          <div className="player-modal__section-label">Season Statistics</div>
-          <div className="player-modal__no-stats">College statistics not yet available</div>
-        </>
-      )}
-
-      <div className="player-modal__divider" />
-
-      {/* Prominent market value for prospects */}
-      <div className="market-value-card market-value-card--prospect">
-        <div className="market-value-card__label">Est. Rookie Contract</div>
-        <div className="market-value-card__val">{fmt(prospect.projectedSalary)}</div>
-        <div className="market-value-card__note">AI estimate · based on scout grade formula</div>
-      </div>
-    </>
-  );
-}
+          <span className="pmodal-contract-item__val
