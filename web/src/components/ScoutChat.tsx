@@ -3,6 +3,7 @@ import type { DraftProspect, RosterDeficit, RosterPlayer } from "../types/simula
 import type { SmartRecommendation } from "../data/prospectRanking";
 import { rankProspectsForTeam } from "../data/prospectRanking";
 import type { TeamStrength } from "../data/prospectRanking";
+import { findClosestBlueprint, rankAllBlueprints } from "../data/blueprintScore";
 
 interface Message {
   role: "scout" | "user";
@@ -36,9 +37,13 @@ function buildResponse(
   if (/\b(who|best|recommend|pick|suggest|top)\b/.test(q) && !/compare/.test(q)) {
     if (!recommendation) return "No prospects left on the board.";
     const p = recommendation.prospect;
+    const bp = findClosestBlueprint(roster);
+    const bpSuffix = bp
+      ? ` Your roster currently matches the **${bp.team}** blueprint at ${bp.score}% — this pick helps close the gap.`
+      : "";
     return `My top recommendation is **${p.name}** (${p.position}, ${p.school}). ` +
       `Ceiling score: ${p.valueScore}/100 · Needs score: ${p.needsScore}/100. ` +
-      recommendation.explanation;
+      recommendation.explanation + bpSuffix;
   }
 
   // --- What are my needs / deficits ---
@@ -100,6 +105,21 @@ function buildResponse(
         : "You're in the mix. Balance ceiling and immediate fit to push into contention.");
   }
 
+  // --- Blueprint / team identity ---
+  if (/\b(blueprint|identity|style|dna|look like|similar|resemble|build like|building like)\b/.test(q)) {
+    const bp = findClosestBlueprint(roster);
+    if (!bp) return "Add more players to your roster before I can assess your blueprint DNA.";
+    const rankings = rankAllBlueprints(roster);
+    const rankStr = rankings.map(r => `${r.team} (${r.score}%)`).join(" · ");
+    return `Your roster most resembles the **${bp.team} (${bp.season})** at **${bp.score}% match**.\n` +
+      `Identity: "${bp.identitySentence}"\n\n` +
+      (bp.matchedSlotLabels.length > 0
+        ? `Shared DNA: ${bp.matchedSlotLabels.join(", ")}.\n\n`
+        : "") +
+      `Blueprint principle: "${bp.citationPrinciple}"\n\n` +
+      `All comparisons: ${rankStr}`;
+  }
+
   // --- Top N on the board ---
   const topNMatch = q.match(/top\s+(\d+)/);
   if (topNMatch) {
@@ -125,7 +145,7 @@ function buildResponse(
   }
 
   // --- Fallback ---
-  return `I can help with:\n• "Who should I pick?" — get my top recommendation\n• "What are my needs?" — roster gaps\n• "Tell me about [player]" — prospect breakdown\n• "Compare [A] and [B]" — side-by-side\n• "Top 5" — best fits for your team\n• "What's my team strength?" — contender assessment`;
+  return `I can help with:\n• "Who should I pick?" — top recommendation\n• "What are my needs?" — roster gaps\n• "Tell me about [player]" — prospect breakdown\n• "Compare [A] and [B]" — side-by-side\n• "Top 5" — best fits for your team\n• "What's my blueprint DNA?" — which contender team you're building like\n• "What's my team strength?" — contender assessment`;
 }
 
 export default function ScoutChat({

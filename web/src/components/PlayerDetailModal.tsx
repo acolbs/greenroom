@@ -10,6 +10,7 @@ import type {
 } from "../types/simulator";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import PlayerAvatar from "./PlayerAvatar";
+import { getBlueprintCitation } from "../data/blueprintScore";
 
 export type ModalSubject = ExpiringContract | DraftProspect | RosterPlayer;
 
@@ -481,6 +482,24 @@ function FaPlayerRight({ contract }: { contract: ExpiringContract }) {
         <div className="scout-take__headline">{take.headline}</div>
         <p className="scout-take__reasoning">{take.reasoning}</p>
       </div>
+
+      {/* Blueprint citation */}
+      {(() => {
+        const citation = getBlueprintCitation(contract.offensiveArchetype, contract.defensiveRole);
+        if (!citation) return null;
+        return (
+          <div className="blueprint-citation">
+            <div className="blueprint-citation__icon">📐</div>
+            <div className="blueprint-citation__body">
+              <div className="blueprint-citation__label">Blueprint Signal</div>
+              <div className="blueprint-citation__note">{citation.note}</div>
+              <div className="blueprint-citation__teams">
+                {citation.teamNames.join(" · ")}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </>
   );
 }

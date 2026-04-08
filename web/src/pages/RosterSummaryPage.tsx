@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import { CHAMPIONSHIP_FORMULA, computeFormulFitScore } from "../data/championshipFormula";
+import { findClosestBlueprint, rankAllBlueprints } from "../data/blueprintScore";
 import { TEAMS } from "../data/constants";
 import NavBar from "../components/NavBar";
 import CapBar from "../components/CapBar";
@@ -31,6 +33,8 @@ export default function RosterSummaryPage() {
   const team = TEAMS.find((t) => t.id === selectedTeamId);
   const fitScore = computeFormulFitScore(roster);
   const fitPct = Math.round(fitScore * 100);
+  const closestBlueprint = useMemo(() => findClosestBlueprint(roster), [roster]);
+  const blueprintRankings = useMemo(() => rankAllBlueprints(roster), [roster]);
 
   function handleReset() {
     reset();
@@ -282,6 +286,89 @@ export default function RosterSummaryPage() {
                     </span>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* ── Blueprint DNA panel ── */}
+            {closestBlueprint && (
+              <div className="blueprint-panel">
+                <div className="blueprint-panel__header">
+                  <span className="blueprint-panel__label">Blueprint DNA</span>
+                  <span className="blueprint-panel__badge">AI Analysis</span>
+                </div>
+
+                {/* Closest match */}
+                <div className="blueprint-panel__match">
+                  <div className="blueprint-panel__match-score"
+                    style={{
+                      color: closestBlueprint.score >= 70
+                        ? "var(--color-accent)"
+                        : closestBlueprint.score >= 45
+                        ? "var(--color-warning)"
+                        : "var(--color-text-muted)",
+                    }}
+                  >
+                    {closestBlueprint.score}%
+                  </div>
+                  <div className="blueprint-panel__match-info">
+                    <div className="blueprint-panel__match-team">{closestBlueprint.team}</div>
+                    <div className="blueprint-panel__match-season">
+                      {closestBlueprint.season} · {closestBlueprint.result}
+                    </div>
+                  </div>
+                </div>
+
+                <p className="blueprint-panel__identity">
+                  "{closestBlueprint.identitySentence}"
+                </p>
+
+                {/* Matched slots */}
+                {closestBlueprint.matchedSlotLabels.length > 0 && (
+                  <div className="blueprint-panel__slots">
+                    <div className="blueprint-panel__slots-label">Shared construction DNA</div>
+                    {closestBlueprint.matchedSlotLabels.map((label, i) => (
+                      <span key={i} className="blueprint-panel__slot-chip">{label}</span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Citation */}
+                {closestBlueprint.citationPrinciple && (
+                  <div className="blueprint-panel__citation">
+                    <span className="blueprint-panel__citation-icon">💡</span>
+                    <span>{closestBlueprint.citationPrinciple}</span>
+                  </div>
+                )}
+
+                {/* All rankings */}
+                {blueprintRankings.length > 1 && (
+                  <div className="blueprint-panel__rankings">
+                    <div className="blueprint-panel__slots-label" style={{ marginBottom: "0.4rem" }}>
+                      All blueprint comparisons
+                    </div>
+                    {blueprintRankings.map((bp, i) => (
+                      <div key={i} className="blueprint-panel__rank-row">
+                        <span className="blueprint-panel__rank-team">{bp.team} <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>{bp.season}</span></span>
+                        <div className="blueprint-panel__rank-bar-wrap">
+                          <div
+                            className="blueprint-panel__rank-bar"
+                            style={{
+                              width: `${bp.score}%`,
+                              background: i === 0
+                                ? "var(--color-accent)"
+                                : "var(--color-border)",
+                            }}
+                          />
+                        </div>
+                        <span className="blueprint-panel__rank-pct"
+                          style={{ color: i === 0 ? "var(--color-accent)" : "var(--color-text-muted)" }}
+                        >
+                          {bp.score}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
