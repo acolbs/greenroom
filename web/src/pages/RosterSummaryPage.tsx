@@ -3,6 +3,7 @@ import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import { CHAMPIONSHIP_FORMULA, computeFormulFitScore } from "../data/championshipFormula";
 import { findClosestBlueprint, rankAllBlueprints } from "../data/blueprintScore";
+import { buildReportCard } from "../data/reportCard";
 import { TEAMS } from "../data/constants";
 import NavBar from "../components/NavBar";
 import CapBar from "../components/CapBar";
@@ -35,6 +36,7 @@ export default function RosterSummaryPage() {
   const fitPct = Math.round(fitScore * 100);
   const closestBlueprint = useMemo(() => findClosestBlueprint(roster), [roster]);
   const blueprintRankings = useMemo(() => rankAllBlueprints(roster), [roster]);
+  const reportCard = useMemo(() => buildReportCard(roster, payroll, deficits), [roster, payroll, deficits]);
 
   function handleReset() {
     reset();
@@ -46,34 +48,69 @@ export default function RosterSummaryPage() {
       <NavBar />
 
       <div className="page-content">
-        <div style={{ marginBottom: "1.5rem", display: "flex", alignItems: "flex-end", gap: "1rem", flexWrap: "wrap" }}>
-          <div>
-            <div className="summary-fit-label">Championship Formula Fit</div>
-            <div
-              className="summary-fit-score"
-              style={{
-                color:
-                  fitPct >= 70
+        {/* ── Report Card header ── */}
+        <div style={{ marginBottom: "1.5rem" }}>
+          <div className="report-card">
+            {/* Overall grade */}
+            <div className="report-card__overall">
+              <div
+                className="report-card__grade"
+                style={{
+                  color:
+                    reportCard.overall.grade === "A" || reportCard.overall.grade === "B"
+                      ? "var(--color-accent)"
+                      : reportCard.overall.grade === "C"
+                      ? "var(--color-warning)"
+                      : "var(--color-danger)",
+                }}
+              >
+                {reportCard.overall.grade}
+              </div>
+              <div className="report-card__overall-info">
+                <div className="report-card__overall-label">Offseason Grade</div>
+                <div className="report-card__overall-sub">{reportCard.overall.label} · {reportCard.overall.score}/100</div>
+                {team && (
+                  <div className="report-card__team-name">
+                    {team.city} {team.name} · {roster.length} players
+                  </div>
+                )}
+              </div>
+              <div style={{ marginLeft: "auto" }}>
+                <button className="btn btn-secondary" onClick={handleReset}>
+                  Start Over
+                </button>
+              </div>
+            </div>
+
+            {/* 4 axis rows */}
+            <div className="report-card__axes">
+              {reportCard.axes.map((ax) => {
+                const gradeColor =
+                  ax.grade === "A" || ax.grade === "B"
                     ? "var(--color-accent)"
-                    : fitPct >= 45
+                    : ax.grade === "C"
                     ? "var(--color-warning)"
-                    : "var(--color-danger)",
-              }}
-            >
-              {fitPct}%
+                    : "var(--color-danger)";
+                return (
+                  <div key={ax.name} className="report-card__axis-row">
+                    <span className="report-card__axis-name">{ax.name}</span>
+                    <span className="report-card__axis-grade" style={{ color: gradeColor, borderColor: gradeColor + "55" }}>
+                      {ax.grade}
+                    </span>
+                    <div className="report-card__axis-bar-wrap">
+                      <div
+                        className="report-card__axis-bar"
+                        style={{
+                          width: `${ax.score}%`,
+                          background: gradeColor,
+                        }}
+                      />
+                    </div>
+                    <span className="report-card__axis-note">{ax.note}</span>
+                  </div>
+                );
+              })}
             </div>
-          </div>
-
-          {team && (
-            <div style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>
-              {team.city} {team.name} · {roster.length} players
-            </div>
-          )}
-
-          <div style={{ marginLeft: "auto" }}>
-            <button className="btn btn-secondary" onClick={handleReset}>
-              Start Over
-            </button>
           </div>
         </div>
 

@@ -2468,3 +2468,205 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   color: var(--color-text-muted);
   margin-top: 0.1rem;
 }
+
+/* ── Report Card (Roster Summary Page) ───────────────────────────────────── */
+
+.report-card {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.report-card__overall {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.report-card__grade {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.report-card__overall-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.report-card__overall-label {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+}
+
+.report-card__overall-sub {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.report-card__team-name {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin-top: 0.1rem;
+}
+
+.report-card__axes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 0.75rem;
+}
+
+.report-card__axis-row {
+  display: grid;
+  grid-template-columns: 130px 28px 1fr auto;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.report-card__axis-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.report-card__axis-grade {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 0.05rem 0.3rem;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.report-card__axis-bar-wrap {
+  height: 5px;
+  background: var(--color-surface);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.report-card__axis-bar {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.report-card__axis-note {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  max-width: 280px;
+  text-align: right;
+}
+
+/* ── Draft Advisor Banner ─────────────────────────────────────────────────── */
+
+.draft-advisor-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(63, 185, 80, 0.05);
+  border: 1px solid rgba(63, 185, 80, 0.2);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.draft-advisor-banner__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.draft-advisor-banner__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.draft-advisor-banner__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.draft-advisor-banner__label {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+}
+
+.draft-advisor-banner__tier {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 0.05rem 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.draft-advisor-banner__body {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.draft-advisor-banner__verb {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.draft-advisor-banner__name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.draft-advisor-banner__meta {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.draft-advisor-banner__cpu {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.draft-advisor-banner__reason {
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  max-width: 320px;
+  text-align: right;
+  flex-shrink: 0;
+}

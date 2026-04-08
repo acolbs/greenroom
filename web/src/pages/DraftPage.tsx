@@ -11,6 +11,7 @@ import type { DraftProspect, Position } from "../types/simulator";
 import NavBar from "../components/NavBar";
 import PlayerAvatar from "../components/PlayerAvatar";
 import ScoutChat from "../components/ScoutChat";
+import DraftAdvisorBanner from "../components/DraftAdvisorBanner";
 import PlayerDetailModal from "../components/PlayerDetailModal";
 import TeamLogo from "../components/TeamLogo";
 import Tooltip from "../components/Tooltip";
@@ -338,6 +339,18 @@ export default function DraftPage() {
             history={history}
             draftClass={draftClass}
             selectedTeamId={selectedTeamId}
+          />
+        )}
+
+        {/* ── Scout AI advisor banner ── */}
+        {draftSimActive && !draftSimComplete && (
+          <DraftAdvisorBanner
+            recommendation={recommendation}
+            deficits={deficits}
+            teamStrength={teamStrength}
+            roster={roster}
+            isUserTurn={isUserTurn}
+            isCpuPicking={!isUserTurn}
           />
         )}
 
