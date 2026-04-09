@@ -12,7 +12,7 @@
 // ---------------------------------------------------------------------------
 
 import type { RosterPlayer, OffensiveArchetype, DefensiveRole } from "../types/simulator";
-import { CHAMPIONSHIP_FORMULA } from "./championshipFormula";
+import { CHAMPIONSHIP_FORMULA, partialMatchCredit } from "./championshipFormula";
 import blueprintsRaw from "./championship-blueprints.json";
 
 // ---------------------------------------------------------------------------
@@ -129,15 +129,21 @@ function slotLabel(idx: number): string {
   return `${slot.offensiveArchetype} / ${slot.defensiveRole}`;
 }
 
-/** Convert a roster into a binary feature vector (one value per formula slot). */
+/** Convert a roster into a feature vector using partial matching (0–1 per slot). */
 function rosterToVector(roster: RosterPlayer[]): number[] {
   return CHAMPIONSHIP_FORMULA.slots.map((slot) => {
-    const count = roster.filter(
-      (p) =>
-        p.offensiveArchetype === slot.offensiveArchetype &&
-        p.defensiveRole === slot.defensiveRole
+    const exact = roster.filter(
+      (p) => p.offensiveArchetype === slot.offensiveArchetype && p.defensiveRole === slot.defensiveRole
     ).length;
-    return count >= slot.target ? 1 : 0;
+    if (exact >= slot.target) return 1;
+    // partial: best partial credit from any non-exact player
+    const partialPlayers = roster.filter(
+      (p) => !(p.offensiveArchetype === slot.offensiveArchetype && p.defensiveRole === slot.defensiveRole) &&
+        (p.offensiveArchetype === slot.offensiveArchetype || p.defensiveRole === slot.defensiveRole)
+    );
+    if (partialPlayers.length === 0) return exact >= slot.target ? 1 : 0;
+    // Return partial credit (normalized to slot.weight = 1 scale)
+    return partialMatchCredit(partialPlayers[0], slot) / slot.weight;
   });
 }
 
@@ -283,6 +289,86 @@ export function getBlueprintCitation(
       `${offArch} / ${slot.defensiveRole} is a ${(slot.weight * 100).toFixed(0)}%-weight formula slot — ` +
       `${teamNames.length} of ${total} blueprint teams built around it, including ${teamNames[0]}.`,
   };
+}
+
+export interface PlayerBlueprintMapping {
+  playerName: string;
+  offensiveArchetype: string;
+  defensiveRole: string;
+  /** "exact" | "partial-off" | "partial-def" | "none" */
+  matchType: "exact" | "partial-off" | "partial-def" | "none";
+  slotLabel: string;
+  matchStrength: number; // 0–1
+}
+
+/**
+ * Map each roster player to their best matching slot in the closest blueprint.
+ * Used to show "Player X fills the Shot Creator / Wing Stopper role" on the Summary page.
+ */
+export function mapRosterToBlueprint(
+  roster: RosterPlayer[],
+  blueprintId: string
+): PlayerBlueprintMapping[] {
+  const bv = BLUEPRINT_VECTORS[blueprintId];
+  if (!bv) return [];
+
+  return roster.map((p) => {
+    // Try exact match first
+    const exactIdx = CHAMPIONSHIP_FORMULA.slots.findIndex(
+      (s, i) => bv[i] === 1 && s.offensiveArchetype === p.offensiveArchetype && s.defensiveRole === p.defensiveRole
+    );
+    if (exactIdx !== -1) {
+      return {
+        playerName: p.name,
+        offensiveArchetype: p.offensiveArchetype,
+        defensiveRole: p.defensiveRole,
+        matchType: "exact",
+        slotLabel: slotLabel(exactIdx),
+        matchStrength: 1,
+      };
+    }
+
+    // Try partial: offensive match in a blueprint slot
+    const offIdx = CHAMPIONSHIP_FORMULA.slots.findIndex(
+      (s, i) => bv[i] === 1 && s.offensiveArchetype === p.offensiveArchetype
+    );
+    if (offIdx !== -1) {
+      const credit = partialMatchCredit(p, CHAMPIONSHIP_FORMULA.slots[offIdx]) / CHAMPIONSHIP_FORMULA.slots[offIdx].weight;
+      return {
+        playerName: p.name,
+        offensiveArchetype: p.offensiveArchetype,
+        defensiveRole: p.defensiveRole,
+        matchType: "partial-off",
+        slotLabel: slotLabel(offIdx),
+        matchStrength: credit,
+      };
+    }
+
+    // Try partial: defensive match in a blueprint slot
+    const defIdx = CHAMPIONSHIP_FORMULA.slots.findIndex(
+      (s, i) => bv[i] === 1 && s.defensiveRole === p.defensiveRole
+    );
+    if (defIdx !== -1) {
+      const credit = partialMatchCredit(p, CHAMPIONSHIP_FORMULA.slots[defIdx]) / CHAMPIONSHIP_FORMULA.slots[defIdx].weight;
+      return {
+        playerName: p.name,
+        offensiveArchetype: p.offensiveArchetype,
+        defensiveRole: p.defensiveRole,
+        matchType: "partial-def",
+        slotLabel: slotLabel(defIdx),
+        matchStrength: credit,
+      };
+    }
+
+    return {
+      playerName: p.name,
+      offensiveArchetype: p.offensiveArchetype,
+      defensiveRole: p.defensiveRole,
+      matchType: "none",
+      slotLabel: "",
+      matchStrength: 0,
+    };
+  });
 }
 
 /**

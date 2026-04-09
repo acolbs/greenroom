@@ -2670,3 +2670,44 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   text-align: right;
   flex-shrink: 0;
 }
+
+/* ── Blueprint player mapping ─────────────────────────────────────────────── */
+
+.blueprint-panel__player-map {
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: 0.625rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.blueprint-panel__player-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  padding: 0.2rem 0;
+}
+
+.blueprint-panel__player-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.blueprint-panel__player-slot {
+  color: var(--color-text-muted);
+  font-size: 0.65rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.blueprint-panel__player-match {
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+}

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import { CHAMPIONSHIP_FORMULA, computeFormulFitScore } from "../data/championshipFormula";
-import { findClosestBlueprint, rankAllBlueprints } from "../data/blueprintScore";
+import { findClosestBlueprint, rankAllBlueprints, mapRosterToBlueprint } from "../data/blueprintScore";
 import { buildReportCard } from "../data/reportCard";
 import { TEAMS } from "../data/constants";
 import NavBar from "../components/NavBar";
@@ -37,6 +37,10 @@ export default function RosterSummaryPage() {
   const closestBlueprint = useMemo(() => findClosestBlueprint(roster), [roster]);
   const blueprintRankings = useMemo(() => rankAllBlueprints(roster), [roster]);
   const reportCard = useMemo(() => buildReportCard(roster, payroll, deficits), [roster, payroll, deficits]);
+  const playerMappings = useMemo(
+    () => closestBlueprint ? mapRosterToBlueprint(roster, closestBlueprint.blueprintId) : [],
+    [roster, closestBlueprint]
+  );
 
   function handleReset() {
     reset();
@@ -374,6 +378,34 @@ export default function RosterSummaryPage() {
                   <div className="blueprint-panel__citation">
                     <span className="blueprint-panel__citation-icon">💡</span>
                     <span>{closestBlueprint.citationPrinciple}</span>
+                  </div>
+                )}
+
+                {/* ── Roster vs Blueprint player mapping ── */}
+                {playerMappings.filter(m => m.matchType !== "none").length > 0 && (
+                  <div className="blueprint-panel__player-map">
+                    <div className="blueprint-panel__slots-label" style={{ marginBottom: "0.5rem" }}>
+                      Your players vs {closestBlueprint.team}
+                    </div>
+                    {playerMappings
+                      .filter(m => m.matchType !== "none")
+                      .sort((a, b) => b.matchStrength - a.matchStrength)
+                      .map((m, i) => {
+                        const isExact = m.matchType === "exact";
+                        const color = isExact
+                          ? "var(--color-accent)"
+                          : m.matchStrength >= 0.3
+                          ? "var(--color-warning)"
+                          : "var(--color-text-muted)";
+                        const label = isExact ? "✓ Exact" : m.matchType === "partial-off" ? "~ Off. match" : "~ Def. match";
+                        return (
+                          <div key={i} className="blueprint-panel__player-row">
+                            <span className="blueprint-panel__player-name">{m.playerName}</span>
+                            <span className="blueprint-panel__player-slot">{m.slotLabel}</span>
+                            <span className="blueprint-panel__player-match" style={{ color }}>{label}</span>
+                          </div>
+                        );
+                      })}
                   </div>
                 )}
 

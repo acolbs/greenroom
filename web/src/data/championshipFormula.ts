@@ -86,6 +86,43 @@ export const CHAMPIONSHIP_FORMULA: ChampionshipFormula = {
 };
 
 // ---------------------------------------------------------------------------
+// Data-derived partial-match weights (inverse frequency from 534-player pool
+// vs 13 contender rosters). Rarer archetype = higher weight for that slot.
+// ---------------------------------------------------------------------------
+
+export const SLOT_PARTIAL_WEIGHTS: Record<string, { offW: number; defW: number }> = {
+  "Primary Ball Handler|Point of Attack": { offW: 0.65, defW: 0.35 },
+  "Shot Creator|Wing Stopper":            { offW: 0.37, defW: 0.63 },
+  "Stationary Shooter|Helper":            { offW: 0.62, defW: 0.38 },
+  "Shot Creator|Helper":                  { offW: 0.56, defW: 0.44 },
+  "Roll + Cut Big|Anchor Big":            { offW: 0.36, defW: 0.64 },
+  "Roll + Cut Big|Mobile Big":            { offW: 0.66, defW: 0.34 },
+  "Movement Shooter|Wing Stopper":        { offW: 0.35, defW: 0.65 },
+  "Stationary Shooter|Point of Attack":   { offW: 0.61, defW: 0.39 },
+  "Primary Ball Handler|Chaser":          { offW: 0.63, defW: 0.37 },
+};
+
+/**
+ * Partial match credit for a single player vs a formula slot.
+ * Both match = 1.0 · slot.weight
+ * Offensive only = offW × 0.5 · slot.weight
+ * Defensive only = defW × 0.5 · slot.weight
+ */
+export function partialMatchCredit(
+  p: { offensiveArchetype: string; defensiveRole: string },
+  slot: FormulaSlot
+): number {
+  const offHit = p.offensiveArchetype === slot.offensiveArchetype;
+  const defHit = p.defensiveRole === slot.defensiveRole;
+  if (offHit && defHit) return slot.weight;
+  const key = `${slot.offensiveArchetype}|${slot.defensiveRole}`;
+  const w = SLOT_PARTIAL_WEIGHTS[key] ?? { offW: 0.5, defW: 0.5 };
+  if (offHit) return w.offW * 0.5 * slot.weight;
+  if (defHit) return w.defW * 0.5 * slot.weight;
+  return 0;
+}
+
+// ---------------------------------------------------------------------------
 // Roster deficit computation
 // ---------------------------------------------------------------------------
 
@@ -134,12 +171,25 @@ export function computeFormulFitScore(roster: RosterPlayer[]): number {
     0
   );
 
+  // Use partial matching: exact hits score full weight, single-dimension hits
+  // score a data-derived fraction based on archetype rarity in the league.
   const filledWeight = CHAMPIONSHIP_FORMULA.slots.reduce((sum, slot) => {
-    const filled = Math.min(countMatches(roster, slot), slot.target);
-    return sum + filled * slot.weight;
+    const exact = Math.min(countMatches(roster, slot), slot.target);
+    if (exact >= slot.target) return sum + exact * slot.weight;
+    // Remaining capacity: check partial matches from other players
+    const remaining = slot.target - exact;
+    const partialPlayers = roster.filter(
+      (p) =>
+        !(p.offensiveArchetype === slot.offensiveArchetype && p.defensiveRole === slot.defensiveRole) &&
+        (p.offensiveArchetype === slot.offensiveArchetype || p.defensiveRole === slot.defensiveRole)
+    );
+    const partialCredit = Math.min(partialPlayers.length, remaining) > 0
+      ? partialMatchCredit(partialPlayers[0], slot) * Math.min(partialPlayers.length, remaining)
+      : 0;
+    return sum + exact * slot.weight + partialCredit;
   }, 0);
 
-  return totalWeight > 0 ? filledWeight / totalWeight : 0;
+  return totalWeight > 0 ? Math.min(filledWeight / totalWeight, 1) : 0;
 }
 
 // ---------------------------------------------------------------------------
