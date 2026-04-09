@@ -1,0 +1,353 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-04-08",
+  "notes": "Blueprints are contender/finalist profiles, not exclusively championship winners. Add true title teams (e.g. 2022 Warriors, 2023 Nuggets, 2024 Celtics) to enrich comparison power. Stats sourced from ESPN Hollinger unless noted.",
+  "blueprints": [
+    {
+      "id": "mavericks-2023-24",
+      "team": "Dallas Mavericks",
+      "season": "2023-24",
+      "result": "NBA Finals Runner-Up",
+      "source_file": "2023–24 Dallas Mavericks (Post-Trade Deadline Version) – Team-Building Blueprint.pdf",
+      "identity_sentence": "Superstar-centric 5-out motion offense built around Dončić/Irving, paired with length-and-switch defense anchored by dual rim protectors.",
+      "offensive_system": "5-out motion (Delay-Chicago actions, constant pin-downs and DHOs, star-led improvisation)",
+      "defensive_system": "Switch/drop hybrid with dual rim protectors; versatile wings switch above break, bigs drop and protect paint",
+      "stats": {
+        "pace": null,
+        "offRating": null,
+        "defRating": null,
+        "netRating": null,
+        "eFGpct": null,
+        "tsPct": null,
+        "astRatio": null,
+        "toRatio": null,
+        "orbPct": null,
+        "rebRate": null,
+        "threePARate": "high (rim-or-3 philosophy)",
+        "rimSharePct": null,
+        "opponentRimFGpct_playoffs": 0.50,
+        "notes": "Team-level box stats not fully extracted from this blueprint doc format. Playoff rim defense stat is explicitly sourced."
+      },
+      "construction_principles": [
+        "Build spacing around a generational playmaker — 4 perimeter players + 1 screener/roller at all times",
+        "Require a true secondary creator (not just a shooter) to punish help defense",
+        "Pair switchable wings (6'6\"–6'8\") with mobile rim-protecting bigs — the combination, not either alone, creates the defensive identity",
+        "Trade deadline flexibility: willing to sacrifice perimeter shooting to add defensive infrastructure mid-season",
+        "Role players have one job: shoot, cut, or screen — no secondary creation expected from role depth"
+      ],
+      "archetypes": [
+        {
+          "role": "Primary Creator",
+          "label": "Generational playmaker / focal point",
+          "count": 1,
+          "key_players": ["Luka Dončić"],
+          "fit_indicators": ["elite PnR + isolation efficiency", "high usage sustainable", "draws consistent double-teams"],
+          "anti_fit": ["low-IQ shot selection", "weak off-ball"],
+          "draft_note": "System is entirely built around this archetype — cannot be emulated without a Luka-caliber player"
+        },
+        {
+          "role": "Secondary Creator",
+          "label": "Off-ball scorer / secondary playmaker",
+          "count": 1,
+          "key_players": ["Kyrie Irving"],
+          "fit_indicators": ["movement scoring off screens", "capable of PnR when starter rests", "punishes help defense"],
+          "anti_fit": ["passive catch-and-shoot only"],
+          "draft_note": "Critical gap filler — offense collapses to one-dimensional without this archetype"
+        },
+        {
+          "role": "3-and-D Wing",
+          "label": "Switchable perimeter defender + spot-up shooter",
+          "count": 2,
+          "key_players": ["Dorian Finney-Smith", "Josh Green", "Quentin Grimes"],
+          "fit_indicators": ["3PT% > 36%", "defends 1-through-4", "accepts minimal offensive usage"],
+          "anti_fit": ["ball-stopper", "poor off-ball movement"],
+          "draft_note": "Need 2+ of these; system breaks without floor spacing around the stars"
+        },
+        {
+          "role": "Floor Spacer / Secondary 3PT Shooter",
+          "label": "Corner/wing shooter, non-creator",
+          "count": 1,
+          "key_players": ["P.J. Washington"],
+          "fit_indicators": ["catch-and-shoot 3PT > 37%", "comfortable in corner"],
+          "anti_fit": ["high-volume self-creation tendencies"],
+          "draft_note": "Acquired at trade deadline specifically to maintain spacing while adding length"
+        },
+        {
+          "role": "Rim Protector / Lob Threat",
+          "label": "Mobile big, lob finisher, paint anchor",
+          "count": 2,
+          "key_players": ["Dereck Lively II", "Daniel Gafford"],
+          "fit_indicators": ["block rate > 3%", "PnR roll efficiency high", "comfortable operating at top of 5-out"],
+          "anti_fit": ["post-up heavy", "slow lateral mover", "ball-stopper at top of key"],
+          "draft_note": "Two rim protectors is non-negotiable for this system — one starts, one provides backup interior defense"
+        }
+      ],
+      "structural_weaknesses": [
+        "High shooting variance — cold shooting nights expose lack of secondary actions",
+        "Superstar-dependent: if star creator is blitzed or injured, offense has no fallback generator",
+        "Limited decision-makers beyond top-2: teams that physically match up and blitz Dončić can stifle the offense"
+      ],
+      "blueprint_score_weights": {
+        "has_elite_primary_creator": 0.30,
+        "has_secondary_creator": 0.20,
+        "three_and_d_wing_count_gte_2": 0.15,
+        "has_mobile_rim_protector": 0.20,
+        "floor_spacer_depth": 0.15
+      }
+    },
+    {
+      "id": "pacers-2024-25",
+      "team": "Indiana Pacers",
+      "season": "2024-25",
+      "result": "Eastern Conference Contender",
+      "source_file": "2024–25 Indiana Pacers Team Identity and Playstyle Profile for Draft Modeling.pdf",
+      "identity_sentence": "High-efficiency ball-movement offense with elite assist creation and shot-making efficiency, deliberately trading offensive rebounds for floor balance and transition defense.",
+      "offensive_system": "PnR-centered advantage offense (Haliburton as initiator, Turner as roll-man), high passes/game, drive-and-kick rim pressure",
+      "defensive_system": "Approximately league-average; not scheme-driven; wins through offensive edge and clutch execution",
+      "stats": {
+        "pace": 102.2,
+        "offRating": 114.1,
+        "defRating": 111.3,
+        "netRating": 2.8,
+        "eFGpct": 0.562,
+        "tsPct": 0.594,
+        "astRatio": 20.7,
+        "toRatio": 11.8,
+        "orbPct": 21.3,
+        "rebRate": 48.2,
+        "threePARate": 0.400,
+        "rimSharePct": 0.383,
+        "clutchNetRating": 20.9,
+        "drivesPerGame": 53.3,
+        "passesPerGame": 321.2,
+        "source": "ESPN Hollinger (primary), StatMuse (shot zones), accessed 2026-04-01"
+      },
+      "construction_principles": [
+        "Win through shot quality and decision speed, not volume rebounding — deliberately low ORR is a feature, not a bug",
+        "Protect the assist ratio: anti-fit prospects are those who spike turnovers without elite creation to compensate",
+        "Rim pressure + 3PT spacing is the shot diet (78% of attempts at rim or behind arc)",
+        "Clutch performance is defense-driven even though regular-season identity is offensive — need defenders who hold up when pace slows",
+        "Roster gap: needs at least one above-average rebounder at a core position to stabilize matchups"
+      ],
+      "archetypes": [
+        {
+          "role": "Primary Creator / PnR Initiator",
+          "label": "Pass-first lead guard, advantage generator",
+          "count": 1,
+          "key_players": ["Tyrese Haliburton"],
+          "fit_indicators": ["AST% top-quartile for position", "low TOV% relative to usage", "PnR Ball Handler PPP ≥ league median"],
+          "anti_fit": ["high turnover rate without elite creation upside"],
+          "draft_note": "System is assist-ratio-driven; must preserve this or offensive identity collapses"
+        },
+        {
+          "role": "PnR Roll-Man / Rim Finisher",
+          "label": "Screen-and-roll big, above-average rebounder",
+          "count": 1,
+          "key_players": ["Myles Turner"],
+          "fit_indicators": ["strong roll-man efficiency", "rim finishing", "above-average rebounding to compensate team weakness"],
+          "anti_fit": ["non-screener", "post-up heavy big"],
+          "draft_note": "290 roll-man possessions in 2024-25 — this is the highest-leverage non-star role in the system"
+        },
+        {
+          "role": "Spacing Wing",
+          "label": "Quick-trigger shooter + secondary drive threat",
+          "count": 2,
+          "key_players": ["Bennedict Mathurin", "Andrew Nembhard"],
+          "fit_indicators": ["meaningful 3PA rate (system is already 40% 3PA)", "credible closeout attack", "defensive competence"],
+          "anti_fit": ["non-shooter who can't punish rotations", "ball-stopper"],
+          "draft_note": "Off-ball gravity matters more than creation here — system generates shots, needs someone to make them"
+        }
+      ],
+      "structural_weaknesses": [
+        "League-average defense — matchups where pace slows expose reliance on offensive edge",
+        "Bottom-tier offensive rebounding (21.3 ORR) means no second-chance cushion",
+        "Deep playoff runs require clutch defensive identity that regular-season metrics don't fully reveal"
+      ],
+      "blueprint_score_weights": {
+        "astRatio_gte_19": 0.20,
+        "toRatio_lte_12": 0.20,
+        "eFGpct_gte_0_55": 0.15,
+        "has_pnr_creator_guard": 0.25,
+        "has_rim_finishing_big": 0.10,
+        "spacing_wing_count_gte_2": 0.10
+      }
+    },
+    {
+      "id": "thunder-2025-26",
+      "team": "Oklahoma City Thunder",
+      "season": "2025-26",
+      "result": "1st in West (60-16, regular season ongoing as of 2026-04-01)",
+      "source_file": "2025 OKC Thunder Team Identity and Playstyle Report for Draft Modeling.pdf",
+      "identity_sentence": "Defense-first, turnover-forcing contender whose offense is driven by elite ball security and shot-making efficiency — wins by suffocating opponents, feeding offense from stops.",
+      "offensive_system": "Star-led half-court offense with connector big utility (Hartenstein short-roll/hub), secondary creators scaling when needed, midrange-capable star stabilizes late-clock",
+      "defensive_system": "High-pressure, event-driven, contest-quality oriented — forces turnovers and converts them into advantage offense; opponents shoot lowest FG% in NBA",
+      "stats": {
+        "pace": 101.7,
+        "offRating": 115.9,
+        "defRating": 104.6,
+        "netRating": 11.3,
+        "eFGpct": 0.558,
+        "tsPct": 0.597,
+        "toRatio": 11.3,
+        "turnoverPct": 0.124,
+        "orbPct": null,
+        "rebRate": null,
+        "rimSharePct": 0.28,
+        "threePARate": 0.32,
+        "oppFGpct": 0.435,
+        "deflectionsPerGame": 20.7,
+        "turnoversForced_pg": 16.8,
+        "pointsOffTurnovers_pg": 22.1,
+        "stealsPerGame": 9.6,
+        "blocksPerGame": 5.5,
+        "source": "ESPN Hollinger + NBA official game notes (through 75 games), accessed 2026-04-01"
+      },
+      "construction_principles": [
+        "Defense is not passive — it is event-generating: the goal is to force turnovers and convert them into advantage offense",
+        "Ball security is non-negotiable: league-best turnover% means every acquisition must prove mistake-avoidant decision-making",
+        "Roster fit is not positional — it's decision speed + defensive multiplicity (can they switch? can they pressure?)",
+        "Connector big role is critical: high-assist big (Hartenstein archetype) keeps possessions organized without creating turnover risk",
+        "Defense-first identity holds even with top-10 offense — proves the two aren't in conflict at roster construction level"
+      ],
+      "archetypes": [
+        {
+          "role": "Primary Creator",
+          "label": "MVP-level on-ball engine, self-created efficiency",
+          "count": 1,
+          "key_players": ["Shai Gilgeous-Alexander"],
+          "fit_indicators": ["elite paint + pull-up efficiency", "low personal turnover rate despite high usage", "midrange capable for late-clock stability"],
+          "anti_fit": ["high-turnover ball-handler", "jump-shot-dependent creator"],
+          "draft_note": "System's offensive gravity depends entirely on this archetype — offense is top-10 because of SGA, not despite defense"
+        },
+        {
+          "role": "Secondary Creator / Two-Way Wing",
+          "label": "Wing who scales up as secondary pilot, doesn't compromise defense",
+          "count": 1,
+          "key_players": ["Jalen Williams"],
+          "fit_indicators": ["can initiate when star rests", "defensive effort + IQ at wing position", "doesn't spike turnovers when usage increases"],
+          "anti_fit": ["pure scorer with defensive liabilities"],
+          "draft_note": "Offense remains top-10 specifically because this archetype exists — critical to not being one-dimensional"
+        },
+        {
+          "role": "Defensive Anchor Big / Contest Specialist",
+          "label": "Switchable, mobile big who contests without fouling",
+          "count": 1,
+          "key_players": ["Chet Holmgren"],
+          "fit_indicators": ["opponent 2PT% when contesting (explicitly tracked)", "rim protection without compromising spacing", "can switch onto wings"],
+          "anti_fit": ["traditional low-post big", "foul-prone"],
+          "draft_note": "OKC tracks and explicitly cites Holmgren's contest results — this is a primary identity marker"
+        },
+        {
+          "role": "Defensive Coordinator / Pressure Guard",
+          "label": "Switch/stunt/strip specialist, defensive multiplier",
+          "count": 1,
+          "key_players": ["Alex Caruso"],
+          "fit_indicators": ["deflections rate", "switch capability 1-through-4", "amplifies team defense without needing offensive usage"],
+          "anti_fit": ["defensive liability regardless of offensive value"],
+          "draft_note": "Described as 'ceiling-raising' even in limited minutes — this archetype is a force multiplier on the No. 1 defense"
+        },
+        {
+          "role": "Connector Big",
+          "label": "Screening + short-roll passing + rebounding utility",
+          "count": 1,
+          "key_players": ["Isaiah Hartenstein"],
+          "fit_indicators": ["AST ≥ 3.0 for a big", "strong rebounding", "dribble-handoff and short-roll mechanics", "low turnover rate for a passer"],
+          "anti_fit": ["passive screener only", "non-passing big"],
+          "draft_note": "9.7 REB + 3.7 AST explicitly cited in team notes — this is not a coincidence, it's a system requirement"
+        },
+        {
+          "role": "Point-of-Attack Disruption Guard",
+          "label": "Pressure guard who fits the turnover-forcing loop",
+          "count": 2,
+          "key_players": ["Cason Wallace", "Luguentz Dort"],
+          "fit_indicators": ["steals rate", "on-ball pressure ability", "accepts minimal offensive creation role"],
+          "anti_fit": ["passive defender", "requires offensive usage to justify rotation spot"],
+          "draft_note": "These are the pressure system's foot soldiers — must fit the deflection/turnover pipeline"
+        }
+      ],
+      "structural_weaknesses": [
+        "Moderate shot selection efficiency ('C' grade from secondary source) — relies on defense to compensate for below-elite shot diet",
+        "Youth-dependent depth — system continuity relies on young core continuing to develop"
+      ],
+      "blueprint_score_weights": {
+        "defRating_lte_108": 0.25,
+        "toRatio_lte_12": 0.20,
+        "has_mvp_creator": 0.20,
+        "has_two_way_wing": 0.15,
+        "has_connector_big_with_ast": 0.10,
+        "has_defensive_multiplier": 0.10
+      }
+    },
+    {
+      "id": "cavaliers-2024-25",
+      "team": "Cleveland Cavaliers",
+      "season": "2024-25",
+      "result": "Eastern Conference Contender (used as template/worked example in source doc)",
+      "source_file": "NBA team identity and playstyle profile for draft modeling.pdf",
+      "identity_sentence": "High-efficiency rim-and-3 offense anchored by elite shooting metrics and strong halfcourt execution, paired with a size-anchored defense.",
+      "offensive_system": "Rim-and-3 heavy halfcourt offense; efficient in transition despite slightly below-average frequency; shot-quality model rather than pace-driven",
+      "defensive_system": "Size-anchored defense; strong points-per-100 allowed; relies on physicality and length rather than pressure-forcing",
+      "stats": {
+        "pace": 102.4,
+        "offRating": 119.1,
+        "defRating": 109.0,
+        "netRating": 10.1,
+        "eFGpct": 0.578,
+        "tsPct": 0.607,
+        "astRatio": null,
+        "toRatio": 11.6,
+        "orbPct": 25.9,
+        "rebRate": 51.0,
+        "source": "ESPN Hollinger, accessed 2026-04-01"
+      },
+      "construction_principles": [
+        "Shooting efficiency and decision-making are primary — eFG% and TS% materially above league average means shot quality is the competitive edge",
+        "Turnover ratio better than league average — value low-mistake decision-makers and catch-and-shoot reliability at margins",
+        "Size anchors defense — physical, tall roster enables length-based rim protection and defensive rebounding",
+        "Pace is slightly above average but not extreme — offense wins through halfcourt quality, not pace exploitation",
+        "Above-average offensive rebounding (25.9 ORR vs 25.2 league) provides second-chance cushion"
+      ],
+      "archetypes": [
+        {
+          "role": "Shot-Making Lead",
+          "label": "Efficient primary scorer with low-turnover decision-making",
+          "count": 1,
+          "key_players": ["Donovan Mitchell"],
+          "fit_indicators": ["eFG% well above league average", "low turnover rate relative to usage", "pull-up and catch-and-shoot efficiency"],
+          "anti_fit": ["volume scorer with poor efficiency"],
+          "draft_note": "System is built on shot quality, not volume — this archetype must be efficient or the identity breaks"
+        },
+        {
+          "role": "Size Anchor / Defensive Big",
+          "label": "Physical, tall big who rebounds and deters rim attempts",
+          "count": 1,
+          "key_players": ["Jarrett Allen", "Evan Mobley"],
+          "fit_indicators": ["above-average rebounding rate", "rim deterrence", "length and physicality"],
+          "anti_fit": ["undersized big who cannot anchor defense"],
+          "draft_note": "Defense is size-anchored, not scheme-driven — need physical presence to maintain defensive identity"
+        },
+        {
+          "role": "Shooting Wing",
+          "label": "High-efficiency spot-up and off-movement shooter",
+          "count": 2,
+          "key_players": ["Max Strus", "Georges Niang"],
+          "fit_indicators": ["strong eFG% from 3", "catch-and-shoot reliability", "low-mistake decisions"],
+          "anti_fit": ["poor shooter", "turnover-prone"],
+          "draft_note": "Team's shot profile concentrates at rim and 3PT — wings must be able to punish from distance"
+        }
+      ],
+      "structural_weaknesses": [
+        "Below-average transition frequency despite efficient transition scoring — leaves possessions on the table",
+        "Defense relies on size, not pressure — vulnerable to pace teams that can outrun the size advantage"
+      ],
+      "blueprint_score_weights": {
+        "eFGpct_gte_0_56": 0.25,
+        "toRatio_lte_12": 0.20,
+        "defRating_lte_111": 0.15,
+        "has_efficient_primary_scorer": 0.20,
+        "has_size_anchor_big": 0.10,
+        "shooting_wing_count_gte_2": 0.10
+      }
+    }
+  ]
+}
