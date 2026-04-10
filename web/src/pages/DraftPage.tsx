@@ -12,6 +12,7 @@ import NavBar from "../components/NavBar";
 import PlayerAvatar from "../components/PlayerAvatar";
 import ScoutChat from "../components/ScoutChat";
 import DraftAdvisorBanner from "../components/DraftAdvisorBanner";
+import BlueprintSlotTracker from "../components/BlueprintSlotTracker";
 import PlayerDetailModal from "../components/PlayerDetailModal";
 import TeamLogo from "../components/TeamLogo";
 import Tooltip from "../components/Tooltip";
@@ -525,8 +526,13 @@ export default function DraftPage() {
             </div>
           </div>
 
-          {/* ── Right: Scout Chat + history ── */}
+          {/* ── Right: Blueprint tracker + Scout Chat + history ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {/* Blueprint slot tracker */}
+            {draftSimActive && (
+              <BlueprintSlotTracker roster={roster} />
+            )}
+
             {/* Scout Chat AI */}
             {draftSimActive && (
               <ScoutChat

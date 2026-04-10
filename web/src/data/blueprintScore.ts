@@ -392,3 +392,63 @@ export function rankAllBlueprints(
     }))
     .sort((a, b) => b.score - a.score);
 }
+
+// ---------------------------------------------------------------------------
+// Slot-fill view — for the live Blueprint Slot Tracker on the Draft page
+// ---------------------------------------------------------------------------
+
+export interface SlotFill {
+  /** e.g. "Primary Ball Handler / Point of Attack" */
+  slotLabel: string;
+  offensiveArchetype: string;
+  defensiveRole: string;
+  /** 0–1 importance weight from CHAMPIONSHIP_FORMULA */
+  weight: number;
+  /** Does this specific blueprint team require this slot? */
+  inBlueprint: boolean;
+  /** Name of the roster player filling this slot, or null if open */
+  player: string | null;
+  matchType: "exact" | "partial-off" | "partial-def" | "empty";
+}
+
+/**
+ * For each of the 9 championship formula slots, finds the best roster player
+ * filling it and whether the given blueprint requires that slot.
+ * Used by BlueprintSlotTracker on the Draft page.
+ */
+export function getSlotFills(
+  roster: RosterPlayer[],
+  blueprintId: string
+): SlotFill[] {
+  const bv = BLUEPRINT_VECTORS[blueprintId] ?? Array(9).fill(1);
+
+  return CHAMPIONSHIP_FORMULA.slots.map((slot, i) => {
+    const label = `${slot.offensiveArchetype} / ${slot.defensiveRole}`;
+
+    // Exact match first
+    const exact = roster.find(
+      (p) => p.offensiveArchetype === slot.offensiveArchetype && p.defensiveRole === slot.defensiveRole
+    );
+    if (exact) {
+      return { slotLabel: label, offensiveArchetype: slot.offensiveArchetype, defensiveRole: slot.defensiveRole, weight: slot.weight, inBlueprint: bv[i] === 1, player: exact.name, matchType: "exact" };
+    }
+
+    // Offensive-role partial
+    const offMatch = roster.find(
+      (p) => p.offensiveArchetype === slot.offensiveArchetype && p.defensiveRole !== slot.defensiveRole
+    );
+    if (offMatch) {
+      return { slotLabel: label, offensiveArchetype: slot.offensiveArchetype, defensiveRole: slot.defensiveRole, weight: slot.weight, inBlueprint: bv[i] === 1, player: offMatch.name, matchType: "partial-off" };
+    }
+
+    // Defensive-role partial
+    const defMatch = roster.find(
+      (p) => p.defensiveRole === slot.defensiveRole && p.offensiveArchetype !== slot.offensiveArchetype
+    );
+    if (defMatch) {
+      return { slotLabel: label, offensiveArchetype: slot.offensiveArchetype, defensiveRole: slot.defensiveRole, weight: slot.weight, inBlueprint: bv[i] === 1, player: defMatch.name, matchType: "partial-def" };
+    }
+
+    return { slotLabel: label, offensiveArchetype: slot.offensiveArchetype, defensiveRole: slot.defensiveRole, weight: slot.weight, inBlueprint: bv[i] === 1, player: null, matchType: "empty" };
+  });
+}
