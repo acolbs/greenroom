@@ -7,6 +7,7 @@ export type OffensiveArchetype =
   | "Low Minute"
   | "Movement Shooter"
   | "Off Screen Shooter"
+  | "Offensive Hub"
   | "Post Scorer"
   | "Primary Ball Handler"
   | "Roll + Cut Big"
@@ -204,6 +205,25 @@ export interface RosterDeficit {
 }
 
 // ---------------------------------------------------------------------------
+// Blueprint scoring
+// ---------------------------------------------------------------------------
+
+export interface BlueprintMatch {
+  blueprintId: string;
+  team: string;
+  season: string;
+  result: string;
+  /** 0–100 weighted cosine similarity between roster and blueprint. */
+  score: number;
+  /** Formula slot labels that both the user's roster AND this blueprint fill. */
+  matchedSlotLabels: string[];
+  /** A specific construction principle from the blueprint to cite in the UI. */
+  citationPrinciple: string;
+  /** One-sentence identity summary pulled from the blueprint doc. */
+  identitySentence: string;
+}
+
+// ---------------------------------------------------------------------------
 // Full simulator state (Zustand store shape)
 // ---------------------------------------------------------------------------
 
@@ -230,6 +250,7 @@ export interface SimulatorState {
   championshipFormula: ChampionshipFormula | null;
   rosterDeficits: RosterDeficit[];
   teamStrength: TeamStrength;
+  blueprintMatch: BlueprintMatch | null;
 
   // Async state
   loading: boolean;

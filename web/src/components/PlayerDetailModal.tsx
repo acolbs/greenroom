@@ -39,6 +39,8 @@ const OFF_DESCRIPTIONS: Record<OffensiveArchetype, string> = {
     "Reads off-ball action at an elite level — using screens, relocating, and firing on the catch without hesitation. Forces defenders to chase him across the entire court, opening driving lanes for teammates and punishing any lapse in coverage.",
   "Off Screen Shooter":
     "A nightmare for opposing coaches to scheme around. Drills pin-down and stagger screens with precision timing, curling or fading based on how the defense plays it. Gets comfortable looks that look impossible on paper.",
+  "Offensive Hub":
+    "The connective tissue of the offense — a big who can handle, pass, and score from every spot on the floor. Runs pick-and-rolls and post actions as both scorer and facilitator, creating advantages for teammates while being unguardable in isolation. The rarest archetype in basketball.",
   "Post Scorer":
     "A throwback scorer with polished footwork and touch around the basket. Punishes smaller defenders with size and physicality in the post, and reads double-teams to find cutters. Keeps opposing bigs honest and creates mismatches across the floor.",
   "Primary Ball Handler":
