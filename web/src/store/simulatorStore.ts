@@ -18,8 +18,13 @@ import type { MasterRow } from "../data/parseMaster";
 import { parseDraftClass } from "../data/parseBigBoard";
 import {
   applyProspectCollegeStats,
-  parseProspectStatsByRank,
+  parseProspectStatsByName,
 } from "../data/parseProspectStats";
+import {
+  parseProspectCompsByName,
+  parseProspectSuccessByName,
+  attachProspectML,
+} from "../data/parseProspectML";
 import {
   CHAMPIONSHIP_FORMULA,
   computeRosterDeficits,
@@ -51,24 +56,37 @@ function loadAllData(): Promise<LoadedData> {
   if (dataCache) return dataCache;
 
   dataCache = (async (): Promise<LoadedData> => {
-    const [masterText, statsText, contractsText, optionsText, bigBoardText, prospectStatsText] =
-      await Promise.all([
-        fetchText("data/master.csv"),
-        fetchText("data/2025-2026_Stats.csv"),
-        fetchText("data/hoopshype_contracts.csv"),
-        fetchText("data/options_contracts.csv"),
-        fetchText("data/big_board.csv"),
-        fetchText("data/prospect_stats.csv"),
-      ]);
+    const [
+      masterText,
+      statsText,
+      contractsText,
+      optionsText,
+      bigBoardText,
+      prospectStatsText,
+      prospectCompsText,
+      prospectSuccessText,
+    ] = await Promise.all([
+      fetchText("data/master.csv"),
+      fetchText("data/2025-2026_Stats.csv"),
+      fetchText("data/hoopshype_contracts.csv"),
+      fetchText("data/options_contracts.csv"),
+      fetchText("data/big_board.csv"),
+      fetchText("data/prospect_stats.csv"),
+      fetchText("data/prospect_comps.csv"),
+      fetchText("data/prospect_success.csv"),
+    ]);
 
     const masterRows = parseMasterRows(parseCsv(masterText));
     const contractMap = parseHoopshypeContracts(parseCsv(contractsText));
     const optionRows = parseOptionsContracts(parseCsv(optionsText));
     const aceMap = buildAceLookup(parseCsv(statsText));
-    const prospectStatsByRank = parseProspectStatsByRank(parseCsv(prospectStatsText));
-    const draftClass = applyProspectCollegeStats(
-      parseDraftClass(parseCsv(bigBoardText)),
-      prospectStatsByRank
+    const prospectStatsByName = parseProspectStatsByName(parseCsv(prospectStatsText));
+    const compsByName = parseProspectCompsByName(parseCsv(prospectCompsText));
+    const successByName = parseProspectSuccessByName(parseCsv(prospectSuccessText));
+    const draftClass = attachProspectML(
+      applyProspectCollegeStats(parseDraftClass(parseCsv(bigBoardText)), prospectStatsByName),
+      compsByName,
+      successByName
     );
 
     return { masterRows, contractMap, optionRows, aceMap, draftClass };

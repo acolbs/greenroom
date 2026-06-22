@@ -1,5 +1,5 @@
 import type { DraftProspect, ProspectCollegeStats } from "../types/simulator";
-import { toFloat } from "./csvUtils";
+import { toFloat, normalizeName } from "./csvUtils";
 
 function parseNullableFloat(raw: string | undefined): number | null {
   if (raw == null || raw.trim() === "") return null;
@@ -9,16 +9,17 @@ function parseNullableFloat(raw: string | undefined): number | null {
 
 /**
  * Parse web/public/data/prospect_stats.csv (Sports-Reference college per-game lines).
- * Keyed by big-board Rank. Rows without sr_found / empty games+pts are skipped.
+ * Keyed by normalized player name (stable across re-ranks). Rows without
+ * sr_found / empty games+pts are skipped.
  */
-export function parseProspectStatsByRank(
+export function parseProspectStatsByName(
   rows: Record<string, string>[]
-): Map<number, ProspectCollegeStats> {
-  const map = new Map<number, ProspectCollegeStats>();
+): Map<string, ProspectCollegeStats> {
+  const map = new Map<string, ProspectCollegeStats>();
 
   for (const row of rows) {
-    const rank = Math.round(toFloat(row["Rank"] ?? ""));
-    if (rank <= 0) continue;
+    const name = row["Name"]?.trim();
+    if (!name) continue;
 
     const srFound = row["sr_found"]?.trim() === "1";
     const games = parseNullableFloat(row["games"]);
@@ -30,7 +31,7 @@ export function parseProspectStatsByRank(
     const tsRaw = parseNullableFloat(row["ts_pct"]);
     const tsPct = tsRaw != null ? (tsRaw > 1 ? tsRaw / 100 : tsRaw) : 0;
 
-    map.set(rank, {
+    map.set(normalizeName(name), {
       seasonYear: row["year_id"]?.trim() || "—",
       teamAbbr: row["team_name_abbr"]?.trim() || "",
       confAbbr: row["conf_abbr"]?.trim() || "",
@@ -53,10 +54,10 @@ export function parseProspectStatsByRank(
 
 export function applyProspectCollegeStats(
   prospects: DraftProspect[],
-  byRank: Map<number, ProspectCollegeStats>
+  byName: Map<string, ProspectCollegeStats>
 ): DraftProspect[] {
   return prospects.map((p) => {
-    const collegeStats = byRank.get(p.rank);
+    const collegeStats = byName.get(normalizeName(p.name));
     return collegeStats ? { ...p, collegeStats } : p;
   });
 }

@@ -125,6 +125,31 @@ export interface ProspectCollegeStats {
   tsPct: number;
 }
 
+/** One ML player comparison (from prospect_comps.csv). */
+export interface ProspectComp {
+  /** Comparable NBA player's name. */
+  name: string;
+  /** Comparable's listed position. */
+  pos: string;
+  /** Comparable's offensive archetype + defensive role (display labels). */
+  offensiveArchetype: string;
+  defensiveRole: string;
+  /** Style-match similarity, 0–100. */
+  similarity: number;
+}
+
+/** ML success projection (from prospect_success.csv) — percentages 0–100. */
+export interface ProspectSuccessOdds {
+  star: number;
+  starter: number;
+  bench: number;
+  cut: number;
+  /** Expected value 1.0–4.0 (Cut→Star). */
+  ev: number;
+  /** Rank by EV across the prospect pool. */
+  mlRank: number;
+}
+
 export interface DraftProspect {
   /** Stable ID: "prospect-{rank}" */
   id: string;
@@ -141,8 +166,12 @@ export interface DraftProspect {
   notes: string;
   /** Heuristic rookie salary computed from grade. */
   projectedSalary: number;
-  /** Merged from prospect_stats.csv by Rank when available. */
+  /** Merged from prospect_stats.csv by name when available. */
   collegeStats?: ProspectCollegeStats;
+  /** Top ML comps (prospect_comps.csv), best match first. */
+  comps?: ProspectComp[];
+  /** ML success projection (prospect_success.csv). */
+  successOdds?: ProspectSuccessOdds;
 }
 
 export interface DraftHistoryEntry {

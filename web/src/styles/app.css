@@ -1643,6 +1643,84 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   border-radius: 8px;
 }
 
+/* ── Prospect ML: comps + projected outcome ─────────────────────────────── */
+.prospect-comps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.prospect-comp {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+}
+
+.prospect-comp__main {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.prospect-comp__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.prospect-comp__sim {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.prospect-comp__meta {
+  margin-top: 0.15rem;
+  font-size: 0.66rem;
+  color: var(--color-text-muted);
+}
+
+.success-bar {
+  display: flex;
+  height: 0.6rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.success-bar__seg {
+  height: 100%;
+}
+.success-bar__seg--star {
+  background: var(--color-accent);
+}
+.success-bar__seg--starter {
+  background: var(--color-info);
+}
+.success-bar__seg--bench {
+  background: var(--color-warning);
+}
+.success-bar__seg--cut {
+  background: var(--color-text-muted);
+}
+
+.success-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.66rem;
+  color: var(--color-text-muted);
+}
+
+.success-legend b {
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Grade bar */
 .pmodal-grade-wrap {
   display: flex;

@@ -622,6 +622,60 @@ function ProspectRight({ prospect }: { prospect: DraftProspect }) {
         </>
       )}
 
+      {prospect.comps && prospect.comps.length > 0 && (
+        <>
+          <div className="player-modal__divider" />
+          <div className="player-modal__section-label">Plays Like</div>
+          <div className="prospect-comps">
+            {prospect.comps.slice(0, 3).map((c) => (
+              <div className="prospect-comp" key={c.name}>
+                <div className="prospect-comp__main">
+                  <span className="prospect-comp__name">{c.name}</span>
+                  <span className="prospect-comp__sim">{Math.round(c.similarity)}% match</span>
+                </div>
+                <div className="prospect-comp__meta">
+                  {c.pos} · {c.offensiveArchetype} / {c.defensiveRole}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="player-modal__no-stats" style={{ marginTop: "0.5rem" }}>
+            ML style comps · trained on current NBA players
+          </div>
+        </>
+      )}
+
+      {prospect.successOdds && (
+        <>
+          <div className="player-modal__divider" />
+          <div className="player-modal__section-label">Projected Outcome</div>
+          <div className="success-bar">
+            <span
+              className="success-bar__seg success-bar__seg--star"
+              style={{ width: `${prospect.successOdds.star}%` }}
+            />
+            <span
+              className="success-bar__seg success-bar__seg--starter"
+              style={{ width: `${prospect.successOdds.starter}%` }}
+            />
+            <span
+              className="success-bar__seg success-bar__seg--bench"
+              style={{ width: `${prospect.successOdds.bench}%` }}
+            />
+            <span
+              className="success-bar__seg success-bar__seg--cut"
+              style={{ width: `${prospect.successOdds.cut}%` }}
+            />
+          </div>
+          <div className="success-legend">
+            <span><b>{prospect.successOdds.star.toFixed(0)}%</b> Star</span>
+            <span><b>{prospect.successOdds.starter.toFixed(0)}%</b> Starter</span>
+            <span><b>{prospect.successOdds.bench.toFixed(0)}%</b> Bench</span>
+            <span><b>{prospect.successOdds.cut.toFixed(0)}%</b> Cut</span>
+          </div>
+        </>
+      )}
+
       <div className="player-modal__divider" />
 
       {/* Prominent market value for prospects */}
