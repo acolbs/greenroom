@@ -1,0 +1,14 @@
+# ML prospect pipeline dependencies.
+#   pip install -r scripts/requirements-pipeline.txt
+#
+# Used by:
+#   prospect_data.py          (shared data + feature helpers)
+#   assign_archetypes_rf.py   (archetype models -> prospect_archetype_ml.csv)
+#   player_comps.py           (PCA/KNN comps  -> prospect_comps.csv)
+#   predict_success.py        (success model  -> prospect_success.csv)
+#   compose_big_board.py      (merge -> big_board.csv + prospect_stats.csv)
+pandas>=2.0
+numpy>=1.24
+scikit-learn>=1.3
+xgboost>=2.0
+imbalanced-learn>=0.12

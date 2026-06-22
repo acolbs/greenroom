@@ -18,3 +18,9 @@ web/vite.config.ts.timestamp-*.mjs
 
 # Claude Code git worktrees (linked working trees, not files to commit)
 .claude/worktrees/
+
+# ML pipeline scratch / verification artifacts
+.tmp_scratch/
+web/public/data/*.composed
+__pycache__/
+*.pyc
