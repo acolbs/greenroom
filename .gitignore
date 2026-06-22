@@ -9,3 +9,12 @@ web/dist/
 .cursor/
 web/.vite/
 **/*.tsbuildinfo
+
+# Vite temp config artifacts
+web/vite.config.ts.timestamp-*.mjs
+
+# Impeccable live-session state
+.impeccable/live/sessions/
+
+# Claude Code git worktrees (linked working trees, not files to commit)
+.claude/worktrees/

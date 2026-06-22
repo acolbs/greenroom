@@ -1,0 +1,336 @@
+Rank,Prospect,Pos,Comp_Rank,Comp_Name,Comp_Pos,Comp_Off,Comp_Def,Similarity
+1,Cameron Boozer,PF,1,Alperen Sengun,C,Shot Creator,Mobile Big,81.7
+1,Cameron Boozer,PF,2,Anthony Davis,PF,Shot Creator,Mobile Big,78.6
+1,Cameron Boozer,PF,3,Pascal Siakam,PF,Shot Creator,Wing Stopper,77.8
+1,Cameron Boozer,PF,4,Bam Adebayo,C,Shot Creator,Mobile Big,77.8
+1,Cameron Boozer,PF,5,Paolo Banchero,PF,Shot Creator,Wing Stopper,77.7
+2,Darryn Peterson,SG/PG,1,Anthony Edwards,SG,Shot Creator,Chaser,86.8
+2,Darryn Peterson,SG/PG,2,Kawhi Leonard,SF,Shot Creator,Wing Stopper,85.4
+2,Darryn Peterson,SG/PG,3,Norman Powell,SG,Shot Creator,Chaser,82.7
+2,Darryn Peterson,SG/PG,4,Dillon Brooks,SF,Shot Creator,Wing Stopper,81.2
+2,Darryn Peterson,SG/PG,5,Shaedon Sharpe,SG,Shot Creator,Chaser,81.2
+3,AJ Dybantsa,SF,1,Jaylen Brown,SF,Shot Creator,Helper,85.9
+3,AJ Dybantsa,SF,2,Pascal Siakam,PF,Shot Creator,Wing Stopper,84.9
+3,AJ Dybantsa,SF,3,Franz Wagner,SF,Shot Creator,Wing Stopper,83.7
+3,AJ Dybantsa,SF,4,Julius Randle,PF,Shot Creator,Helper,83.3
+3,AJ Dybantsa,SF,5,Paolo Banchero,PF,Shot Creator,Wing Stopper,82.5
+4,Caleb Wilson,SF/PF,1,Jarrett Allen,C,Roll + Cut Big,Mobile Big,74.8
+4,Caleb Wilson,SF/PF,2,Marvin Bagley III,PF,Roll + Cut Big,Mobile Big,73.1
+4,Caleb Wilson,SF/PF,3,Anthony Davis,PF,Shot Creator,Mobile Big,72.7
+4,Caleb Wilson,SF/PF,4,Trayce Jackson-Davis,C,Roll + Cut Big,Mobile Big,71.7
+4,Caleb Wilson,SF/PF,5,Derik Queen,C,Shot Creator,Mobile Big,70.6
+5,Kingston Flemings,PG,1,Jalen Williams,SG,Shot Creator,Helper,92.9
+5,Kingston Flemings,PG,2,Dylan Harper,SG,Shot Creator,Point of Attack,86.7
+5,Kingston Flemings,PG,3,Devin Carter,PG,Secondary Ball Handler,Point of Attack,86.4
+5,Kingston Flemings,PG,4,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,86.2
+5,Kingston Flemings,PG,5,Shaedon Sharpe,SG,Shot Creator,Chaser,84.3
+6,Darius Acuff,PG,1,Jalen Williams,SG,Shot Creator,Helper,92.1
+6,Darius Acuff,PG,2,Devin Booker,SG,Shot Creator,Helper,87.7
+6,Darius Acuff,PG,3,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,86.2
+6,Darius Acuff,PG,4,Keyonte George,PG,Primary Ball Handler,Chaser,85.8
+6,Darius Acuff,PG,5,Donovan Mitchell,SG,Shot Creator,Helper,85.8
+7,Keaton Wagler,SG/PG,1,RJ Barrett,SF,Movement Shooter,Helper,92.0
+7,Keaton Wagler,SG/PG,2,Desmond Bane,SG,Primary Ball Handler,Chaser,90.4
+7,Keaton Wagler,SG/PG,3,Austin Reaves,SG,Shot Creator,Chaser,89.2
+7,Keaton Wagler,SG/PG,4,Bennedict Mathurin,SF,Secondary Ball Handler,Chaser,88.8
+7,Keaton Wagler,SG/PG,5,Anthony Edwards,SG,Shot Creator,Chaser,86.4
+8,Mikel Brown Jr.,PG,1,Donovan Mitchell,SG,Shot Creator,Helper,91.1
+8,Mikel Brown Jr.,PG,2,Collin Sexton,SG,Primary Ball Handler,Point of Attack,90.9
+8,Mikel Brown Jr.,PG,3,Keyonte George,PG,Primary Ball Handler,Chaser,90.2
+8,Mikel Brown Jr.,PG,4,De'Aaron Fox,PG,Shot Creator,Point of Attack,89.1
+8,Mikel Brown Jr.,PG,5,Dennis Schröder,PG,Shot Creator,Point of Attack,86.7
+9,Nate Ament,SF,1,Franz Wagner,SF,Shot Creator,Wing Stopper,83.3
+9,Nate Ament,SF,2,Jonathan Kuminga,PF,Shot Creator,Wing Stopper,81.7
+9,Nate Ament,SF,3,Pascal Siakam,PF,Shot Creator,Wing Stopper,81.7
+9,Nate Ament,SF,4,DeMar DeRozan,PF,Shot Creator,Helper,80.7
+9,Nate Ament,SF,5,Bennedict Mathurin,SF,Secondary Ball Handler,Chaser,79.5
+10,Brayden Burries,SG/PG,1,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,88.6
+10,Brayden Burries,SG/PG,2,Jeremiah Fears,PG,Primary Ball Handler,Point of Attack,85.9
+10,Brayden Burries,SG/PG,3,Norman Powell,SG,Shot Creator,Chaser,84.5
+10,Brayden Burries,SG/PG,4,Bruce Brown,SG,Stationary Shooter,Point of Attack,82.2
+10,Brayden Burries,SG/PG,5,Desmond Bane,SG,Primary Ball Handler,Chaser,81.8
+11,Labaron Philon,PG,1,Donovan Mitchell,SG,Shot Creator,Helper,90.4
+11,Labaron Philon,PG,2,Keyonte George,PG,Primary Ball Handler,Chaser,88.2
+11,Labaron Philon,PG,3,Jamal Murray,PG,Shot Creator,Chaser,86.4
+11,Labaron Philon,PG,4,Jalen Williams,SG,Shot Creator,Helper,85.6
+11,Labaron Philon,PG,5,De'Aaron Fox,PG,Shot Creator,Point of Attack,84.9
+12,Yaxel Lendeborg,PF,1,Jaren Jackson Jr.,C,Shot Creator,Helper,89.1
+12,Yaxel Lendeborg,PF,2,Alex Sarr,C,Shot Creator,Mobile Big,84.9
+12,Yaxel Lendeborg,PF,3,Evan Mobley,PF,Shot Creator,Mobile Big,84.7
+12,Yaxel Lendeborg,PF,4,Anthony Davis,PF,Shot Creator,Mobile Big,84.5
+12,Yaxel Lendeborg,PF,5,Karl-Anthony Towns,C,Shot Creator,Mobile Big,83.2
+13,Hannes Steinbach,PF,1,Marvin Bagley III,PF,Roll + Cut Big,Mobile Big,84.3
+13,Hannes Steinbach,PF,2,Anthony Davis,PF,Shot Creator,Mobile Big,81.2
+13,Hannes Steinbach,PF,3,Karl-Anthony Towns,C,Shot Creator,Mobile Big,77.0
+13,Hannes Steinbach,PF,4,Jarrett Allen,C,Roll + Cut Big,Mobile Big,73.5
+13,Hannes Steinbach,PF,5,Jonas Valančiūnas,C,Post Scorer,Anchor Big,73.4
+14,Braylon Mullins,SG,1,Aaron Wiggins,SG,Movement Shooter,Helper,92.4
+14,Braylon Mullins,SG,2,Devin Vassell,SG,Movement Shooter,Chaser,88.4
+14,Braylon Mullins,SG,3,Jaylon Tyson,SG,Movement Shooter,Chaser,87.7
+14,Braylon Mullins,SG,4,Jaden Ivey,SG,Movement Shooter,Chaser,87.4
+14,Braylon Mullins,SG,5,Tre Johnson,SG,Off Screen Shooter,Chaser,86.8
+15,Thomas Haugh,PF,1,P.J. Washington,PF,Shot Creator,Wing Stopper,88.1
+15,Thomas Haugh,PF,2,Peyton Watson,SF,Movement Shooter,Point of Attack,87.7
+15,Thomas Haugh,PF,3,Keshad Johnson,SF,Shot Creator,Helper,83.8
+15,Thomas Haugh,PF,4,Kyle Kuzma,PF,Movement Shooter,Wing Stopper,83.4
+15,Thomas Haugh,PF,5,RJ Barrett,SF,Movement Shooter,Helper,83.0
+16,Koa Peat,PF,1,Alperen Sengun,C,Shot Creator,Mobile Big,90.7
+16,Koa Peat,PF,2,Marvin Bagley III,PF,Roll + Cut Big,Mobile Big,83.7
+16,Koa Peat,PF,3,Paolo Banchero,PF,Shot Creator,Wing Stopper,82.6
+16,Koa Peat,PF,4,Jarrett Allen,C,Roll + Cut Big,Mobile Big,80.0
+16,Koa Peat,PF,5,Derik Queen,C,Shot Creator,Mobile Big,79.1
+18,Chris Cenac Jr.,PF/C,1,Anthony Davis,PF,Shot Creator,Mobile Big,75.4
+18,Chris Cenac Jr.,PF/C,2,John Collins,PF,Stationary Shooter,Helper,75.4
+18,Chris Cenac Jr.,PF/C,3,Bam Adebayo,C,Shot Creator,Mobile Big,74.5
+18,Chris Cenac Jr.,PF/C,4,Jalen Smith,C,Stretch Big,Mobile Big,74.0
+18,Chris Cenac Jr.,PF/C,5,Nikola Vučević,C,Versatile Big,Mobile Big,74.0
+19,Tounde Yessoufou,SG/SF,1,Shaedon Sharpe,SG,Shot Creator,Chaser,81.4
+19,Tounde Yessoufou,SG/SF,2,Justin Champagnie,SF,Movement Shooter,Helper,78.8
+19,Tounde Yessoufou,SG/SF,3,Dillon Brooks,SF,Shot Creator,Wing Stopper,78.2
+19,Tounde Yessoufou,SG/SF,4,OG Anunoby,PF,Stationary Shooter,Wing Stopper,78.1
+19,Tounde Yessoufou,SG/SF,5,Myron Gardner,SF,Movement Shooter,Helper,77.5
+20,Jayden Quaintance,PF,1,Amari Williams,PF,Athletic Finisher,Anchor Big,72.9
+20,Jayden Quaintance,PF,2,Trayce Jackson-Davis,C,Roll + Cut Big,Mobile Big,70.1
+20,Jayden Quaintance,PF,3,Adem Bona,C,Roll + Cut Big,Mobile Big,67.3
+20,Jayden Quaintance,PF,4,Daniel Gafford,C,Roll + Cut Big,Mobile Big,66.0
+20,Jayden Quaintance,PF,5,Jarrett Allen,C,Roll + Cut Big,Mobile Big,61.0
+22,Bennett Stirtz,PG,1,Norman Powell,SG,Shot Creator,Chaser,89.6
+22,Bennett Stirtz,PG,2,Desmond Bane,SG,Primary Ball Handler,Chaser,88.9
+22,Bennett Stirtz,PG,3,Ayo Dosunmu,SG,Primary Ball Handler,Point of Attack,88.4
+22,Bennett Stirtz,PG,4,Collin Sexton,SG,Primary Ball Handler,Point of Attack,87.8
+22,Bennett Stirtz,PG,5,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,87.7
+26,Tyler Tanner,PG,1,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,81.4
+26,Tyler Tanner,PG,2,Devin Carter,PG,Secondary Ball Handler,Point of Attack,80.5
+26,Tyler Tanner,PG,3,Jalen Williams,SG,Shot Creator,Helper,78.7
+26,Tyler Tanner,PG,4,Tyrese Maxey,PG,Shot Creator,Chaser,78.6
+26,Tyler Tanner,PG,5,De'Anthony Melton,PG,Primary Ball Handler,Point of Attack,78.4
+28,Joshua Jefferson,PF/SF,1,Kyle Anderson,SF,Shot Creator,Mobile Big,81.3
+28,Joshua Jefferson,PF/SF,2,Jalen Johnson,SF,Shot Creator,Helper,79.8
+28,Joshua Jefferson,PF/SF,3,Scottie Barnes,PF,Shot Creator,Wing Stopper,78.6
+28,Joshua Jefferson,PF/SF,4,Jonathan Kuminga,PF,Shot Creator,Wing Stopper,76.0
+28,Joshua Jefferson,PF/SF,5,Ausar Thompson,SF,Roll + Cut Big,Point of Attack,75.4
+29,Morez Johnson Jr.,PF,1,Marvin Bagley III,PF,Roll + Cut Big,Mobile Big,86.6
+29,Morez Johnson Jr.,PF,2,Anthony Davis,PF,Shot Creator,Mobile Big,78.3
+29,Morez Johnson Jr.,PF,3,Jarrett Allen,C,Roll + Cut Big,Mobile Big,77.2
+29,Morez Johnson Jr.,PF,4,Alperen Sengun,C,Shot Creator,Mobile Big,75.8
+29,Morez Johnson Jr.,PF,5,Karl-Anthony Towns,C,Shot Creator,Mobile Big,75.4
+30,Dailyn Swain,SG/SF,1,Jimmy Butler,SF,Shot Creator,Wing Stopper,80.5
+30,Dailyn Swain,SG/SF,2,Jordan Miller,SF,Secondary Ball Handler,Chaser,77.3
+30,Dailyn Swain,SG/SF,3,Naji Marshall,SF,Stationary Shooter,Wing Stopper,77.2
+30,Dailyn Swain,SG/SF,4,Jalen Williams,SG,Shot Creator,Helper,77.2
+30,Dailyn Swain,SG/SF,5,Jalen Johnson,SF,Shot Creator,Helper,76.3
+31,Isaiah Evans,SF,1,Aaron Nesmith,SF,Off Screen Shooter,Chaser,90.3
+31,Isaiah Evans,SF,2,Andrew Wiggins,SF,Shot Creator,Wing Stopper,87.0
+31,Isaiah Evans,SF,3,Zaccharie Risacher,SF,Stationary Shooter,Helper,86.8
+31,Isaiah Evans,SF,4,Miles Bridges,PF,Shot Creator,Wing Stopper,85.7
+31,Isaiah Evans,SF,5,Ace Bailey,SF,Movement Shooter,Helper,85.2
+32,Ebuka Okorie,PG,1,Norman Powell,SG,Shot Creator,Chaser,86.3
+32,Ebuka Okorie,PG,2,Shaedon Sharpe,SG,Shot Creator,Chaser,85.5
+32,Ebuka Okorie,PG,3,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,83.2
+32,Ebuka Okorie,PG,4,Jalen Williams,SG,Shot Creator,Helper,81.7
+32,Ebuka Okorie,PG,5,Devin Booker,SG,Shot Creator,Helper,80.4
+33,Meleek Thomas,SG/PG,1,Shaedon Sharpe,SG,Shot Creator,Chaser,90.7
+33,Meleek Thomas,SG/PG,2,Dillon Brooks,SF,Shot Creator,Wing Stopper,87.8
+33,Meleek Thomas,SG/PG,3,Saddiq Bey,SF,Shot Creator,Helper,85.7
+33,Meleek Thomas,SG/PG,4,Jalen Green,SG,Shot Creator,Chaser,85.7
+33,Meleek Thomas,SG/PG,5,Norman Powell,SG,Shot Creator,Chaser,85.2
+34,Aday Mara,C,1,Zach Edey,C,Post Scorer,Anchor Big,73.0
+34,Aday Mara,C,2,Khaman Maluach,C,Roll + Cut Big,Helper,65.8
+34,Aday Mara,C,3,Ryan Kalkbrenner,C,Roll + Cut Big,Anchor Big,62.8
+34,Aday Mara,C,4,Ivica Zubac,C,Post Scorer,Anchor Big,61.1
+34,Aday Mara,C,5,Luke Kornet,C,Roll + Cut Big,Anchor Big,60.9
+35,Henri Veesaar,C,1,Anthony Davis,PF,Shot Creator,Mobile Big,86.4
+35,Henri Veesaar,C,2,Karl-Anthony Towns,C,Shot Creator,Mobile Big,84.1
+35,Henri Veesaar,C,3,Donovan Clingan,C,Stretch Big,Anchor Big,83.4
+35,Henri Veesaar,C,4,Zach Collins,C,Stretch Big,Mobile Big,81.8
+35,Henri Veesaar,C,5,Alex Sarr,C,Shot Creator,Mobile Big,81.7
+36,Alijah Arenas,SG,1,RJ Barrett,SF,Movement Shooter,Helper,85.6
+36,Alijah Arenas,SG,2,Norman Powell,SG,Shot Creator,Chaser,82.2
+36,Alijah Arenas,SG,3,Desmond Bane,SG,Primary Ball Handler,Chaser,81.0
+36,Alijah Arenas,SG,4,Jalen Williams,SG,Shot Creator,Helper,80.6
+36,Alijah Arenas,SG,5,Brandon Williams,PG,Slasher,Point of Attack,80.4
+37,Flory Bidunga,C,1,Clint Capela,C,Roll + Cut Big,Mobile Big,85.6
+37,Flory Bidunga,C,2,Yves Missi,C,Athletic Finisher,Mobile Big,85.1
+37,Flory Bidunga,C,3,Joan Beringer,PF,Roll + Cut Big,Helper,82.6
+37,Flory Bidunga,C,4,Daniel Gafford,C,Roll + Cut Big,Mobile Big,78.2
+37,Flory Bidunga,C,5,Mitchell Robinson,C,Athletic Finisher,Mobile Big,76.2
+39,Zuby Ejiofor,PF,1,Trayce Jackson-Davis,C,Roll + Cut Big,Mobile Big,74.0
+39,Zuby Ejiofor,PF,2,Derik Queen,C,Shot Creator,Mobile Big,73.2
+39,Zuby Ejiofor,PF,3,Marvin Bagley III,PF,Roll + Cut Big,Mobile Big,71.7
+39,Zuby Ejiofor,PF,4,Daniel Gafford,C,Roll + Cut Big,Mobile Big,71.3
+39,Zuby Ejiofor,PF,5,Jarrett Allen,C,Roll + Cut Big,Mobile Big,70.9
+40,Alex Karaban,SF/PF,1,Jabari Smith Jr.,PF,Movement Shooter,Helper,93.0
+40,Alex Karaban,SF/PF,2,Asa Newell,PF,Stationary Shooter,Helper,91.6
+40,Alex Karaban,SF/PF,3,Quinten Post,PF,Stretch Big,Mobile Big,90.5
+40,Alex Karaban,SF/PF,4,Aaron Nesmith,SF,Off Screen Shooter,Chaser,90.3
+40,Alex Karaban,SF/PF,5,Andrew Wiggins,SF,Shot Creator,Wing Stopper,90.3
+41,Braden Smith,PG,1,Josh Giddey,PG,Primary Ball Handler,Helper,82.3
+41,Braden Smith,PG,2,Pat Spencer,PG,Primary Ball Handler,Chaser,82.2
+41,Braden Smith,PG,3,Jamal Shead,PG,Primary Ball Handler,Point of Attack,82.0
+41,Braden Smith,PG,4,Andrew Nembhard,PG,Primary Ball Handler,Point of Attack,81.9
+41,Braden Smith,PG,5,Blake Wesley,SG,Shot Creator,Chaser,81.0
+42,Motiejus Krivas,C,1,Nick Richards,C,Roll + Cut Big,Mobile Big,82.2
+42,Motiejus Krivas,C,2,Mitchell Robinson,C,Athletic Finisher,Mobile Big,77.4
+42,Motiejus Krivas,C,3,Adem Bona,C,Roll + Cut Big,Mobile Big,76.9
+42,Motiejus Krivas,C,4,Rudy Gobert,C,Roll + Cut Big,Anchor Big,76.5
+42,Motiejus Krivas,C,5,PJ Hall,C,Roll + Cut Big,Anchor Big,75.8
+43,Juke Harris,SG,1,Norman Powell,SG,Shot Creator,Chaser,86.1
+43,Juke Harris,SG,2,Cam Christie,SG,Movement Shooter,Point of Attack,80.8
+43,Juke Harris,SG,3,Desmond Bane,SG,Primary Ball Handler,Chaser,80.7
+43,Juke Harris,SG,4,Bryce McGowens,SG,Stationary Shooter,Chaser,80.3
+43,Juke Harris,SG,5,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,79.7
+44,Richie Saunders,SG,1,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,86.1
+44,Richie Saunders,SG,2,Jeremiah Fears,PG,Primary Ball Handler,Point of Attack,85.8
+44,Richie Saunders,SG,3,De'Anthony Melton,PG,Primary Ball Handler,Point of Attack,85.7
+44,Richie Saunders,SG,4,Norman Powell,SG,Shot Creator,Chaser,83.3
+44,Richie Saunders,SG,5,Jamaree Bouyea,PG,Secondary Ball Handler,Chaser,82.2
+45,Tarris Reed Jr.,C,1,Clint Capela,C,Roll + Cut Big,Mobile Big,76.8
+45,Tarris Reed Jr.,C,2,Isaiah Jackson,C,Roll + Cut Big,Mobile Big,73.8
+45,Tarris Reed Jr.,C,3,Daniel Gafford,C,Roll + Cut Big,Mobile Big,73.7
+45,Tarris Reed Jr.,C,4,Yves Missi,C,Athletic Finisher,Mobile Big,73.4
+45,Tarris Reed Jr.,C,5,Trayce Jackson-Davis,C,Roll + Cut Big,Mobile Big,71.3
+46,JT Toppin,PF,1,Marvin Bagley III,PF,Roll + Cut Big,Mobile Big,73.3
+46,JT Toppin,PF,2,Paul Reed,C,Roll + Cut Big,Mobile Big,73.2
+46,JT Toppin,PF,3,Scottie Barnes,PF,Shot Creator,Wing Stopper,71.9
+46,JT Toppin,PF,4,Chet Holmgren,PF,Shot Creator,Mobile Big,70.8
+46,JT Toppin,PF,5,Derik Queen,C,Shot Creator,Mobile Big,69.0
+48,Alex Condon,PF/C,1,Derik Queen,C,Shot Creator,Mobile Big,82.0
+48,Alex Condon,PF/C,2,Marvin Bagley III,PF,Roll + Cut Big,Mobile Big,79.0
+48,Alex Condon,PF/C,3,Trayce Jackson-Davis,C,Roll + Cut Big,Mobile Big,78.3
+48,Alex Condon,PF/C,4,Jarrett Allen,C,Roll + Cut Big,Mobile Big,76.9
+48,Alex Condon,PF/C,5,Paolo Banchero,PF,Shot Creator,Wing Stopper,75.6
+49,Ryan Conwell,SG,1,Tyler Herro,SG,Shot Creator,Chaser,90.7
+49,Ryan Conwell,SG,2,Desmond Bane,SG,Primary Ball Handler,Chaser,88.9
+49,Ryan Conwell,SG,3,CJ McCollum,SG,Primary Ball Handler,Chaser,88.2
+49,Ryan Conwell,SG,4,Nickeil Alexander-Walker,SG,Primary Ball Handler,Point of Attack,88.0
+49,Ryan Conwell,SG,5,Ayo Dosunmu,SG,Primary Ball Handler,Point of Attack,87.5
+50,Jaden Bradley,PG,1,Brandon Williams,PG,Slasher,Point of Attack,85.0
+50,Jaden Bradley,PG,2,Tre Jones,PG,Slasher,Point of Attack,84.0
+50,Jaden Bradley,PG,3,Stephon Castle,PG,Primary Ball Handler,Point of Attack,81.8
+50,Jaden Bradley,PG,4,Jalen Williams,SG,Shot Creator,Helper,80.3
+50,Jaden Bradley,PG,5,Quenton Jackson,PG,Secondary Ball Handler,Point of Attack,79.2
+51,Pryce Sandfort,SF,1,Simone Fontecchio,SF,Off Screen Shooter,Helper,88.6
+51,Pryce Sandfort,SF,2,Brice Sensabaugh,SF,Movement Shooter,Helper,87.8
+51,Pryce Sandfort,SF,3,Bobby Portis,PF,Versatile Big,Helper,86.4
+51,Pryce Sandfort,SF,4,Klay Thompson,SF,Off Screen Shooter,Helper,86.0
+51,Pryce Sandfort,SF,5,Rui Hachimura,PF,Shot Creator,Wing Stopper,85.8
+52,Rueben Chinyelu,C,1,Mitchell Robinson,C,Athletic Finisher,Mobile Big,81.3
+52,Rueben Chinyelu,C,2,Isaiah Jackson,C,Roll + Cut Big,Mobile Big,80.7
+52,Rueben Chinyelu,C,3,Yves Missi,C,Athletic Finisher,Mobile Big,74.1
+52,Rueben Chinyelu,C,4,Nic Claxton,C,Roll + Cut Big,Mobile Big,68.4
+52,Rueben Chinyelu,C,5,Alex Sarr,C,Shot Creator,Mobile Big,59.5
+54,Milan Momcilovic,SF/PF,1,Simone Fontecchio,SF,Off Screen Shooter,Helper,89.4
+54,Milan Momcilovic,SF/PF,2,Brice Sensabaugh,SF,Movement Shooter,Helper,87.7
+54,Milan Momcilovic,SF/PF,3,Klay Thompson,SF,Off Screen Shooter,Helper,87.5
+54,Milan Momcilovic,SF/PF,4,Jalen Wilson,PF,Movement Shooter,Helper,86.8
+54,Milan Momcilovic,SF/PF,5,Rui Hachimura,PF,Shot Creator,Wing Stopper,86.8
+55,Bruce Thornton,PG,1,Desmond Bane,SG,Primary Ball Handler,Chaser,88.8
+55,Bruce Thornton,PG,2,Norman Powell,SG,Shot Creator,Chaser,87.3
+55,Bruce Thornton,PG,3,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,85.9
+55,Bruce Thornton,PG,4,Tyler Herro,SG,Shot Creator,Chaser,85.2
+55,Bruce Thornton,PG,5,Jeremiah Fears,PG,Primary Ball Handler,Point of Attack,85.0
+56,Emanuel Sharp,SG,1,Norman Powell,SG,Shot Creator,Chaser,87.6
+56,Emanuel Sharp,SG,2,Zach LaVine,SG,Shot Creator,Chaser,84.2
+56,Emanuel Sharp,SG,3,Nickeil Alexander-Walker,SG,Primary Ball Handler,Point of Attack,82.4
+56,Emanuel Sharp,SG,4,Bryce McGowens,SG,Stationary Shooter,Chaser,82.1
+56,Emanuel Sharp,SG,5,Jordan Clarkson,SG,Movement Shooter,Chaser,82.1
+57,Paul McNeil Jr.,SG,1,Tim Hardaway Jr.,SG,Off Screen Shooter,Chaser,88.5
+57,Paul McNeil Jr.,SG,2,Devin Vassell,SG,Movement Shooter,Chaser,85.3
+57,Paul McNeil Jr.,SG,3,Landry Shamet,SG,Movement Shooter,Chaser,84.2
+57,Paul McNeil Jr.,SG,4,A.J. Lawson,SG,Movement Shooter,Wing Stopper,83.8
+57,Paul McNeil Jr.,SG,5,Moses Moody,SG,Movement Shooter,Chaser,83.8
+58,Otega Oweh,SG,1,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,82.5
+58,Otega Oweh,SG,2,Jalen Williams,SG,Shot Creator,Helper,80.8
+58,Otega Oweh,SG,3,Devin Carter,PG,Secondary Ball Handler,Point of Attack,80.7
+58,Otega Oweh,SG,4,Norman Powell,SG,Shot Creator,Chaser,80.1
+58,Otega Oweh,SG,5,Jeremiah Fears,PG,Primary Ball Handler,Point of Attack,77.9
+59,Tamin Lipsey,PG,1,Kevin Porter Jr.,PG,Shot Creator,Chaser,82.9
+59,Tamin Lipsey,PG,2,Devin Carter,PG,Secondary Ball Handler,Point of Attack,80.9
+59,Tamin Lipsey,PG,3,Dru Smith,SG,Shot Creator,Point of Attack,80.9
+59,Tamin Lipsey,PG,4,KJ Simpson,PG,Primary Ball Handler,Point of Attack,80.6
+59,Tamin Lipsey,PG,5,Daniss Jenkins,PG,Primary Ball Handler,Point of Attack,80.2
+60,Trevon Brazile,PF,1,Justin Champagnie,SF,Movement Shooter,Helper,86.4
+60,Trevon Brazile,PF,2,P.J. Washington,PF,Shot Creator,Wing Stopper,84.3
+60,Trevon Brazile,PF,3,Keshad Johnson,SF,Shot Creator,Helper,84.3
+60,Trevon Brazile,PF,4,Jaren Jackson Jr.,C,Shot Creator,Helper,84.2
+60,Trevon Brazile,PF,5,Peyton Watson,SF,Movement Shooter,Point of Attack,82.4
+61,Baba Miller,SF,1,Paolo Banchero,PF,Shot Creator,Wing Stopper,71.5
+61,Baba Miller,SF,2,Jonathan Kuminga,PF,Shot Creator,Wing Stopper,71.2
+61,Baba Miller,SF,3,Scottie Barnes,PF,Shot Creator,Wing Stopper,70.4
+61,Baba Miller,SF,4,Collin Murray-Boyles,PF,Roll + Cut Big,Mobile Big,70.2
+61,Baba Miller,SF,5,Joan Beringer,PF,Roll + Cut Big,Helper,70.1
+62,Keyshawn Hall,SF,1,Paolo Banchero,PF,Shot Creator,Wing Stopper,89.3
+62,Keyshawn Hall,SF,2,Jonathan Kuminga,PF,Shot Creator,Wing Stopper,85.0
+62,Keyshawn Hall,SF,3,Bennedict Mathurin,SF,Secondary Ball Handler,Chaser,81.4
+62,Keyshawn Hall,SF,4,Franz Wagner,SF,Shot Creator,Wing Stopper,80.4
+62,Keyshawn Hall,SF,5,Jerami Grant,PF,Shot Creator,Wing Stopper,79.2
+64,Miles Byrd,SG,1,Bilal Coulibaly,SG,Secondary Ball Handler,Wing Stopper,84.4
+64,Miles Byrd,SG,2,Anthony Black,PG,Primary Ball Handler,Point of Attack,79.6
+64,Miles Byrd,SG,3,Caris LeVert,SG,Secondary Ball Handler,Chaser,79.3
+64,Miles Byrd,SG,4,Alex Caruso,SG,Stationary Shooter,Wing Stopper,77.7
+64,Miles Byrd,SG,5,VJ Edgecombe,SG,Primary Ball Handler,Point of Attack,76.2
+65,Zvonimir Ivisic,C,1,Isaiah Stewart,C,Stretch Big,Mobile Big,78.9
+65,Zvonimir Ivisic,C,2,Jay Huff,C,Stretch Big,Mobile Big,74.3
+65,Zvonimir Ivisic,C,3,Donovan Clingan,C,Stretch Big,Anchor Big,72.0
+65,Zvonimir Ivisic,C,4,Branden Carlson,C,Stretch Big,Mobile Big,71.9
+65,Zvonimir Ivisic,C,5,Khaman Maluach,C,Roll + Cut Big,Helper,71.2
+66,Milos Uzan,PG,1,Caleb Love,SG,Shot Creator,Chaser,92.0
+66,Milos Uzan,PG,2,Tyrese Proctor,PG,Secondary Ball Handler,Chaser,91.5
+66,Milos Uzan,PG,3,Tyrese Martin,SG,Secondary Ball Handler,Chaser,91.3
+66,Milos Uzan,PG,4,Kentavious Caldwell-Pope,SG,Secondary Ball Handler,Chaser,89.6
+66,Milos Uzan,PG,5,Ayo Dosunmu,SG,Primary Ball Handler,Point of Attack,89.6
+68,Darrion Williams,SF,1,Paul George,PF,Shot Creator,Helper,88.2
+68,Darrion Williams,SF,2,VJ Edgecombe,SG,Primary Ball Handler,Point of Attack,88.2
+68,Darrion Williams,SF,3,Kenrich Williams,PF,Stationary Shooter,Helper,86.9
+68,Darrion Williams,SF,4,Tobias Harris,PF,Versatile Big,Wing Stopper,86.8
+68,Darrion Williams,SF,5,Mikal Bridges,SF,Movement Shooter,Point of Attack,86.2
+69,Tomislav Ivisic,C,1,Jalen Smith,C,Stretch Big,Mobile Big,88.6
+69,Tomislav Ivisic,C,2,Jock Landale,C,Versatile Big,Mobile Big,86.5
+69,Tomislav Ivisic,C,3,Branden Carlson,C,Stretch Big,Mobile Big,86.3
+69,Tomislav Ivisic,C,4,Nikola Vučević,C,Versatile Big,Mobile Big,85.9
+69,Tomislav Ivisic,C,5,Thomas Bryant,C,Stretch Big,Mobile Big,83.8
+71,Dillon Mitchell,SF,1,Oso Ighodaro,PF,Roll + Cut Big,Mobile Big,81.9
+71,Dillon Mitchell,SF,2,Ausar Thompson,SF,Roll + Cut Big,Point of Attack,80.9
+71,Dillon Mitchell,SF,3,Collin Murray-Boyles,PF,Roll + Cut Big,Mobile Big,79.9
+71,Dillon Mitchell,SF,4,Jonathan Mogbo,PF,Athletic Finisher,Mobile Big,77.9
+71,Dillon Mitchell,SF,5,Adou Thiero,SF,Athletic Finisher,Helper,77.6
+72,Andrej Stojakovic,SG,1,Cedric Coward,SG,Movement Shooter,Wing Stopper,77.9
+72,Andrej Stojakovic,SG,2,Christian Braun,SG,Stationary Shooter,Point of Attack,75.5
+72,Andrej Stojakovic,SG,3,Cody Williams,SG,Stationary Shooter,Point of Attack,75.0
+72,Andrej Stojakovic,SG,4,Cam Christie,SG,Movement Shooter,Point of Attack,74.5
+72,Andrej Stojakovic,SG,5,Amir Coffey,SG,Stationary Shooter,Helper,73.3
+73,Tahaad Pettiford,PG,1,Jamaree Bouyea,PG,Secondary Ball Handler,Chaser,86.2
+73,Tahaad Pettiford,PG,2,Ayo Dosunmu,SG,Primary Ball Handler,Point of Attack,86.2
+73,Tahaad Pettiford,PG,3,Nickeil Alexander-Walker,SG,Primary Ball Handler,Point of Attack,85.4
+73,Tahaad Pettiford,PG,4,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,85.0
+73,Tahaad Pettiford,PG,5,Tyrese Maxey,PG,Shot Creator,Chaser,84.5
+74,Kylan Boswell,PG,1,Quenton Jackson,PG,Secondary Ball Handler,Point of Attack,85.0
+74,Kylan Boswell,PG,2,Norman Powell,SG,Shot Creator,Chaser,84.4
+74,Kylan Boswell,PG,3,Bradley Beal,SG,Secondary Ball Handler,Chaser,84.3
+74,Kylan Boswell,PG,4,Pelle Larsson,SG,Shot Creator,Chaser,83.6
+74,Kylan Boswell,PG,5,Cam Christie,SG,Movement Shooter,Point of Attack,83.6
+75,Coen Carr,SF/PF,1,P.J. Washington,PF,Shot Creator,Wing Stopper,81.8
+75,Coen Carr,SF/PF,2,Zeke Nnaji,PF,Stretch Big,Helper,81.5
+75,Coen Carr,SF/PF,3,Chet Holmgren,PF,Shot Creator,Mobile Big,80.7
+75,Coen Carr,SF/PF,4,Dominick Barlow,PF,Athletic Finisher,Helper,80.3
+75,Coen Carr,SF/PF,5,Jonathan Kuminga,PF,Shot Creator,Wing Stopper,78.1
+76,Tucker DeVries,SG/SF,1,Jaden Ivey,SG,Movement Shooter,Chaser,93.9
+76,Tucker DeVries,SG/SF,2,Jaylon Tyson,SG,Movement Shooter,Chaser,93.4
+76,Tucker DeVries,SG/SF,3,Aaron Wiggins,SG,Movement Shooter,Helper,93.0
+76,Tucker DeVries,SG/SF,4,Tre Johnson,SG,Off Screen Shooter,Chaser,91.2
+76,Tucker DeVries,SG/SF,5,VJ Edgecombe,SG,Primary Ball Handler,Point of Attack,90.1
+77,KJ Lewis,SG,1,Devin Carter,PG,Secondary Ball Handler,Point of Attack,79.6
+77,KJ Lewis,SG,2,Ajay Mitchell,SG,Primary Ball Handler,Point of Attack,79.6
+77,KJ Lewis,SG,3,De'Anthony Melton,PG,Primary Ball Handler,Point of Attack,77.6
+77,KJ Lewis,SG,4,Jalen Williams,SG,Shot Creator,Helper,75.9
+77,KJ Lewis,SG,5,Jeremiah Fears,PG,Primary Ball Handler,Point of Attack,75.4
+78,Malik Reneau,PF,1,Alperen Sengun,C,Shot Creator,Mobile Big,87.1
+78,Malik Reneau,PF,2,Marvin Bagley III,PF,Roll + Cut Big,Mobile Big,82.3
+78,Malik Reneau,PF,3,Anthony Davis,PF,Shot Creator,Mobile Big,82.3
+78,Malik Reneau,PF,4,Paolo Banchero,PF,Shot Creator,Wing Stopper,81.3
+78,Malik Reneau,PF,5,Karl-Anthony Towns,C,Shot Creator,Mobile Big,81.1
+80,Solo Ball,SG,1,Jordan Clarkson,SG,Movement Shooter,Chaser,93.7
+80,Solo Ball,SG,2,Zach LaVine,SG,Shot Creator,Chaser,88.8
+80,Solo Ball,SG,3,Devin Vassell,SG,Movement Shooter,Chaser,87.9
+80,Solo Ball,SG,4,Isaac Okoro,SG,Stationary Shooter,Wing Stopper,87.6
+80,Solo Ball,SG,5,Amir Coffey,SG,Stationary Shooter,Helper,87.5

@@ -25,6 +25,7 @@ import {
   computeRosterDeficits,
 } from "../data/championshipFormula";
 import { computeTeamStrength } from "../data/prospectRanking";
+import { findClosestBlueprint } from "../data/blueprintScore";
 
 // ---------------------------------------------------------------------------
 // Singleton data cache — CSVs are fetched once, then reused across team switches
@@ -138,6 +139,7 @@ const INITIAL_STATE: SimulatorState & { capSpace: number } = {
   championshipFormula: CHAMPIONSHIP_FORMULA,
   rosterDeficits: [],
   teamStrength: { score: 0, label: "Rebuilding" },
+  blueprintMatch: null,
   loading: false,
   error: null,
   capSpace: SALARY_CAP,
@@ -349,6 +351,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
           capSpace: computeCapSpace(finalRoster),
           rosterDeficits: computeRosterDeficits(finalRoster),
           teamStrength: computeTeamStrength(finalRoster),
+          blueprintMatch: findClosestBlueprint(finalRoster),
         });
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to load data.";
@@ -404,6 +407,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         capSpace: computeCapSpace(roster),
         rosterDeficits: computeRosterDeficits(roster),
         teamStrength: computeTeamStrength(roster),
+        blueprintMatch: findClosestBlueprint(roster),
       });
     },
 
@@ -499,6 +503,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         capSpace: computeCapSpace(nextRoster),
         rosterDeficits: computeRosterDeficits(nextRoster),
         teamStrength: computeTeamStrength(nextRoster),
+        blueprintMatch: findClosestBlueprint(nextRoster),
         draftAvailableProspects: state.draftAvailableProspects.filter(
           (p) => p.id !== prospectId
         ),
