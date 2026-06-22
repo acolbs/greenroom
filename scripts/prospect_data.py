@@ -65,6 +65,24 @@ POS_AVG_PHYSICALS = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Canonical archetype taxonomy — mirror of web/src/data/archetypes.ts.
+# The model emits a deliberate SUBSET (see the merges in assign_archetypes_rf.py:
+# Post Scorer -> Roll + Cut Big, Slasher -> Athletic Finisher; "Low Minute" and
+# "Low Activity" are never predicted). Keep these in sync with the TS registry.
+# ---------------------------------------------------------------------------
+OFFENSIVE_ARCHETYPES = [
+    "Primary Ball Handler", "Secondary Ball Handler", "Shot Creator",
+    "Movement Shooter", "Stationary Shooter", "Off Screen Shooter",
+    "Athletic Finisher", "Slasher", "Roll + Cut Big", "Stretch Big",
+    "Versatile Big", "Post Scorer", "Low Minute",
+]
+DEFENSIVE_ROLES = [
+    "Point of Attack", "Wing Stopper", "Chaser", "Helper",
+    "Mobile Big", "Anchor Big", "Low Activity",
+]
+
+
 def pos_bucket(p) -> str:
     if pd.isna(p):
         return "W"

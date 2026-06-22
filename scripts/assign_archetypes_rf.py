@@ -30,6 +30,7 @@ from prospect_data import (
     DATA, data_path, pos_bucket,
     get_nba_phys, get_prospect_phys, get_prospect_reach,
     estimate_college_rates,
+    OFFENSIVE_ARCHETYPES, DEFENSIVE_ROLES,
 )
 
 warnings.filterwarnings("ignore")
@@ -53,6 +54,14 @@ BIG_OFF_CLASSES = [
 GUARD_DEF_CLASSES = ["Point of Attack", "Chaser", "Helper", "Wing Stopper"]
 WING_DEF_CLASSES  = ["Wing Stopper", "Helper", "Chaser", "Point of Attack"]
 BIG_DEF_CLASSES   = ["Mobile Big", "Anchor Big", "Helper", "Wing Stopper"]
+
+# Every class the model can emit must exist in the canonical taxonomy.
+_off_classes = set(GUARD_OFF_CLASSES) | set(WING_OFF_CLASSES) | set(BIG_OFF_CLASSES)
+_def_classes = set(GUARD_DEF_CLASSES) | set(WING_DEF_CLASSES) | set(BIG_DEF_CLASSES)
+assert _off_classes <= set(OFFENSIVE_ARCHETYPES), \
+    f"unknown OFF archetype(s): {_off_classes - set(OFFENSIVE_ARCHETYPES)}"
+assert _def_classes <= set(DEFENSIVE_ROLES), \
+    f"unknown DEF role(s): {_def_classes - set(DEFENSIVE_ROLES)}"
 
 
 def size_group(height_in, pb):

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { findClosestBlueprint, getSlotFills } from "../data/blueprintScore";
 import type { RosterPlayer } from "../types/simulator";
+import { OFF_SHORT_LABEL, DEF_SHORT_LABEL } from "../data/archetypes";
 
 interface Props {
   roster: RosterPlayer[];
@@ -20,33 +21,11 @@ const MATCH_COLOR: Record<string, string> = {
   empty: "var(--color-text-muted)",
 };
 
-// Short display labels so the row doesn't overflow
+// Short display labels so the row doesn't overflow (see data/archetypes.ts)
 function shortLabel(off: string, def: string): string {
-  const OFF: Record<string, string> = {
-    "Primary Ball Handler": "Ball Handler",
-    "Secondary Ball Handler": "2nd Handler",
-    "Shot Creator": "Shot Creator",
-    "Stationary Shooter": "Spot-Up Shooter",
-    "Movement Shooter": "Movement Shooter",
-    "Athletic Finisher": "Finisher",
-    "Roll + Cut Big": "Roll/Cut Big",
-    "Stretch Big": "Stretch Big",
-    "Versatile Big": "Versatile Big",
-    "Post Scorer": "Post Scorer",
-    "Offensive Hub": "Offensive Hub",
-    "Slasher": "Slasher",
-    "Off Screen Shooter": "Off-Screen",
-  };
-  const DEF: Record<string, string> = {
-    "Point of Attack": "POA Defender",
-    "Wing Stopper": "Wing Stopper",
-    "Helper": "Helper",
-    "Anchor Big": "Anchor",
-    "Mobile Big": "Mobile Big",
-    "Chaser": "Chaser",
-    "Low Activity": "Low Activity",
-  };
-  return `${OFF[off] ?? off} + ${DEF[def] ?? def}`;
+  const offLabel = (OFF_SHORT_LABEL as Record<string, string>)[off] ?? off;
+  const defLabel = (DEF_SHORT_LABEL as Record<string, string>)[def] ?? def;
+  return `${offLabel} + ${defLabel}`;
 }
 
 export default function BlueprintSlotTracker({ roster }: Props) {

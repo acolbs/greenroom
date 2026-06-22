@@ -4,11 +4,10 @@ import type {
   RosterPlayer,
   TeamStrength,
   TeamStrengthLabel,
-  OffensiveArchetype,
-  DefensiveRole,
   Position,
 } from "../types/simulator";
 import { computeFormulFitScore } from "./championshipFormula";
+import { OFFENSIVE_VALUE, DEFENSIVE_VALUE } from "./archetypes";
 
 export type { TeamStrength };
 
@@ -35,32 +34,6 @@ const POSITION_CEILING: Record<Position, number> = {
   SF: 1.05,
   PF: 0.92,
   C: 0.88,
-};
-
-const OFFENSIVE_VALUE: Partial<Record<OffensiveArchetype, number>> = {
-  "Primary Ball Handler": 1.12,
-  "Shot Creator": 1.10,
-  "Movement Shooter": 1.05,
-  "Stationary Shooter": 1.03,
-  "Secondary Ball Handler": 1.02,
-  "Slasher": 0.98,
-  "Athletic Finisher": 0.95,
-  "Roll + Cut Big": 0.95,
-  "Stretch Big": 0.93,
-  "Off Screen Shooter": 0.92,
-  "Versatile Big": 0.90,
-  "Post Scorer": 0.85,
-  "Low Minute": 0.70,
-};
-
-const DEFENSIVE_VALUE: Partial<Record<DefensiveRole, number>> = {
-  "Point of Attack": 1.10,
-  "Wing Stopper": 1.08,
-  "Anchor Big": 1.03,
-  "Mobile Big": 1.01,
-  "Helper": 0.98,
-  "Chaser": 0.95,
-  "Low Activity": 0.80,
 };
 
 // ---------------------------------------------------------------------------

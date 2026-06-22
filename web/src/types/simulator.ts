@@ -1,31 +1,10 @@
 // ---------------------------------------------------------------------------
-// Archetype unions — derived directly from archetypes.csv values
+// Archetype unions — single source of truth lives in data/archetypes.ts.
+// Re-exported here so existing `types/simulator` imports keep working.
 // ---------------------------------------------------------------------------
 
-export type OffensiveArchetype =
-  | "Athletic Finisher"
-  | "Low Minute"
-  | "Movement Shooter"
-  | "Off Screen Shooter"
-  | "Offensive Hub"
-  | "Post Scorer"
-  | "Primary Ball Handler"
-  | "Roll + Cut Big"
-  | "Secondary Ball Handler"
-  | "Shot Creator"
-  | "Slasher"
-  | "Stationary Shooter"
-  | "Stretch Big"
-  | "Versatile Big";
-
-export type DefensiveRole =
-  | "Anchor Big"
-  | "Chaser"
-  | "Helper"
-  | "Low Activity"
-  | "Mobile Big"
-  | "Point of Attack"
-  | "Wing Stopper";
+import type { OffensiveArchetype, DefensiveRole } from "../data/archetypes";
+export type { OffensiveArchetype, DefensiveRole };
 
 export type Position = "PG" | "SG" | "SF" | "PF" | "C";
 

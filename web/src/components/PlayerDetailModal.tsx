@@ -3,14 +3,13 @@ import type {
   ExpiringContract,
   DraftProspect,
   RosterPlayer,
-  OffensiveArchetype,
-  DefensiveRole,
   RosterDeficit,
   ProspectCollegeStats,
 } from "../types/simulator";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import PlayerAvatar from "./PlayerAvatar";
 import { getBlueprintCitation } from "../data/blueprintScore";
+import { OFF_DESCRIPTIONS, DEF_DESCRIPTIONS } from "../data/archetypes";
 
 export type ModalSubject = ExpiringContract | DraftProspect | RosterPlayer;
 
@@ -28,55 +27,7 @@ function isRosterPlayerSubject(s: ModalSubject): s is RosterPlayer {
   return "teamAbbrev" in s;
 }
 
-// ── Playstyle descriptions ─────────────────────────────────────────────────
-
-const OFF_DESCRIPTIONS: Record<OffensiveArchetype, string> = {
-  "Athletic Finisher":
-    "Thrives at the rim using elite athleticism, body control, and instincts to convert above the defense. Doesn't need the ball in his hands — just put him in position and he delivers. Dangerous in transition, relentless in pick-and-roll dive situations, and strong enough to finish through contact.",
-  "Low Minute":
-    "A rotation piece who provides reliable spot minutes without demanding usage. Efficient within a defined role, rarely forcing the action. The kind of player who keeps the machine running while starters rest.",
-  "Movement Shooter":
-    "Reads off-ball action at an elite level — using screens, relocating, and firing on the catch without hesitation. Forces defenders to chase him across the entire court, opening driving lanes for teammates and punishing any lapse in coverage.",
-  "Off Screen Shooter":
-    "A nightmare for opposing coaches to scheme around. Drills pin-down and stagger screens with precision timing, curling or fading based on how the defense plays it. Gets comfortable looks that look impossible on paper.",
-  "Offensive Hub":
-    "The connective tissue of the offense — a big who can handle, pass, and score from every spot on the floor. Runs pick-and-rolls and post actions as both scorer and facilitator, creating advantages for teammates while being unguardable in isolation. The rarest archetype in basketball.",
-  "Post Scorer":
-    "A throwback scorer with polished footwork and touch around the basket. Punishes smaller defenders with size and physicality in the post, and reads double-teams to find cutters. Keeps opposing bigs honest and creates mismatches across the floor.",
-  "Primary Ball Handler":
-    "The engine the offense runs through. Initiates every action — probing defenses in pick-and-roll, attacking downhill off the dribble, and pulling up from mid-range. Capable of creating advantages for himself and breaking down schemes that leave teammates wide open.",
-  "Roll + Cut Big":
-    "Wins constantly on movement — rolling hard to the basket off hand-offs, cutting back-door when the defense sleeps, and converting in traffic around the rim. Doesn't need isolation touches, just reads the action and finishes with efficiency.",
-  "Secondary Ball Handler":
-    "Provides meaningful ball handling relief without the pressure of being the primary initiator. Can run the offense in stretches, hit the pull-up mid-range in the two-man game, and keep defenses honest with playmaking at the elbows.",
-  "Shot Creator":
-    "Generates clean looks out of thin air — separation pull-ups, step-backs, and creative floaters that break down set defenses. The go-to option in late-shot-clock situations when the play breaks down, thriving in isolation and self-creation.",
-  "Slasher":
-    "Gets to the basket at will. Explosive change of direction and first step make him nearly impossible to contain in straight-line drives and cutting situations. Draws fouls at a high rate and punishes packed-in defenses with finesse finishes and lobs.",
-  "Stationary Shooter":
-    "A floor spacer who doesn't need to come off screens — he just stations himself beyond the arc and makes defenses pay for sagging. Instant and effortless release keeps closing out defenders off balance, stretching the defense and freeing up the paint.",
-  "Stretch Big":
-    "Drags opposing bigs out of the paint and into uncomfortable territory. Capable of knocking down threes from the corners and elbows, creating driving lanes for slashing teammates and exploiting bigs who can't keep up on the perimeter.",
-  "Versatile Big":
-    "Difficult to game-plan against because of a well-rounded offensive arsenal. Can score in the post, step out to the mid-range, facilitate from the high post, and read pick-and-roll action from both handler and screener perspectives.",
-};
-
-const DEF_DESCRIPTIONS: Record<DefensiveRole, string> = {
-  "Anchor Big":
-    "The defensive backbone of the team — an imposing presence in the paint that alters shots, cleans up boards, and communicates rotations. Other defenders can gamble knowing he's behind them as the last line of protection.",
-  "Chaser":
-    "A relentless on-ball pressure defender who pursues guards through screens and refuses to give up easy ground. Generates deflections and turnovers by staying chest-to-chest and reading the ball handler's eyes.",
-  "Helper":
-    "Reads the defense like a chess match — rotating early, taking charges, and filling gaps when teammates get beat. Rarely gambles but is always in the right spot to erase mistakes and protect the rim without fouling.",
-  "Low Activity":
-    "Provides limited defensive output and is best protected in scheme. The offense is his calling card — teams accept the defensive trade-off knowing he produces on the other end.",
-  "Mobile Big":
-    "Bridges the gap between interior and perimeter defense. Capable of switching onto guards in pick-and-roll and still contesting at the rim on the next possession. A rare combination that modern offenses struggle to exploit.",
-  "Point of Attack":
-    "Locks down opposing ball handlers on the perimeter with physical, intelligent defense. Studies opponents' tendencies, forces them to their weak hand, and sets the tone that every possession is a fight.",
-  "Wing Stopper":
-    "Assigned to the best perimeter scorer on the opposing team — capable of taking away shooters and slashers alike. Combines length, lateral quickness, and defensive IQ to make life miserable for star wings.",
-};
+// Playstyle descriptions live in data/archetypes.ts (OFF_DESCRIPTIONS / DEF_DESCRIPTIONS).
 
 // ── Scout's Take logic ─────────────────────────────────────────────────────
 

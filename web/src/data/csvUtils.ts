@@ -1,5 +1,11 @@
 import Papa from "papaparse";
-import type { OffensiveArchetype, DefensiveRole, Position } from "../types/simulator";
+import type { Position } from "../types/simulator";
+import {
+  OFFENSIVE_ARCHETYPE_SET,
+  DEFENSIVE_ROLE_SET,
+  type OffensiveArchetype,
+  type DefensiveRole,
+} from "./archetypes";
 
 // ---------------------------------------------------------------------------
 // Core parser — normalizes every cell to a trimmed string
@@ -57,40 +63,14 @@ export function normalizeName(name: string): string {
 // Type-safe archetype/role parsers
 // ---------------------------------------------------------------------------
 
-const OFFENSIVE_ARCHETYPES = new Set<string>([
-  "Athletic Finisher",
-  "Low Minute",
-  "Movement Shooter",
-  "Off Screen Shooter",
-  "Post Scorer",
-  "Primary Ball Handler",
-  "Roll + Cut Big",
-  "Secondary Ball Handler",
-  "Shot Creator",
-  "Slasher",
-  "Stationary Shooter",
-  "Stretch Big",
-  "Versatile Big",
-]);
-
-const DEFENSIVE_ROLES = new Set<string>([
-  "Anchor Big",
-  "Chaser",
-  "Helper",
-  "Low Activity",
-  "Mobile Big",
-  "Point of Attack",
-  "Wing Stopper",
-]);
-
 export function parseOffensiveArchetype(raw: string): OffensiveArchetype | null {
   const s = raw.trim();
-  return OFFENSIVE_ARCHETYPES.has(s) ? (s as OffensiveArchetype) : null;
+  return OFFENSIVE_ARCHETYPE_SET.has(s) ? (s as OffensiveArchetype) : null;
 }
 
 export function parseDefensiveRole(raw: string): DefensiveRole | null {
   const s = raw.trim();
-  return DEFENSIVE_ROLES.has(s) ? (s as DefensiveRole) : null;
+  return DEFENSIVE_ROLE_SET.has(s) ? (s as DefensiveRole) : null;
 }
 
 const POSITIONS = new Set<string>(["PG", "SG", "SF", "PF", "C"]);
