@@ -299,7 +299,9 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
     const state = get();
     const nextPick = state.draftCurrentPick;
 
-    if (nextPick > state.draftTotalPicks) {
+    // End the draft once we run past the last pick OR exhaust the prospect pool
+    // (the class can be smaller than the 60 pick slots).
+    if (nextPick > state.draftTotalPicks || state.draftAvailableProspects.length === 0) {
       set({ draftSimActive: false, draftSimComplete: true });
       return;
     }
