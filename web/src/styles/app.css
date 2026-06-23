@@ -733,20 +733,22 @@
   padding: 0.85rem 0.65rem 0.7rem;
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 4px;
   min-height: 0;
   aspect-ratio: 4 / 5;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 
 .draft-card:hover {
-  border-color: rgba(63, 185, 80, 0.45);
+  border-color: var(--color-accent);
   background: var(--color-surface-hover);
+  box-shadow: var(--glow-accent);
 }
 
 .draft-card--recommended {
   border-color: var(--color-accent);
-  background: #0a1a0d;
-  box-shadow: 0 0 0 1px rgba(63, 185, 80, 0.2);
+  background: var(--color-accent-subtle);
+  box-shadow: inset 0 0 0 1px var(--color-accent-dim);
 }
 
 .draft-card__photo-wrap {
@@ -759,14 +761,14 @@
   position: absolute;
   top: -0.2rem;
   left: -0.2rem;
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 0.58rem;
   font-weight: 700;
   color: var(--color-text-muted);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 0.12rem 0.32rem;
+  border-radius: 4px;
+  padding: 0.12rem 0.34rem;
   z-index: 1;
   letter-spacing: 0.02em;
 }
@@ -774,7 +776,7 @@
 .draft-card--recommended .draft-card__rank-badge {
   border-color: var(--color-accent-dim);
   color: var(--color-accent);
-  background: rgba(63, 185, 80, 0.12);
+  background: var(--color-accent-subtle);
 }
 
 .draft-card__name-block {
@@ -782,17 +784,17 @@
 }
 
 .draft-card__name {
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  font-family: var(--font-poster);
+  font-size: 0.95rem;
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
   width: 100%;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 2.45em;
+  min-height: 2.05em;
 }
 
 .draft-card__scout-tag {
@@ -839,14 +841,15 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 0.35rem;
-  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--color-text-muted);
 }
 
 .draft-card__metric-val {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 0.82rem;
   font-weight: 700;
   text-transform: none;
@@ -1210,10 +1213,11 @@
 }
 
 .draft-setup h2 {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: var(--font-poster);
+  font-size: 2rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
   color: var(--color-text);
 }
 
@@ -1227,7 +1231,7 @@
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   color: var(--color-text);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 0.7rem 1rem;
   font-size: 0.9rem;
   width: 100%;
@@ -1240,7 +1244,7 @@
 .draft-setup input:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.12);
+  box-shadow: 0 0 0 3px var(--color-accent-subtle);
 }
 
 .draft-setup-error {
