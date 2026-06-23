@@ -295,6 +295,38 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
                   </div>
                   <div className="player-modal__arch">{subject.offensiveArchetype}</div>
                   <div className="player-modal__def">{subject.defensiveRole}</div>
+                  {typeof subject.talentScore === "number" && (() => {
+                    const tier = subject.talentTier ?? "";
+                    const color =
+                      tier === "Star" ? "#F5C451"
+                      : tier === "Starter" ? "#46A877"
+                      : tier === "Rotation" ? "#39E3FF"
+                      : "#8a93a0";
+                    return (
+                      <div
+                        title="Unified Talent Score (0–100), percentile-ranked within pool"
+                        style={{
+                          marginTop: "0.6rem",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.4rem",
+                          padding: "0.25rem 0.65rem",
+                          borderRadius: "999px",
+                          border: `1px solid ${color}`,
+                          color,
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.7rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.04em",
+                          textTransform: "uppercase",
+                          boxShadow: `0 0 10px ${color}33`,
+                        }}
+                      >
+                        <span>{tier}</span>
+                        <span style={{ opacity: 0.85 }}>Talent {subject.talentScore}</span>
+                      </div>
+                    );
+                  })()}
                   {subjectIsProspect && (
                     <>
                       <div className="player-modal__school" style={{ marginTop: "0.5rem" }}>

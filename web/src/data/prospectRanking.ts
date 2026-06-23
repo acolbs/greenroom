@@ -49,6 +49,12 @@ const POSITION_CEILING: Record<Position, number> = {
  * adjust ±10 points max so scouting rank always dominates.
  */
 export function computeValueScore(prospect: DraftProspect): number {
+  // Prefer the unified Talent Score (EV + grade percentile) when present — it's
+  // a stronger talent signal than rank and keeps clearly-better players (the
+  // "Curry shouldn't read as low" principle) high regardless of fit.
+  if (typeof prospect.talentScore === "number") return prospect.talentScore;
+
+  // Fallback (pre-talent-score behavior): rank-based curve.
   // Total prospects in the draft class (81 in our big_board)
   const TOTAL = 81;
   // Rank-based base: exponential decay so the top picks score much higher
@@ -73,15 +79,19 @@ export function computeFitScore(
   prospect: DraftProspect,
   deficits: RosterDeficit[]
 ): number {
+  // Flexible fit: an exact archetype match gets full slot weight; matching just
+  // the offensive OR defensive side earns partial credit (the prospect doesn't
+  // have to be the exact role to help fill a need).
+  let best = 0;
   for (const deficit of deficits) {
-    if (
-      prospect.offensiveArchetype === deficit.offensiveArchetype &&
-      prospect.defensiveRole === deficit.defensiveRole
-    ) {
-      return Math.round(deficit.weight * 100);
-    }
+    const offHit = prospect.offensiveArchetype === deficit.offensiveArchetype;
+    const defHit = prospect.defensiveRole === deficit.defensiveRole;
+    let credit = 0;
+    if (offHit && defHit) credit = deficit.weight * 100;
+    else if (offHit || defHit) credit = deficit.weight * 100 * 0.4;
+    if (credit > best) best = credit;
   }
-  return 0;
+  return Math.round(best);
 }
 
 /**
@@ -123,26 +133,26 @@ export function computeNeedsScore(
   fitScore: number,
   teamStrength: TeamStrength
 ): number {
+  // How much fit is allowed to matter, by team situation.
   let fitWeight: number;
-  let valueWeight: number;
-
   switch (teamStrength.label) {
     case "Contender":
-      fitWeight = 0.75;
-      valueWeight = 0.25;
+      fitWeight = 0.45;
       break;
     case "Middle":
-      fitWeight = 0.40;
-      valueWeight = 0.60;
+      fitWeight = 0.30;
       break;
     case "Rebuilding":
     default:
-      fitWeight = 0.10;
-      valueWeight = 0.90;
+      fitWeight = 0.12;
       break;
   }
 
-  return Math.round(fitWeight * fitScore + valueWeight * valueScore);
+  // Talent is the floor. Fit is DISCOUNTED by the player's own talent, so a
+  // perfect-fit low-talent player can't leapfrog a clearly better one — while a
+  // player who is both talented AND fits the need rises to the very top.
+  const fitContribution = fitScore * (valueScore / 100);
+  return Math.round((1 - fitWeight) * valueScore + fitWeight * fitContribution);
 }
 
 /**
