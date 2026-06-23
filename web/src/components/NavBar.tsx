@@ -13,6 +13,35 @@ function fmt(n: number): string {
   return (n < 0 ? "-$" : "$") + (abs / 1_000_000).toFixed(1) + "M";
 }
 
+function ThemeToggle() {
+  const [theme, setTheme] = useState<"light" | "dark">(() =>
+    document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light"
+  );
+
+  function toggle() {
+    const next = theme === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem("greenroom-theme", next);
+    } catch {
+      /* ignore */
+    }
+    setTheme(next);
+  }
+
+  return (
+    <button
+      type="button"
+      className="theme-toggle"
+      onClick={toggle}
+      title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+    >
+      {theme === "dark" ? "Light" : "Dark"}
+    </button>
+  );
+}
+
 const PHASE_ROUTES: Partial<Record<SimulatorPhase, string>> = {
   FREE_AGENCY: "/free-agency",
   DRAFT: "/draft",
@@ -157,6 +186,7 @@ export default function NavBar() {
 
           {/* Right side */}
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
+            <ThemeToggle />
             {selectedTeamId && roster.length > 0 && (
               <button
                 onClick={() => setRosterOpen(true)}

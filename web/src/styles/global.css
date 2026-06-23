@@ -10,38 +10,11 @@ html {
 }
 
 :root {
-  /* ── Color palette ─────────────────────────────────────── */
-  --color-bg:             #07090a;
-  --color-surface:        #0d1117;
-  --color-surface-raised: #131920;
-  --color-surface-hover:  #1a2230;
-  --color-border:         #1e2733;
-  --color-border-subtle:  #161e28;
-
-  --color-text:           #e6edf3;
-  --color-text-secondary: #b0bec5;
-  --color-text-muted:     #6b7a8a;
-
-  --color-accent:         #3fb950;
-  --color-accent-hover:   #56d467;
-  --color-accent-dim:     #1a3626;
-  --color-accent-subtle:  #0e2018;
-
-  --color-danger:         #f85149;
-  --color-danger-dim:     #3a1414;
-  --color-warning:        #d29922;
-  --color-warning-dim:    #2d2006;
-  --color-info:           #58a6ff;
-
-  /* Futuristic glow (accent + cool rim) */
-  --glow-accent:          0 0 28px rgba(63, 185, 80, 0.22);
-  --glow-accent-tight:    0 0 14px rgba(63, 185, 80, 0.35);
-  --glow-info:            0 0 36px rgba(88, 161, 255, 0.08);
-  --glow-border:          0 0 1px rgba(63, 185, 80, 0.15);
-
-  /* ── Typography ────────────────────────────────────────── */
-  --font-display: "DM Sans", system-ui, sans-serif;
-  --font-body:    "Inter", system-ui, sans-serif;
+  /* ── Typography — "Front Office" ───────────────────────── */
+  --font-display: "Schibsted Grotesk", system-ui, sans-serif;
+  --font-body:    "Schibsted Grotesk", system-ui, sans-serif;
+  --font-poster:  "Anton", "Schibsted Grotesk", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
 
   font-family: var(--font-body);
   font-size: 16px;
@@ -57,12 +30,73 @@ html {
   --second-apron:  222000000;
 }
 
+/* ── Color palette — Light (default) ───────────────────────── */
+:root,
+:root[data-theme="light"] {
+  --color-bg:             #eef0ec;
+  --color-surface:        #fbfcfa;
+  --color-surface-raised: #ffffff;
+  --color-surface-hover:  #f1f4ef;
+  --color-border:         #d6dcd5;
+  --color-border-subtle:  #e3e8e1;
+
+  --color-text:           #10211a;
+  --color-text-secondary: #3c4d45;
+  --color-text-muted:     #5c6f66;
+
+  --color-accent:         #1b5e3f;  /* pine */
+  --color-accent-hover:   #237a52;
+  --color-accent-dim:     #cfe3d6;
+  --color-accent-subtle:  #e4eee7;
+
+  --color-danger:         #b4452e;
+  --color-danger-dim:     #f2d9d2;
+  --color-warning:        #b07a1e;
+  --color-warning-dim:    #f0e3cb;
+  --color-info:           #2b6cb0;
+
+  --glow-accent:          0 1px 3px rgba(16, 33, 26, 0.10);
+  --glow-accent-tight:    0 1px 2px rgba(16, 33, 26, 0.12);
+  --glow-info:            none;
+  --glow-border:          0 0 0 1px rgba(27, 94, 63, 0.08);
+}
+
+/* ── Color palette — Dark ──────────────────────────────────── */
+:root[data-theme="dark"] {
+  --color-bg:             #0f1613;
+  --color-surface:        #16201b;
+  --color-surface-raised: #1c2a23;
+  --color-surface-hover:  #22332c;
+  --color-border:         #283730;
+  --color-border-subtle:  #1e2b25;
+
+  --color-text:           #ecf1ed;
+  --color-text-secondary: #b4c5bc;
+  --color-text-muted:     #90a89b;
+
+  --color-accent:         #46a877;  /* pine, brightened for dark */
+  --color-accent-hover:   #5bbf8c;
+  --color-accent-dim:     #1b3329;
+  --color-accent-subtle:  #14241d;
+
+  --color-danger:         #e0735a;
+  --color-danger-dim:     #3a1a14;
+  --color-warning:        #d6a23e;
+  --color-warning-dim:    #2d2206;
+  --color-info:           #6ba8e8;
+
+  --glow-accent:          0 0 28px rgba(70, 168, 119, 0.20);
+  --glow-accent-tight:    0 0 14px rgba(70, 168, 119, 0.32);
+  --glow-info:            0 0 36px rgba(107, 168, 232, 0.07);
+  --glow-border:          0 0 1px rgba(70, 168, 119, 0.15);
+}
+
 body {
   min-height: 100dvh;
   position: relative;
 }
 
-/* Ambient grid + glow (non-interactive) */
+/* Ambient glow + court-grid (non-interactive). Light: subtle. Dark: pine glow. */
 body::before {
   content: "";
   position: fixed;
@@ -70,9 +104,15 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(ellipse 120% 70% at 50% -30%, rgba(63, 185, 80, 0.09), transparent 52%),
-    radial-gradient(ellipse 55% 45% at 100% 20%, rgba(88, 161, 255, 0.06), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(63, 185, 80, 0.04), transparent 45%);
+    radial-gradient(ellipse 120% 70% at 50% -30%, rgba(27, 94, 63, 0.06), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 0% 85%, rgba(27, 94, 63, 0.03), transparent 50%);
+}
+
+:root[data-theme="dark"] body::before {
+  background:
+    radial-gradient(ellipse 120% 70% at 50% -30%, rgba(70, 168, 119, 0.10), transparent 52%),
+    radial-gradient(ellipse 55% 45% at 100% 20%, rgba(107, 168, 232, 0.05), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(70, 168, 119, 0.05), transparent 45%);
 }
 
 body::after {
@@ -81,12 +121,19 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(16, 33, 26, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 33, 26, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, black 12%, transparent 72%);
+}
+
+:root[data-theme="dark"] body::after {
   opacity: 0.35;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, black 12%, transparent 72%);
 }
 
 /* Milestone pulse (phase change / draft complete) */
@@ -98,8 +145,8 @@ html.action-complete-glow::after {
   z-index: 9999;
   background: radial-gradient(
     circle at 50% 42%,
-    rgba(63, 185, 80, 0.28) 0%,
-    rgba(88, 161, 255, 0.06) 38%,
+    rgba(46, 140, 90, 0.22) 0%,
+    rgba(46, 140, 90, 0.06) 38%,
     transparent 58%
   );
   animation: action-glow-pulse 0.85s ease-out forwards;

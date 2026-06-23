@@ -25,11 +25,12 @@ export default function SelectTeamPage() {
       <div className="page-content">
         <div style={{ marginBottom: "2rem" }}>
           <h1 style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "1.6rem",
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            marginBottom: "0.35rem",
+            fontFamily: "var(--font-poster)",
+            fontSize: "2.6rem",
+            lineHeight: 1,
+            textTransform: "uppercase",
+            letterSpacing: "0.01em",
+            marginBottom: "0.5rem",
           }}>
             Choose Your Franchise
           </h1>
