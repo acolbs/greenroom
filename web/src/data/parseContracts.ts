@@ -1,4 +1,4 @@
-import type { ExpiringContract, OptionType, OffensiveArchetype, DefensiveRole, Position } from "../types/simulator";
+import type { ExpiringContract, OptionType, OffensiveArchetype, DefensiveRole, Position, TalentTier } from "../types/simulator";
 import {
   parseSalaryString,
   isPlayerOptionSalary,
@@ -152,6 +152,8 @@ export interface BuildExpiringParams {
     defensiveRole: DefensiveRole;
     currentSalary: number;
     stats: ExpiringContract["stats"];
+    talentScore?: number;
+    talentTier?: TalentTier;
   }>;
   contractMap: Map<string, ContractRow>;
   optionRows: OptionRow[];
@@ -192,6 +194,8 @@ export function buildExpiringContracts(params: BuildExpiringParams): ExpiringCon
       estimatedMarketSalary,
       isSalaryEstimate,
       stats: player.stats,
+      talentScore: player.talentScore,
+      talentTier: player.talentTier,
       ...(option
         ? { optionType: option.optionType, optionSalary: option.optionSalary }
         : {}),

@@ -7,7 +7,7 @@ import {
   radarFromNba,
   buildPhysicalRows,
 } from "../lib/playerMetrics";
-import HologramRadar from "./HologramRadar";
+import RadarChart from "./RadarChart";
 import PhysicalsCompare from "./PhysicalsCompare";
 
 const SUBJECT_COLOR = "#46A877"; // pine
@@ -46,6 +46,21 @@ export default function ProspectComparison({ prospect }: { prospect: DraftProspe
   // Nothing to show without at least the radar or the physicals.
   if (!subjectRadar && !physRows) return null;
 
+  const legendItems = (
+    <>
+      <span className="comp-legend__item">
+        <span className="comp-legend__dot" style={{ background: SUBJECT_COLOR }} />
+        {prospect.name}
+      </span>
+      {activeComp && (
+        <span className="comp-legend__item">
+          <span className="comp-legend__dot" style={{ background: COMP_COLOR }} />
+          {activeComp.name}
+        </span>
+      )}
+    </>
+  );
+
   return (
     <>
       <div className="player-modal__divider" />
@@ -67,40 +82,17 @@ export default function ProspectComparison({ prospect }: { prospect: DraftProspe
         </div>
       )}
 
-      <div className="comp-legend">
-        <span className="comp-legend__item">
-          <span className="comp-legend__dot" style={{ background: SUBJECT_COLOR }} />
-          {prospect.name}
-        </span>
-        {activeComp && (
-          <span className="comp-legend__item">
-            <span className="comp-legend__dot" style={{ background: COMP_COLOR }} />
-            {activeComp.name}
-          </span>
-        )}
-      </div>
+      {!subjectRadar && <div className="comp-legend">{legendItems}</div>}
 
       {subjectRadar && (
         <div className="comp-radar-wrap">
-          <HologramRadar
+          <div className="comp-legend comp-legend--on-chart">{legendItems}</div>
+          <RadarChart
             subject={subjectRadar}
             comp={compRadar}
             subjectColor={SUBJECT_COLOR}
             compColor={COMP_COLOR}
           />
-          <div className="comp-radar-grid">
-            {subjectRadar.map((p, i) => (
-              <div className="comp-stat" key={p.key}>
-                <span className="comp-stat__label">{p.label}</span>
-                <span className="comp-stat__vals">
-                  <b style={{ color: SUBJECT_COLOR }}>{p.display}</b>
-                  {compRadar && (
-                    <span style={{ color: COMP_COLOR }}>{compRadar[i].display}</span>
-                  )}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 

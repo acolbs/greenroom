@@ -3093,6 +3093,26 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   box-shadow: 0 0 8px currentColor;
 }
 
+/* Key overlaid on the radar, top-left, like the reference. */
+.comp-legend--on-chart {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.7rem;
+  z-index: 2;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 0.3rem;
+  margin: 0;
+  max-width: 60%;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #eaf6f0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.comp-legend--on-chart .comp-legend__item { gap: 0.45rem; }
+
 /* The holo console: a fixed deep-teal panel so the WebGL glow pops in light + dark */
 .comp-radar-wrap {
   position: relative;
@@ -3130,63 +3150,46 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
 }
 
 .hologram-radar,
-.radar-fallback {
+.radar-fallback,
+.radar-chart {
   display: block;
   filter: drop-shadow(0 0 10px rgba(57, 227, 255, 0.18));
 }
 
-.radar-fallback { color: #7fb89e; }
+.radar-fallback,
+.radar-chart { color: #7fb89e; }
 
-.radar-fallback__label {
-  fill: #cfe9dc;
+/* Two-line spoke labels: stat name + value(s) with unit. */
+.radar-chart__label {
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-/* numeric readout under the radar */
-.comp-radar-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.4rem 0.75rem;
-  width: 100%;
-  margin-top: 0.85rem;
-  padding: 0 0.4rem;
-}
-
-.comp-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.comp-stat__label {
-  font-family: var(--font-mono);
-  font-size: 0.56rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #8fb6a8;
-}
-
-.comp-stat__vals {
-  display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
   font-variant-numeric: tabular-nums;
 }
 
-.comp-stat__vals b { font-weight: 700; }
+.radar-chart__label-name {
+  fill: #cfe9dc;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.radar-chart__label-val {
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.radar-chart__label-comp {
+  font-size: 9.5px;
+  font-weight: 600;
+}
 
 /* ── Physical sliders ─────────────────────────────────────────── */
 
 .phys-compare {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
-  margin-top: 0.5rem;
+  gap: 1.4rem;
+  margin-top: 1.1rem;
 }
 
 .phys-row {
@@ -3247,6 +3250,23 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
   background: var(--comp-color);
   box-shadow: 0 0 7px var(--comp-color);
 }
+
+/* Comp player's number floats above its tick mark, offset to one side so it
+   never overlaps the vertical line. Sits to the inner side of the track edge. */
+.phys-track__comp-value {
+  position: absolute;
+  bottom: calc(100% + 3px);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+.phys-track__comp-value--right { margin-left: 7px; }
+
+.phys-track__comp-value--left { transform: translateX(-100%); margin-left: -7px; }
 
 .phys-track__value {
   position: absolute;

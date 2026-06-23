@@ -1,4 +1,4 @@
-import type { RosterPlayer, Position, OffensiveArchetype, DefensiveRole } from "../types/simulator";
+import type { RosterPlayer, Position, OffensiveArchetype, DefensiveRole, TalentTier } from "../types/simulator";
 import {
   normalizeName,
   parseOffensiveArchetype,
@@ -8,6 +8,7 @@ import {
 } from "./csvUtils";
 import type { ContractRow } from "./parseContracts";
 import { teamIdFromCsvAbbrev } from "./constants";
+import { buildNbaPools, nbaTalent, talentTier } from "../lib/talentScore";
 
 // ---------------------------------------------------------------------------
 // Raw shape parsed directly from master.csv columns
@@ -25,6 +26,9 @@ export interface MasterRow {
   defensiveRole: DefensiveRole;
   games: number;
   stats: RosterPlayer["stats"];
+  /** 0–100 unified Talent Score, computed across the full league pool. */
+  talentScore: number;
+  talentTier: TalentTier;
 }
 
 // ---------------------------------------------------------------------------
@@ -78,7 +82,17 @@ export function parseMasterRows(rows: Record<string, string>[]): Map<string, Mas
         ws: toFloat(row["WS"]),
         usgPct: toFloat(row["USG%"]),
       },
+      talentScore: 0, // filled in the post-pass below once the pool is complete
+      talentTier: "Depth",
     });
+  }
+
+  // Talent is a percentile within the full league pool, so it can only be
+  // computed once every row is parsed. Second pass over the assembled map.
+  const pools = buildNbaPools([...byId.values()].map((r) => r.stats));
+  for (const r of byId.values()) {
+    r.talentScore = nbaTalent(r.stats, pools);
+    r.talentTier = talentTier(r.talentScore);
   }
 
   return byId;
@@ -126,6 +140,8 @@ export function buildTeamRoster(params: BuildRosterParams): RosterPlayer[] {
       estimatedMarketSalary,
       isSalaryEstimate,
       stats: row.stats,
+      talentScore: row.talentScore,
+      talentTier: row.talentTier,
     });
   }
 

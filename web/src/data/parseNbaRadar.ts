@@ -16,9 +16,13 @@ export interface NbaRadarStats {
 
 /**
  * Parse raw master.csv rows into a name-keyed map of the six radar stats.
- * master.csv figures are already per-game; TS%/3P% are 0–1. For traded players
- * keeps the row with the most games (matches parseMaster's stint rule). Skips
- * 2TM/3TM aggregate rows.
+ * master.csv figures are already per-game; TS%/3P% are 0–1.
+ *
+ * For traded players we keep the row with the most games. A 2TM/3TM row holds
+ * the full-season total (more games than any single stint), so it wins — giving
+ * the complete-season shape. We deliberately do NOT skip 2TM/3TM here: some
+ * traded players (e.g. Marvin Bagley III) appear ONLY as an aggregate row, and
+ * skipping it would drop them from the radar entirely.
  */
 export function parseNbaRadarByName(
   rows: Record<string, string>[]
@@ -27,9 +31,6 @@ export function parseNbaRadarByName(
   const gamesByKey = new Map<string, number>();
 
   for (const row of rows) {
-    const team = row["Team"]?.trim() ?? "";
-    if (team === "2TM" || team === "3TM") continue;
-
     const name = row["Player"]?.trim();
     if (!name) continue;
 

@@ -32,17 +32,21 @@ const clamp100 = (x: number): number => Math.max(0, Math.min(100, x));
 /** Linear map [lo,hi] -> [0,100], clamped. */
 const band = (raw: number, lo: number, hi: number): number =>
   clamp100(((raw - lo) / (hi - lo)) * 100);
-const pct = (v01: number): string => `${(v01 * 100).toFixed(1)}%`;
 const one = (v: number): string => v.toFixed(1);
+const intPct = (v01: number): string => `${Math.round(v01 * 100)}`;
 
-/** Axis order is the vertex order around the hexagon (12 o'clock, clockwise). */
+/**
+ * Axis order is the vertex order around the hexagon (12 o'clock, clockwise).
+ * `fmt` returns the value WITH its unit so each spoke spells out the stat —
+ * "19.9 PPG", "64 TS%" — matching the on-axis labels in the reference design.
+ */
 export const RADAR_AXES: RadarAxisConfig[] = [
-  { key: "scoring", label: "Scoring", norm: (r) => band(r, 0, 30), fmt: one },
-  { key: "efficiency", label: "Efficiency", norm: (r) => band(r, 0.45, 0.7), fmt: pct },
-  { key: "playmaking", label: "Playmaking", norm: (r) => band(r, 0, 10), fmt: one },
-  { key: "rebounding", label: "Rebounding", norm: (r) => band(r, 0, 13), fmt: one },
-  { key: "defense", label: "Defense", norm: (r) => band(r, 0, 4), fmt: one },
-  { key: "shooting", label: "Shooting", norm: (r) => band(r, 0.2, 0.45), fmt: pct },
+  { key: "scoring", label: "Scoring", norm: (r) => band(r, 0, 30), fmt: (r) => `${one(r)} PPG` },
+  { key: "efficiency", label: "Efficiency", norm: (r) => band(r, 0.45, 0.7), fmt: (r) => `${intPct(r)} TS%` },
+  { key: "playmaking", label: "Playmaking", norm: (r) => band(r, 0, 10), fmt: (r) => `${one(r)} APG` },
+  { key: "rebounding", label: "Rebounding", norm: (r) => band(r, 0, 13), fmt: (r) => `${one(r)} RPG` },
+  { key: "defense", label: "Defense", norm: (r) => band(r, 0, 4), fmt: (r) => `${one(r)} STL+BLK` },
+  { key: "shooting", label: "Shooting", norm: (r) => band(r, 0.2, 0.45), fmt: (r) => `${intPct(r)}% 3P` },
 ];
 
 export interface RadarPoint {
@@ -136,7 +140,8 @@ export function inchesToFeet(inches: number): string {
 export const PHYSICAL_AXES: PhysicalAxisConfig[] = [
   { key: "heightIn", label: "Height", min: 70, max: 88, fmt: inchesToFeet },
   { key: "wingspanIn", label: "Wingspan", min: 72, max: 94, fmt: inchesToFeet },
-  { key: "standingReachIn", label: "Standing Reach", min: 92, max: 120, fmt: inchesToFeet },
+  // Temporarily hidden — no NBA comp standing-reach data yet. Restore when available.
+  // { key: "standingReachIn", label: "Standing Reach", min: 92, max: 120, fmt: inchesToFeet },
   { key: "weightLbs", label: "Weight", min: 160, max: 280, fmt: (w) => `${Math.round(w)} lb` },
 ];
 

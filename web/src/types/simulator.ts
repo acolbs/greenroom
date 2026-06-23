@@ -22,6 +22,9 @@ export type SimulatorPhase = "SELECT_TEAM" | "FREE_AGENCY" | "DRAFT" | "COMPLETE
 
 export type TeamStrengthLabel = "Contender" | "Middle" | "Rebuilding";
 
+/** Display tier derived from the 0–100 talentScore (see lib/talentScore.ts). */
+export type TalentTier = "Star" | "Starter" | "Rotation" | "Depth";
+
 export interface TeamStrength {
   score: number;
   label: TeamStrengthLabel;
@@ -61,6 +64,9 @@ export interface RosterPlayer {
   /** True when ACE lookup failed and currentSalary was used as a proxy. */
   isSalaryEstimate: boolean;
   stats: PlayerStats;
+  /** 0–100 unified Talent Score (lib/talentScore.ts). */
+  talentScore?: number;
+  talentTier?: TalentTier;
 }
 
 // ---------------------------------------------------------------------------
@@ -78,6 +84,9 @@ export interface ExpiringContract {
   estimatedMarketSalary: number;
   isSalaryEstimate: boolean;
   stats: PlayerStats;
+  /** 0–100 unified Talent Score (lib/talentScore.ts). */
+  talentScore?: number;
+  talentTier?: TalentTier;
   /** Present when contract has a Player or Club option. */
   optionType?: OptionType;
   optionSalary?: number;
@@ -178,6 +187,9 @@ export interface DraftProspect {
   successOdds?: ProspectSuccessOdds;
   /** Physical measurements (physicals.csv) when available. */
   physicals?: Physicals;
+  /** 0–100 unified Talent Score (lib/talentScore.ts). */
+  talentScore?: number;
+  talentTier?: TalentTier;
 }
 
 export interface DraftHistoryEntry {

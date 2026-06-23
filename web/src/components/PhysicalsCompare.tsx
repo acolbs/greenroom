@@ -44,6 +44,17 @@ export default function PhysicalsCompare({
                 title={compName ? `${compName}: ${row.compDisplay}` : row.compDisplay ?? ""}
               />
             )}
+            {row.compFill != null && row.compDisplay != null && (
+              <span
+                className={`phys-track__comp-value phys-track__comp-value--${
+                  row.compFill > 0.5 ? "left" : "right"
+                }`}
+                style={{ left: `${row.compFill * 100}%`, color: compColor }}
+                title={compName ?? undefined}
+              >
+                {row.compDisplay}
+              </span>
+            )}
             <span className="phys-track__value" style={{ color: subjectColor }}>
               {row.display}
             </span>

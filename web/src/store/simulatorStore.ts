@@ -27,6 +27,8 @@ import {
 } from "../data/parseProspectML";
 import { parsePhysicalsByName, applyProspectPhysicals } from "../data/parsePhysicals";
 import type { Physicals } from "../data/parsePhysicals";
+import { attachProspectTalent } from "../lib/talentScore";
+import { parseRingerRolesByName, applyRingerRoles } from "../data/parseRingerRoles";
 import { parseNbaRadarByName } from "../data/parseNbaRadar";
 import type { NbaRadarStats } from "../data/parseNbaRadar";
 import type { ComparisonData } from "../types/simulator";
@@ -84,6 +86,12 @@ function loadAllData(): Promise<LoadedData> {
       fetchText("data/physicals.csv"),
     ]);
 
+    // Optional, user-maintained archetype overrides. Missing file → no overrides.
+    const ringerRolesText = await fetchText("data/ringer_roles.csv").catch(() => "");
+    const ringerRoles = parseRingerRolesByName(
+      ringerRolesText ? parseCsv(ringerRolesText) : []
+    );
+
     const masterRowsParsed = parseCsv(masterText);
     const masterRows = parseMasterRows(masterRowsParsed);
     const contractMap = parseHoopshypeContracts(parseCsv(contractsText));
@@ -94,13 +102,18 @@ function loadAllData(): Promise<LoadedData> {
     const successByName = parseProspectSuccessByName(parseCsv(prospectSuccessText));
     const physicalsByName = parsePhysicalsByName(parseCsv(physicalsText));
     const nbaRadarByName = parseNbaRadarByName(masterRowsParsed);
-    const draftClass = applyProspectPhysicals(
-      attachProspectML(
-        applyProspectCollegeStats(parseDraftClass(parseCsv(bigBoardText)), prospectStatsByName),
-        compsByName,
-        successByName
-      ),
-      physicalsByName
+    const draftClass = attachProspectTalent(
+      applyRingerRoles(
+        applyProspectPhysicals(
+          attachProspectML(
+            applyProspectCollegeStats(parseDraftClass(parseCsv(bigBoardText)), prospectStatsByName),
+            compsByName,
+            successByName
+          ),
+          physicalsByName
+        ),
+        ringerRoles
+      )
     );
 
     const prospectPhysicals: Physicals[] = [...physicalsByName.values()].filter(
@@ -353,6 +366,8 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
               defensiveRole: p.defensiveRole,
               currentSalary: p.currentSalary,
               stats: p.stats,
+              talentScore: p.talentScore,
+              talentTier: p.talentTier,
             })),
           contractMap: data.contractMap,
           optionRows: data.optionRows,
@@ -421,6 +436,8 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         estimatedMarketSalary: contract.estimatedMarketSalary,
         isSalaryEstimate: contract.isSalaryEstimate,
         stats: contract.stats,
+        talentScore: contract.talentScore,
+        talentTier: contract.talentTier,
       };
 
       if (decision === "RE_SIGN") {
@@ -536,6 +553,8 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         estimatedMarketSalary: rookieSalaryFromGrade(prospect.grade),
         isSalaryEstimate: false,
         stats: { pts: 0, trb: 0, ast: 0, tsPct: 0, bpm: 0, vorp: 0, ws: 0, usgPct: 0 },
+        talentScore: prospect.talentScore,
+        talentTier: prospect.talentTier,
       };
 
       const nextRoster = [...state.roster, rookiePlayer];
