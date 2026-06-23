@@ -239,6 +239,21 @@ export default function FreeAgencyPage() {
       <NavBar />
 
       <div className="page-content">
+        <div style={{ marginBottom: "1.75rem" }}>
+          <h1 style={{
+            fontFamily: "var(--font-poster)",
+            fontSize: "2.4rem",
+            lineHeight: 1,
+            textTransform: "uppercase",
+            letterSpacing: "0.01em",
+            marginBottom: "0.5rem",
+          }}>
+            Free Agency
+          </h1>
+          <p style={{ fontSize: "0.83rem", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
+            Resolve every expiring contract and club option, then advance to the draft.
+          </p>
+        </div>
         <div className="split-layout">
 
           {/* ── Left: decisions ── */}

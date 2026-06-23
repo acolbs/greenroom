@@ -243,9 +243,11 @@
 }
 
 .section-count {
-  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
   color: var(--color-text-muted);
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 /* ── Cards ─────────────────────────────────────────────────────────────────── */
@@ -347,7 +349,7 @@
   font-weight: 600;
   letter-spacing: 0.03em;
   padding: 0.4rem 0.9rem;
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px solid transparent;
   cursor: pointer;
   transition: opacity 0.15s, background 0.15s, box-shadow 0.15s;
@@ -360,7 +362,7 @@
 
 .btn-primary {
   background: var(--color-accent);
-  color: #06120a;
+  color: #fbfcfa;
   border-color: var(--color-accent);
   font-weight: 700;
   box-shadow: var(--glow-accent-tight);
@@ -399,7 +401,7 @@
 .btn-lg {
   font-size: 0.9rem;
   padding: 0.65rem 1.75rem;
-  border-radius: 8px;
+  border-radius: 4px;
   letter-spacing: 0.05em;
 }
 
@@ -437,9 +439,9 @@
 }
 
 .roster-row-salary {
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 500;
   color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -584,8 +586,8 @@
 }
 
 .fa-card__stat-val {
-  font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
   font-weight: 700;
   color: var(--color-text);
   font-variant-numeric: tabular-nums;
@@ -593,10 +595,11 @@
 }
 
 .fa-card__stat-lbl {
+  font-family: var(--font-mono);
   font-size: 0.5rem;
   color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   white-space: nowrap;
 }
 
@@ -614,15 +617,16 @@
 }
 
 .fa-card__salary-label {
+  font-family: var(--font-mono);
   font-size: 0.53rem;
   color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.09em;
 }
 
 .fa-card__salary-main {
-  font-family: var(--font-display);
-  font-size: 0.88rem;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--color-accent);
   line-height: 1.15;
