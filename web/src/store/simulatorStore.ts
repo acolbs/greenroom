@@ -25,6 +25,11 @@ import {
   parseProspectSuccessByName,
   attachProspectML,
 } from "../data/parseProspectML";
+import { parsePhysicalsByName, applyProspectPhysicals } from "../data/parsePhysicals";
+import type { Physicals } from "../data/parsePhysicals";
+import { parseNbaRadarByName } from "../data/parseNbaRadar";
+import type { NbaRadarStats } from "../data/parseNbaRadar";
+import type { ComparisonData } from "../types/simulator";
 import {
   CHAMPIONSHIP_FORMULA,
   computeRosterDeficits,
@@ -42,6 +47,7 @@ interface LoadedData {
   optionRows: OptionRow[];
   aceMap: Map<string, number>;
   draftClass: DraftProspect[];
+  comparisonData: ComparisonData;
 }
 
 let dataCache: Promise<LoadedData> | null = null;
@@ -65,6 +71,7 @@ function loadAllData(): Promise<LoadedData> {
       prospectStatsText,
       prospectCompsText,
       prospectSuccessText,
+      physicalsText,
     ] = await Promise.all([
       fetchText("data/master.csv"),
       fetchText("data/2025-2026_Stats.csv"),
@@ -74,22 +81,38 @@ function loadAllData(): Promise<LoadedData> {
       fetchText("data/prospect_stats.csv"),
       fetchText("data/prospect_comps.csv"),
       fetchText("data/prospect_success.csv"),
+      fetchText("data/physicals.csv"),
     ]);
 
-    const masterRows = parseMasterRows(parseCsv(masterText));
+    const masterRowsParsed = parseCsv(masterText);
+    const masterRows = parseMasterRows(masterRowsParsed);
     const contractMap = parseHoopshypeContracts(parseCsv(contractsText));
     const optionRows = parseOptionsContracts(parseCsv(optionsText));
     const aceMap = buildAceLookup(parseCsv(statsText));
     const prospectStatsByName = parseProspectStatsByName(parseCsv(prospectStatsText));
     const compsByName = parseProspectCompsByName(parseCsv(prospectCompsText));
     const successByName = parseProspectSuccessByName(parseCsv(prospectSuccessText));
-    const draftClass = attachProspectML(
-      applyProspectCollegeStats(parseDraftClass(parseCsv(bigBoardText)), prospectStatsByName),
-      compsByName,
-      successByName
+    const physicalsByName = parsePhysicalsByName(parseCsv(physicalsText));
+    const nbaRadarByName = parseNbaRadarByName(masterRowsParsed);
+    const draftClass = applyProspectPhysicals(
+      attachProspectML(
+        applyProspectCollegeStats(parseDraftClass(parseCsv(bigBoardText)), prospectStatsByName),
+        compsByName,
+        successByName
+      ),
+      physicalsByName
     );
 
-    return { masterRows, contractMap, optionRows, aceMap, draftClass };
+    const prospectPhysicals: Physicals[] = [...physicalsByName.values()].filter(
+      (p) => p.kind === "prospect"
+    );
+    const comparisonData: ComparisonData = {
+      nbaRadarByName,
+      physicalsByName,
+      prospectPhysicals,
+    };
+
+    return { masterRows, contractMap, optionRows, aceMap, draftClass, comparisonData };
   })();
 
   // On error, clear the cache so the next attempt can retry
@@ -158,6 +181,7 @@ const INITIAL_STATE: SimulatorState & { capSpace: number } = {
   rosterDeficits: [],
   teamStrength: { score: 0, label: "Rebuilding" },
   blueprintMatch: null,
+  comparisonData: null,
   loading: false,
   error: null,
   capSpace: SALARY_CAP,
@@ -366,6 +390,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
           decisions: {},
           draftClass: data.draftClass,
           draftAvailableProspects: data.draftClass,
+          comparisonData: data.comparisonData,
           capSpace: computeCapSpace(finalRoster),
           rosterDeficits: computeRosterDeficits(finalRoster),
           teamStrength: computeTeamStrength(finalRoster),

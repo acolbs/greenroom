@@ -30,6 +30,8 @@ export function parseProspectStatsByName(
 
     const tsRaw = parseNullableFloat(row["ts_pct"]);
     const tsPct = tsRaw != null ? (tsRaw > 1 ? tsRaw / 100 : tsRaw) : 0;
+    const fg3Raw = parseNullableFloat(row["fg3_pct"]);
+    const fg3Pct = fg3Raw != null ? (fg3Raw > 1 ? fg3Raw / 100 : fg3Raw) : 0;
 
     map.set(normalizeName(name), {
       seasonYear: row["year_id"]?.trim() || "—",
@@ -46,6 +48,7 @@ export function parseProspectStatsByName(
       blk: parseNullableFloat(row["blk_per_g"]) ?? 0,
       tov: parseNullableFloat(row["tov_per_g"]) ?? 0,
       tsPct,
+      fg3Pct,
     });
   }
 

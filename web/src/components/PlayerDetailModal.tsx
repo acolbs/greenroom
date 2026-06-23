@@ -8,6 +8,7 @@ import type {
 } from "../types/simulator";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
 import PlayerAvatar from "./PlayerAvatar";
+import ProspectComparison from "./ProspectComparison";
 import { getBlueprintCitation } from "../data/blueprintScore";
 import { OFF_DESCRIPTIONS, DEF_DESCRIPTIONS } from "../data/archetypes";
 
@@ -644,6 +645,8 @@ function ProspectRight({ prospect }: { prospect: DraftProspect }) {
           </div>
         </>
       )}
+
+      <ProspectComparison prospect={prospect} />
 
       {prospect.successOdds && (
         <>

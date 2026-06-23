@@ -5,6 +5,8 @@
 
 import type { OffensiveArchetype, DefensiveRole } from "../data/archetypes";
 export type { OffensiveArchetype, DefensiveRole };
+import type { Physicals } from "../data/parsePhysicals";
+import type { NbaRadarStats } from "../data/parseNbaRadar";
 
 export type Position = "PG" | "SG" | "SF" | "PF" | "C";
 
@@ -123,6 +125,8 @@ export interface ProspectCollegeStats {
   tov: number;
   /** 0–1 (CSV may use .578) */
   tsPct: number;
+  /** 3-point percentage, 0–1. */
+  fg3Pct: number;
 }
 
 /** One ML player comparison (from prospect_comps.csv). */
@@ -172,6 +176,8 @@ export interface DraftProspect {
   comps?: ProspectComp[];
   /** ML success projection (prospect_success.csv). */
   successOdds?: ProspectSuccessOdds;
+  /** Physical measurements (physicals.csv) when available. */
+  physicals?: Physicals;
 }
 
 export interface DraftHistoryEntry {
@@ -260,7 +266,20 @@ export interface SimulatorState {
   teamStrength: TeamStrength;
   blueprintMatch: BlueprintMatch | null;
 
+  // Comparison data for the player-detail radar / physicals (loaded with draft data)
+  comparisonData: ComparisonData | null;
+
   // Async state
   loading: boolean;
   error: string | null;
+}
+
+/** Lookups powering the player-comparison radar + physicals overlay. */
+export interface ComparisonData {
+  /** Per-game NBA radar stats by normalized name (comp players). */
+  nbaRadarByName: Map<string, NbaRadarStats>;
+  /** Physical measurements by normalized name (prospects + NBA). */
+  physicalsByName: Map<string, Physicals>;
+  /** All prospect physicals — the percentile cohort for the sliders. */
+  prospectPhysicals: Physicals[];
 }
