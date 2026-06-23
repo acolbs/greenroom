@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectCurrentUserPick } from "../store/simulatorStore";
 import {
@@ -6,7 +6,7 @@ import {
   getSmartRecommendation,
 } from "../data/prospectRanking";
 import type { RankedProspect } from "../data/prospectRanking";
-import { TEAMS } from "../data/constants";
+import { TEAMS, DRAFT_ORDER_2026 } from "../data/constants";
 import type { DraftProspect, Position } from "../types/simulator";
 import NavBar from "../components/NavBar";
 import PlayerAvatar from "../components/PlayerAvatar";
@@ -20,28 +20,24 @@ import Tooltip from "../components/Tooltip";
 // ── Draft setup screen ─────────────────────────────────────────────────────
 
 function DraftSetup() {
-  const [input, setInput] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
   const setUserPickNumbers = useSimulatorStore((s) => s.setUserPickNumbers);
   const startDraftSimulation = useSimulatorStore((s) => s.startDraftSimulation);
-  const userPickNumbers = useSimulatorStore((s) => s.userPickNumbers);
+  const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
 
-  function handleSubmit() {
-    setError(null);
-    const raw = input
-      .split(/[,\s]+/)
-      .map((s) => s.trim())
-      .filter(Boolean);
-    const nums = raw.map(Number);
+  const team = TEAMS.find((t) => t.id === selectedTeamId);
 
-    if (nums.some(isNaN)) {
-      setError("Enter numbers only, separated by commas.");
-      return;
-    }
+  // Picks your team owns, derived from the ACTUAL 2026 draft order.
+  const autoPicks = useMemo(
+    () =>
+      DRAFT_ORDER_2026.reduce<number[]>((acc, id, i) => {
+        if (id === selectedTeamId) acc.push(i + 1);
+        return acc;
+      }, []),
+    [selectedTeamId]
+  );
 
-    const err = setUserPickNumbers(nums);
-    if (err) { setError(err); return; }
+  function handleStart() {
+    setUserPickNumbers(autoPicks);
     startDraftSimulation();
   }
 
@@ -49,28 +45,28 @@ function DraftSetup() {
     <div className="draft-setup">
       <h2>Set Up Draft</h2>
       <p className="draft-setup-desc">
-        Enter the pick numbers your team owns (e.g. <strong>12, 40, 55</strong>
-        ). The draft has 60 total picks across 2 rounds. CPU teams will auto-pick
-        all other slots.
+        Using the <strong>actual 2026 NBA draft order</strong> (60 picks, 2 rounds,
+        traded picks included). CPU teams pick every other slot in real order.
       </p>
 
-      <input
-        type="text"
-        placeholder="e.g. 12, 40, 55"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-      />
+      <div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
+        {autoPicks.length > 0 ? (
+          <>
+            {team ? `${team.city} ${team.name}` : "Your team"} pick at{" "}
+            <strong style={{ color: "var(--color-accent)" }}>
+              {autoPicks.join(", ")}
+            </strong>
+            .
+          </>
+        ) : (
+          <>
+            {team ? `${team.city} ${team.name}` : "Your team"} hold no picks in this
+            draft — you'll watch all 60 picks play out in the real order.
+          </>
+        )}
+      </div>
 
-      {error && <div className="draft-setup-error">{error}</div>}
-
-      {userPickNumbers.length > 0 && (
-        <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>
-          Your picks: {userPickNumbers.join(", ")}
-        </div>
-      )}
-
-      <button className="btn btn-primary" onClick={handleSubmit}>
+      <button className="btn btn-primary" onClick={handleStart}>
         Start Draft
       </button>
     </div>

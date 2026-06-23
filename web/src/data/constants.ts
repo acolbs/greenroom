@@ -70,6 +70,19 @@ export const TEAMS: Team[] = [
   { id: "UTA", csvAbbrev: "UTA", city: "Utah",          name: "Jazz",         conference: "West" },
 ];
 
+// Actual 2026 NBA draft order (official NBA.com order, picks 1–60, including
+// traded picks). Index 0 = pick 1. Owner = the team listed as holding the pick.
+export const DRAFT_ORDER_2026: string[] = [
+  // Round 1
+  "WAS", "UTA", "MEM", "CHI", "LAC", "BKN", "SAC", "ATL", "DAL", "MIL",
+  "GSW", "OKC", "MIA", "CHA", "CHI", "MEM", "OKC", "CHA", "TOR", "SAS",
+  "DET", "PHI", "ATL", "NYK", "LAL", "DEN", "BOS", "MIN", "CLE", "DAL",
+  // Round 2
+  "NYK", "MEM", "BKN", "SAC", "SAS", "LAC", "OKC", "CHI", "HOU", "BOS",
+  "MIA", "SAS", "BKN", "SAS", "SAC", "ORL", "PHX", "DAL", "DEN", "TOR",
+  "WAS", "LAC", "HOU", "GSW", "NYK", "CHI", "ATL", "NOP", "MIN", "WAS",
+];
+
 /** Canonical team ID from a CSV abbreviation (handles BRK→BKN, CHO→CHA, PHO→PHX). */
 export function teamIdFromCsvAbbrev(csvAbbrev: string): string | null {
   const team = TEAMS.find((t) => t.csvAbbrev === csvAbbrev || t.id === csvAbbrev);

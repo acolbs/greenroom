@@ -7,7 +7,7 @@ import type {
   DraftProspect,
   DraftHistoryEntry,
 } from "../types/simulator";
-import { SALARY_CAP, TOTAL_DRAFT_PICKS, TEAMS, rookieSalaryFromGrade } from "../data/constants";
+import { SALARY_CAP, TOTAL_DRAFT_PICKS, TEAMS, DRAFT_ORDER_2026, rookieSalaryFromGrade } from "../data/constants";
 import { assetUrl } from "../data/assetUrl";
 import { parseCsv, normalizeName } from "../data/csvUtils";
 import { buildAceLookup } from "../data/aceModel";
@@ -149,7 +149,8 @@ function computeCapSpace(roster: RosterPlayer[]): number {
 // ---------------------------------------------------------------------------
 
 function teamForPick(pickNumber: number): string {
-  return TEAMS[(pickNumber - 1) % 30].id;
+  // Use the actual 2026 draft order; fall back to round-robin if out of range.
+  return DRAFT_ORDER_2026[pickNumber - 1] ?? TEAMS[(pickNumber - 1) % 30].id;
 }
 
 // ---------------------------------------------------------------------------
@@ -490,8 +491,8 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
 
     // ── setUserPickNumbers ───────────────────────────────────────────────────
     setUserPickNumbers: (picks) => {
-      if (picks.length === 0) return "Enter at least one pick number.";
-
+      // Empty is allowed: a team with no picks in the real draft order just
+      // watches the full CPU simulation.
       const invalid = picks.filter((p) => p < 1 || p > TOTAL_DRAFT_PICKS);
       if (invalid.length > 0)
         return `Pick numbers must be between 1 and ${TOTAL_DRAFT_PICKS}.`;
@@ -505,7 +506,6 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
     // ── startDraftSimulation ─────────────────────────────────────────────────
     startDraftSimulation: () => {
       const state = get();
-      if (state.userPickNumbers.length === 0) return;
 
       clearCpuTimer();
       set({
