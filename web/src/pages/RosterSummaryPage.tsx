@@ -7,6 +7,7 @@ import { buildReportCard } from "../data/reportCard";
 import { TEAMS } from "../data/constants";
 import NavBar from "../components/NavBar";
 import CapBar from "../components/CapBar";
+import ReadinessGauge from "../components/ReadinessGauge";
 
 function fmt(n: number): string {
   return "$" + (n / 1_000_000).toFixed(1) + "M";
@@ -192,6 +193,38 @@ export default function RosterSummaryPage() {
 
           {/* ── Right: formula analysis ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {/* Championship readiness gauge */}
+            <div
+              style={{
+                background: "var(--color-surface-raised)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "4px",
+                padding: "1rem 1rem 1.25rem",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.65rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.12em",
+                  color: "var(--color-text-muted)",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Championship Readiness
+              </div>
+              <ReadinessGauge
+                score={reportCard.overall.score}
+                label={reportCard.overall.label}
+                sublabel={
+                  closestBlueprint
+                    ? `Closest title blueprint: ${closestBlueprint.team} (${closestBlueprint.score}%)`
+                    : undefined
+                }
+              />
+            </div>
+
             {/* Formula slots */}
             <div
               style={{

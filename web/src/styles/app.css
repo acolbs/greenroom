@@ -1203,6 +1203,72 @@
   text-align: right;
 }
 
+/* ── Championship readiness gauge ──────────────────────────────────────────── */
+.gauge {
+  text-align: center;
+}
+
+.gauge__svg {
+  width: 220px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.gauge__track {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.gauge__value {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.gauge__needle {
+  stroke: var(--color-text);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.gauge__hub {
+  fill: var(--color-text);
+}
+
+.gauge__hub-dot {
+  fill: var(--color-surface-raised);
+}
+
+.gauge__num {
+  font-family: var(--font-poster);
+  font-size: 2.8rem;
+  line-height: 0.9;
+  margin-top: -0.5rem;
+  color: var(--color-text);
+}
+
+.gauge__label {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  font-weight: 500;
+  margin-top: 0.3rem;
+}
+
+.gauge__sub {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  margin-top: 0.45rem;
+  line-height: 1.4;
+}
+
 .summary-table tr:last-child td { border-bottom: none; }
 
 .summary-table tr:hover td {
