@@ -52,6 +52,17 @@ export default function RosterSummaryPage() {
       <NavBar />
 
       <div className="page-content">
+        <div style={{ marginBottom: "1.25rem" }}>
+          <h1 style={{
+            fontFamily: "var(--font-poster)",
+            fontSize: "2.4rem",
+            lineHeight: 1,
+            textTransform: "uppercase",
+            letterSpacing: "0.01em",
+          }}>
+            Offseason Report
+          </h1>
+        </div>
         {/* ── Report Card header ── */}
         <div style={{ marginBottom: "1.5rem" }}>
           <div className="report-card">
@@ -170,13 +181,7 @@ export default function RosterSummaryPage() {
                     <td style={{ color: "var(--color-text-muted)", fontSize: "0.78rem" }}>
                       {p.defensiveRole}
                     </td>
-                    <td
-                      style={{
-                        textAlign: "right",
-                        fontVariantNumeric: "tabular-nums",
-                        fontWeight: 600,
-                      }}
-                    >
+                    <td className="summary-table__salary">
                       {fmt(p.currentSalary)}
                     </td>
                   </tr>
@@ -255,9 +260,9 @@ export default function RosterSummaryPage() {
             {deficits.length === 0 ? (
               <div
                 style={{
-                  background: "#0a1a0d",
+                  background: "var(--color-accent-subtle)",
                   border: "1px solid var(--color-accent)",
-                  borderRadius: "8px",
+                  borderRadius: "4px",
                   padding: "1rem",
                   textAlign: "center",
                   color: "var(--color-accent)",

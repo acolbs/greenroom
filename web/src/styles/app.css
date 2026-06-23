@@ -977,7 +977,7 @@
 .formula-archetypes .met { color: var(--color-text); }
 
 .formula-progress {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 700;
   white-space: nowrap;
@@ -1194,6 +1194,13 @@
   padding: 0.5rem 0.625rem;
   border-bottom: 1px solid var(--color-border-subtle);
   vertical-align: middle;
+}
+
+.summary-table td.summary-table__salary {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  text-align: right;
 }
 
 .summary-table tr:last-child td { border-bottom: none; }
@@ -2404,11 +2411,10 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
 }
 
 .blueprint-panel__match-score {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1;
+  font-family: var(--font-poster);
+  font-size: 2.3rem;
+  letter-spacing: 0;
+  line-height: 0.9;
   flex-shrink: 0;
 }
 
@@ -2592,10 +2598,9 @@ html.edge-force-motion .welcome-page .btn.btn-primary.btn-lg:active {
 }
 
 .report-card__grade {
-  font-family: var(--font-display);
-  font-size: 3rem;
-  font-weight: 800;
-  line-height: 1;
+  font-family: var(--font-poster);
+  font-size: 3.4rem;
+  line-height: 0.9;
   min-width: 2.5rem;
   text-align: center;
 }

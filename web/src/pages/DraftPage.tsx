@@ -400,9 +400,9 @@ export default function DraftPage() {
           <div
             style={{
               padding: "0.75rem 1rem",
-              background: "#0a1a0d",
+              background: "var(--color-accent-subtle)",
               border: "1px solid var(--color-accent)",
-              borderRadius: "8px",
+              borderRadius: "4px",
               marginBottom: "1rem",
               display: "flex",
               alignItems: "center",
