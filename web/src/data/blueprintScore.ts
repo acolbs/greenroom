@@ -12,7 +12,7 @@
 // ---------------------------------------------------------------------------
 
 import type { RosterPlayer, OffensiveArchetype, DefensiveRole } from "../types/simulator";
-import { CHAMPIONSHIP_FORMULA, partialMatchCredit } from "./championshipFormula";
+import { CHAMPIONSHIP_FORMULA, partialMatchCredit, assignRosterToFormula } from "./championshipFormula";
 import blueprintsRaw from "./championship-blueprints.json";
 
 // ---------------------------------------------------------------------------
@@ -309,64 +309,31 @@ export function mapRosterToBlueprint(
   roster: RosterPlayer[],
   blueprintId: string
 ): PlayerBlueprintMapping[] {
-  const bv = BLUEPRINT_VECTORS[blueprintId];
-  if (!bv) return [];
+  if (!BLUEPRINT_VECTORS[blueprintId]) return [];
+
+  // Single no-reuse assignment is the source of truth: each player maps to the
+  // one slot they were assigned (so no two players claim the same slot, and no
+  // player claims two slots).
+  const bySlotPlayer = new Map<string, { slotLabel: string; matchType: PlayerBlueprintMapping["matchType"]; strength: number }>();
+  for (const a of assignRosterToFormula(roster)) {
+    if (a.player) {
+      bySlotPlayer.set(a.player.id, {
+        slotLabel: slotLabel(a.slotIndex),
+        matchType: a.matchType === "empty" ? "none" : a.matchType,
+        strength: a.slot.weight > 0 ? a.credit / a.slot.weight : 0,
+      });
+    }
+  }
 
   return roster.map((p) => {
-    // Try exact match first
-    const exactIdx = CHAMPIONSHIP_FORMULA.slots.findIndex(
-      (s, i) => bv[i] === 1 && s.offensiveArchetype === p.offensiveArchetype && s.defensiveRole === p.defensiveRole
-    );
-    if (exactIdx !== -1) {
-      return {
-        playerName: p.name,
-        offensiveArchetype: p.offensiveArchetype,
-        defensiveRole: p.defensiveRole,
-        matchType: "exact",
-        slotLabel: slotLabel(exactIdx),
-        matchStrength: 1,
-      };
-    }
-
-    // Try partial: offensive match in a blueprint slot
-    const offIdx = CHAMPIONSHIP_FORMULA.slots.findIndex(
-      (s, i) => bv[i] === 1 && s.offensiveArchetype === p.offensiveArchetype
-    );
-    if (offIdx !== -1) {
-      const credit = partialMatchCredit(p, CHAMPIONSHIP_FORMULA.slots[offIdx]) / CHAMPIONSHIP_FORMULA.slots[offIdx].weight;
-      return {
-        playerName: p.name,
-        offensiveArchetype: p.offensiveArchetype,
-        defensiveRole: p.defensiveRole,
-        matchType: "partial-off",
-        slotLabel: slotLabel(offIdx),
-        matchStrength: credit,
-      };
-    }
-
-    // Try partial: defensive match in a blueprint slot
-    const defIdx = CHAMPIONSHIP_FORMULA.slots.findIndex(
-      (s, i) => bv[i] === 1 && s.defensiveRole === p.defensiveRole
-    );
-    if (defIdx !== -1) {
-      const credit = partialMatchCredit(p, CHAMPIONSHIP_FORMULA.slots[defIdx]) / CHAMPIONSHIP_FORMULA.slots[defIdx].weight;
-      return {
-        playerName: p.name,
-        offensiveArchetype: p.offensiveArchetype,
-        defensiveRole: p.defensiveRole,
-        matchType: "partial-def",
-        slotLabel: slotLabel(defIdx),
-        matchStrength: credit,
-      };
-    }
-
+    const hit = bySlotPlayer.get(p.id);
     return {
       playerName: p.name,
       offensiveArchetype: p.offensiveArchetype,
       defensiveRole: p.defensiveRole,
-      matchType: "none",
-      slotLabel: "",
-      matchStrength: 0,
+      matchType: hit?.matchType ?? "none",
+      slotLabel: hit?.slotLabel ?? "",
+      matchStrength: hit?.strength ?? 0,
     };
   });
 }
@@ -422,33 +389,15 @@ export function getSlotFills(
 ): SlotFill[] {
   const bv = BLUEPRINT_VECTORS[blueprintId] ?? Array(9).fill(1);
 
-  return CHAMPIONSHIP_FORMULA.slots.map((slot, i) => {
-    const label = `${slot.offensiveArchetype} / ${slot.defensiveRole}`;
-
-    // Exact match first
-    const exact = roster.find(
-      (p) => p.offensiveArchetype === slot.offensiveArchetype && p.defensiveRole === slot.defensiveRole
-    );
-    if (exact) {
-      return { slotLabel: label, offensiveArchetype: slot.offensiveArchetype, defensiveRole: slot.defensiveRole, weight: slot.weight, inBlueprint: bv[i] === 1, player: exact.name, matchType: "exact" };
-    }
-
-    // Offensive-role partial
-    const offMatch = roster.find(
-      (p) => p.offensiveArchetype === slot.offensiveArchetype && p.defensiveRole !== slot.defensiveRole
-    );
-    if (offMatch) {
-      return { slotLabel: label, offensiveArchetype: slot.offensiveArchetype, defensiveRole: slot.defensiveRole, weight: slot.weight, inBlueprint: bv[i] === 1, player: offMatch.name, matchType: "partial-off" };
-    }
-
-    // Defensive-role partial
-    const defMatch = roster.find(
-      (p) => p.defensiveRole === slot.defensiveRole && p.offensiveArchetype !== slot.offensiveArchetype
-    );
-    if (defMatch) {
-      return { slotLabel: label, offensiveArchetype: slot.offensiveArchetype, defensiveRole: slot.defensiveRole, weight: slot.weight, inBlueprint: bv[i] === 1, player: defMatch.name, matchType: "partial-def" };
-    }
-
-    return { slotLabel: label, offensiveArchetype: slot.offensiveArchetype, defensiveRole: slot.defensiveRole, weight: slot.weight, inBlueprint: bv[i] === 1, player: null, matchType: "empty" };
-  });
+  // One no-reuse assignment drives the whole tracker: every player shows in at
+  // most one slot, and no slot borrows a player already counted elsewhere.
+  return assignRosterToFormula(roster).map((a) => ({
+    slotLabel: `${a.slot.offensiveArchetype} / ${a.slot.defensiveRole}`,
+    offensiveArchetype: a.slot.offensiveArchetype,
+    defensiveRole: a.slot.defensiveRole,
+    weight: a.slot.weight,
+    inBlueprint: bv[a.slotIndex] === 1,
+    player: a.player ? a.player.name : null,
+    matchType: a.matchType,
+  }));
 }

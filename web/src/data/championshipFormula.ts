@@ -123,73 +123,99 @@ export function partialMatchCredit(
 }
 
 // ---------------------------------------------------------------------------
-// Roster deficit computation
+// Roster → formula assignment (one player fills at most ONE slot)
 // ---------------------------------------------------------------------------
 
-/** Returns how many roster players match a given formula slot exactly. */
-function countMatches(roster: RosterPlayer[], slot: FormulaSlot): number {
-  return roster.filter(
-    (p) =>
-      p.offensiveArchetype === slot.offensiveArchetype &&
-      p.defensiveRole === slot.defensiveRole
-  ).length;
+export type SlotMatchType = "exact" | "partial-off" | "partial-def" | "empty";
+
+export interface SlotAssignment {
+  slotIndex: number;
+  slot: FormulaSlot;
+  /** The single player assigned to this slot, or null if open. */
+  player: RosterPlayer | null;
+  /** 0..slot.weight credit the assigned player provides. */
+  credit: number;
+  matchType: SlotMatchType;
 }
 
 /**
- * Computes the gap between a roster's archetype composition and the
- * championship formula targets. Returns only slots where current < target,
- * ordered by weight descending (most important need first).
+ * Assign each roster player to AT MOST ONE formula slot, and each slot to at
+ * most one player, locking the strongest fits first (greedy max-credit match).
+ *
+ * This is the fix for the old double-counting bug: a player who fills one slot
+ * can no longer also be counted toward another. Returns one entry per formula
+ * slot, in formula order.
  */
-export function computeRosterDeficits(roster: RosterPlayer[]): RosterDeficit[] {
-  const deficits: RosterDeficit[] = [];
+export function assignRosterToFormula(roster: RosterPlayer[]): SlotAssignment[] {
+  const slots = CHAMPIONSHIP_FORMULA.slots;
 
-  for (const slot of CHAMPIONSHIP_FORMULA.slots) {
-    const current = countMatches(roster, slot);
-    const gap = Math.max(0, slot.target - current);
-    if (gap > 0) {
-      deficits.push({
-        offensiveArchetype: slot.offensiveArchetype,
-        defensiveRole: slot.defensiveRole,
-        target: slot.target,
-        current,
-        gap,
-        weight: slot.weight,
-      });
-    }
+  // Every (player, slot) pair with positive credit, strongest first.
+  const pairs: { pi: number; si: number; credit: number }[] = [];
+  roster.forEach((p, pi) => {
+    slots.forEach((slot, si) => {
+      const credit = partialMatchCredit(p, slot);
+      if (credit > 0) pairs.push({ pi, si, credit });
+    });
+  });
+  pairs.sort((a, b) => b.credit - a.credit);
+
+  const usedPlayer = new Set<number>();
+  const slotHit = new Map<number, { pi: number; credit: number }>();
+  for (const pr of pairs) {
+    if (usedPlayer.has(pr.pi) || slotHit.has(pr.si)) continue;
+    slotHit.set(pr.si, { pi: pr.pi, credit: pr.credit });
+    usedPlayer.add(pr.pi);
   }
 
-  return deficits.sort((a, b) => b.weight - a.weight);
+  return slots.map((slot, si): SlotAssignment => {
+    const hit = slotHit.get(si);
+    if (!hit) return { slotIndex: si, slot, player: null, credit: 0, matchType: "empty" };
+    const p = roster[hit.pi];
+    const offHit = p.offensiveArchetype === slot.offensiveArchetype;
+    const defHit = p.defensiveRole === slot.defensiveRole;
+    const matchType: SlotMatchType =
+      offHit && defHit ? "exact" : offHit ? "partial-off" : "partial-def";
+    return { slotIndex: si, slot, player: p, credit: hit.credit, matchType };
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Roster deficits — derived from the no-reuse assignment
+// ---------------------------------------------------------------------------
+
+/**
+ * Slots not satisfied by an EXACT-fit player, most important (highest weight)
+ * first; an empty slot outranks a merely partially-covered one of equal weight.
+ * A slot loosely covered by a partial fit still counts as a need — you want a
+ * true fit there.
+ */
+export function computeRosterDeficits(roster: RosterPlayer[]): RosterDeficit[] {
+  return assignRosterToFormula(roster)
+    .filter((a) => a.matchType !== "exact")
+    .sort((a, b) => {
+      if (b.slot.weight !== a.slot.weight) return b.slot.weight - a.slot.weight;
+      const rank = (m: SlotMatchType) => (m === "empty" ? 0 : 1);
+      return rank(a.matchType) - rank(b.matchType);
+    })
+    .map((a) => ({
+      offensiveArchetype: a.slot.offensiveArchetype,
+      defensiveRole: a.slot.defensiveRole,
+      target: a.slot.target,
+      current: 0,
+      gap: a.slot.target,
+      weight: a.slot.weight,
+    }));
 }
 
 /**
- * Formula fit score: proportion of slots the roster currently satisfies.
- * Returns a value from 0 to 1.
+ * Formula fit score (0–1): total assigned credit / total slot weight, using the
+ * no-reuse assignment so one great player can't satisfy the whole formula.
  */
 export function computeFormulFitScore(roster: RosterPlayer[]): number {
-  const totalWeight = CHAMPIONSHIP_FORMULA.slots.reduce(
-    (sum, s) => sum + s.weight,
-    0
-  );
-
-  // Use partial matching: exact hits score full weight, single-dimension hits
-  // score a data-derived fraction based on archetype rarity in the league.
-  const filledWeight = CHAMPIONSHIP_FORMULA.slots.reduce((sum, slot) => {
-    const exact = Math.min(countMatches(roster, slot), slot.target);
-    if (exact >= slot.target) return sum + exact * slot.weight;
-    // Remaining capacity: check partial matches from other players
-    const remaining = slot.target - exact;
-    const partialPlayers = roster.filter(
-      (p) =>
-        !(p.offensiveArchetype === slot.offensiveArchetype && p.defensiveRole === slot.defensiveRole) &&
-        (p.offensiveArchetype === slot.offensiveArchetype || p.defensiveRole === slot.defensiveRole)
-    );
-    const partialCredit = Math.min(partialPlayers.length, remaining) > 0
-      ? partialMatchCredit(partialPlayers[0], slot) * Math.min(partialPlayers.length, remaining)
-      : 0;
-    return sum + exact * slot.weight + partialCredit;
-  }, 0);
-
-  return totalWeight > 0 ? Math.min(filledWeight / totalWeight, 1) : 0;
+  const totalWeight = CHAMPIONSHIP_FORMULA.slots.reduce((s, slot) => s + slot.weight, 0);
+  if (totalWeight <= 0) return 0;
+  const filled = assignRosterToFormula(roster).reduce((s, a) => s + a.credit, 0);
+  return Math.min(filled / totalWeight, 1);
 }
 
 // ---------------------------------------------------------------------------
