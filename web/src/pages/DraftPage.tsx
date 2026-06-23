@@ -49,14 +49,14 @@ function DraftSetup() {
     <div className="draft-setup">
       <h2>Set Up Draft</h2>
       <p className="draft-setup-desc">
-        Enter the pick numbers your team owns (e.g. <strong>15, 45, 75</strong>
+        Enter the pick numbers your team owns (e.g. <strong>12, 40, 55</strong>
         ). The draft has 60 total picks across 2 rounds. CPU teams will auto-pick
         all other slots.
       </p>
 
       <input
         type="text"
-        placeholder="e.g. 15, 45, 75"
+        placeholder="e.g. 12, 40, 55"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
