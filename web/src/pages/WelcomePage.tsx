@@ -4,7 +4,7 @@ import StageBadge from "../components/StageBadge";
 import { BLUEPRINT_TEAMS } from "../lib/teamAnalysis";
 
 const STAGE_RULES = [
-  { label: "Contender", rule: "Draft for fit. Fill the roles your champion blueprint has and you don't." },
+  { label: "Contender", rule: "Draft for fit. Fill the roles your closest past team had and you don't." },
   { label: "Middle", rule: "Balance both. Take fit when the talent is close, talent when it isn't." },
   { label: "Rebuilding", rule: "Best player available. Talent first, fit can wait." },
 ] as const;
@@ -20,14 +20,14 @@ export default function WelcomePage() {
       <main className="wrap">
         <section className="hero">
           <div>
-            <div className="eyebrow">2026 NBA offseason · 2025-26 rosters</div>
+            <div className="eyebrow">2026 NBA offseason · pre-draft rosters</div>
             <h1 className="display hero__title" style={{ marginTop: "1rem" }}>
-              Build like a <em>champion</em>
+              Run the 2026 <em>offseason</em>
             </h1>
             <p className="lede">
               Pick a team. Greenroom reads its 2025-26 roster, decides whether it's a contender, in
-              the middle, or rebuilding, and finds the past title team it's built most like. Then you
-              run the offseason to close the gap.
+              the middle, or rebuilding, and finds the past contender its roster is closest to. Then you
+              make the free agency and draft calls.
             </p>
             <div className="hero__cta">
               <button type="button" className="btn btn-primary btn-lg" onClick={() => navigate("/select-team")}>

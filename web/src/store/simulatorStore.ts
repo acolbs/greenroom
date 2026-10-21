@@ -99,8 +99,14 @@ function loadAllData(): Promise<LoadedData> {
       ringerRolesText ? parseCsv(ringerRolesText) : []
     );
 
+    // Deadline trades and late-season moves, so rosters match the real pre-draft state.
+    const movesText = await fetchText("data/roster_moves_2026.csv").catch(() => "");
+    const moves = new Map(
+      (movesText ? parseCsv(movesText) : []).map((r) => [playerMatchKey(r["Player"] ?? ""), (r["Team"] ?? "").trim()])
+    );
+
     const masterRowsParsed = parseCsv(masterText);
-    const masterRows = parseMasterRows(masterRowsParsed);
+    const masterRows = parseMasterRows(masterRowsParsed, moves);
     const contractMap = parseHoopshypeContracts(parseCsv(contractsText));
     const optionRows = addHoopshypeOptions(
       parseOptionsContracts(parseCsv(optionsText)),
