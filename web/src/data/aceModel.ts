@@ -1,4 +1,4 @@
-import { normalizeName } from "./csvUtils";
+import { playerMatchKey } from "./csvUtils";
 
 // ---------------------------------------------------------------------------
 // ACE model
@@ -28,7 +28,7 @@ export function buildAceLookup(rows: Record<string, string>[]): Map<string, numb
     if (!Number.isFinite(n) || n <= 0) continue;
 
     const ace = Math.round(n);
-    const key = normalizeName(name);
+    const key = playerMatchKey(name);
     const prev = map.get(key);
     if (prev === undefined || ace > prev) {
       map.set(key, ace);

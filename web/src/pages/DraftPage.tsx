@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
-import { useSimulatorStore, selectCurrentUserPick } from "../store/simulatorStore";
+import { useSimulatorStore, selectCurrentUserPick, teamForPick } from "../store/simulatorStore";
 import {
   rankProspectsForTeam,
   getSmartRecommendation,
@@ -267,7 +267,7 @@ export default function DraftPage() {
 
   // Which CPU team is on the clock right now
   const cpuTeam = !isUserTurn && draftSimActive
-    ? TEAMS[(draftCurrentPick - 1) % 30]
+    ? TEAMS.find((t) => t.id === teamForPick(draftCurrentPick)) ?? null
     : null;
 
   // Rank all available prospects

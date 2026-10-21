@@ -13,13 +13,11 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@types/three": "^0.184.1",
     "framer-motion": "^11.18.2",
     "papaparse": "^5.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
-    "three": "^0.184.0",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

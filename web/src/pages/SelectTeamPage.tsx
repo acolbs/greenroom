@@ -12,6 +12,7 @@ export default function SelectTeamPage() {
 
   async function handleSelect(teamId: string) {
     await selectTeam(teamId);
+    if (useSimulatorStore.getState().error) return;
     navigate("/free-agency");
   }
 
