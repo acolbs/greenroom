@@ -68,7 +68,12 @@ export interface RosterPlayer {
   /** 0–100 unified Talent Score (lib/talentScore.ts). */
   talentScore?: number;
   talentTier?: TalentTier;
+  /** Advanced stats that describe how he plays (USG%, AST%, 3PAr...), for player comps. */
+  style?: StyleStats;
 }
+
+/** Keyed by the master.csv column name; see STYLE_KEYS in lib/teamAnalysis.ts. */
+export type StyleStats = Record<string, number>;
 
 // ---------------------------------------------------------------------------
 // Free agency

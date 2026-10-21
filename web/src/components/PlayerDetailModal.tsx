@@ -299,7 +299,7 @@ export default function PlayerDetailModal({ subject, onClose, teamId }: Props) {
                     const tier = subject.talentTier ?? "";
                     const color =
                       tier === "Star" ? "#F5C451"
-                      : tier === "Starter" ? "#46A877"
+                      : tier === "Starter" ? "#34D399"
                       : tier === "Rotation" ? "#39E3FF"
                       : "#8a93a0";
                     return (

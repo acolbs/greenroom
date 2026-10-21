@@ -13,56 +13,160 @@
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 34.8,
+          "AST%": 31.3,
+          "3PAr": 0.263,
+          "FTr": 0.404,
+          "ORB%": 2.8,
+          "DRB%": 12.6,
+          "STL%": 2.4,
+          "BLK%": 3,
+          "TOV%": 8.6,
+          "TS%": 0.637,
+          "BPM": 11.5
+        }
       },
       {
         "name": "Jalen Williams",
         "position": "SF",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 27.5,
+          "AST%": 23.4,
+          "3PAr": 0.291,
+          "FTr": 0.256,
+          "ORB%": 2.9,
+          "DRB%": 14.6,
+          "STL%": 2.4,
+          "BLK%": 2.1,
+          "TOV%": 10.3,
+          "TS%": 0.573,
+          "BPM": 4
+        }
       },
       {
         "name": "Isaiah Hartenstein",
         "position": "C",
         "tier": 2,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 16.7,
+          "AST%": 18.3,
+          "3PAr": 0.04,
+          "FTr": 0.244,
+          "ORB%": 11.2,
+          "DRB%": 29.6,
+          "STL%": 1.4,
+          "BLK%": 3.9,
+          "TOV%": 15.3,
+          "TS%": 0.599,
+          "BPM": 3.2
+        }
       },
       {
         "name": "Alex Caruso",
         "position": "SG",
         "tier": 2,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 15.2,
+          "AST%": 16.6,
+          "3PAr": 0.541,
+          "FTr": 0.162,
+          "ORB%": 4,
+          "DRB%": 12.2,
+          "STL%": 4,
+          "BLK%": 2.9,
+          "TOV%": 9.9,
+          "TS%": 0.568,
+          "BPM": 4
+        }
       },
       {
         "name": "Cason Wallace",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 12.8,
+          "AST%": 11.5,
+          "3PAr": 0.425,
+          "FTr": 0.076,
+          "ORB%": 4.1,
+          "DRB%": 8.8,
+          "STL%": 3.1,
+          "BLK%": 1.9,
+          "TOV%": 10.5,
+          "TS%": 0.562,
+          "BPM": 1
+        }
       },
       {
         "name": "Aaron Wiggins",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 20.3,
+          "AST%": 10.6,
+          "3PAr": 0.466,
+          "FTr": 0.122,
+          "ORB%": 5.1,
+          "DRB%": 12.9,
+          "STL%": 1.7,
+          "BLK%": 1,
+          "TOV%": 8.3,
+          "TS%": 0.596,
+          "BPM": 1.1
+        }
       },
       {
         "name": "Luguentz Dort",
         "position": "SG",
         "tier": 2,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 13.6,
+          "AST%": 6.9,
+          "3PAr": 0.696,
+          "FTr": 0.078,
+          "ORB%": 4.7,
+          "DRB%": 10.3,
+          "STL%": 1.8,
+          "BLK%": 1.9,
+          "TOV%": 7.7,
+          "TS%": 0.586,
+          "BPM": 0.2
+        }
       },
       {
         "name": "Chet Holmgren",
         "position": "C",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 22,
+          "AST%": 9.7,
+          "3PAr": 0.34,
+          "FTr": 0.393,
+          "ORB%": 6,
+          "DRB%": 25,
+          "STL%": 1.3,
+          "BLK%": 8.2,
+          "TOV%": 12.3,
+          "TS%": 0.599,
+          "BPM": 2.4
+        }
       }
     ]
   },
@@ -80,56 +184,160 @@
         "position": "SF",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 30.2,
+          "AST%": 21,
+          "3PAr": 0.427,
+          "FTr": 0.349,
+          "ORB%": 2.9,
+          "DRB%": 20.9,
+          "STL%": 1.4,
+          "BLK%": 1.4,
+          "TOV%": 10.3,
+          "TS%": 0.604,
+          "BPM": 5.1
+        }
       },
       {
         "name": "Derrick White",
         "position": "SG",
         "tier": 2,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 18.6,
+          "AST%": 21.2,
+          "3PAr": 0.59,
+          "FTr": 0.181,
+          "ORB%": 2.4,
+          "DRB%": 11.3,
+          "STL%": 1.5,
+          "BLK%": 3.2,
+          "TOV%": 11,
+          "TS%": 0.611,
+          "BPM": 3.8
+        }
       },
       {
         "name": "Kristaps Porzingis",
         "position": "C",
         "tier": 2,
         "offensiveArchetype": "Versatile Big",
-        "defensiveRole": "Anchor Big"
+        "defensiveRole": "Anchor Big",
+        "style": {
+          "USG%": 25.1,
+          "AST%": 10,
+          "3PAr": 0.39,
+          "FTr": 0.402,
+          "ORB%": 6.5,
+          "DRB%": 19.1,
+          "STL%": 1.2,
+          "BLK%": 5.8,
+          "TOV%": 9.1,
+          "TS%": 0.647,
+          "BPM": 5.1
+        }
       },
       {
         "name": "Al Horford",
         "position": "C",
         "tier": 2,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 12,
+          "AST%": 12.3,
+          "3PAr": 0.616,
+          "FTr": 0.072,
+          "ORB%": 5.3,
+          "DRB%": 19.7,
+          "STL%": 1.1,
+          "BLK%": 3.1,
+          "TOV%": 10,
+          "TS%": 0.65,
+          "BPM": 3.6
+        }
       },
       {
         "name": "Jrue Holiday",
         "position": "PG",
         "tier": 2,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 16.3,
+          "AST%": 19.3,
+          "3PAr": 0.467,
+          "FTr": 0.104,
+          "ORB%": 4.2,
+          "DRB%": 13.2,
+          "STL%": 1.3,
+          "BLK%": 2.1,
+          "TOV%": 14.7,
+          "TS%": 0.597,
+          "BPM": 2.1
+        }
       },
       {
         "name": "Jaylen Brown",
         "position": "SG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 28.9,
+          "AST%": 16.6,
+          "3PAr": 0.326,
+          "FTr": 0.239,
+          "ORB%": 4,
+          "DRB%": 13.4,
+          "STL%": 1.8,
+          "BLK%": 1.4,
+          "TOV%": 10.7,
+          "TS%": 0.58,
+          "BPM": 0.7
+        }
       },
       {
         "name": "Sam Hauser",
         "position": "SF",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 15,
+          "AST%": 6.2,
+          "3PAr": 0.833,
+          "FTr": 0.034,
+          "ORB%": 2.9,
+          "DRB%": 13.7,
+          "STL%": 1.1,
+          "BLK%": 1.3,
+          "TOV%": 5.3,
+          "TS%": 0.629,
+          "BPM": 1.2
+        }
       },
       {
         "name": "Payton Pritchard",
         "position": "PG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 17.2,
+          "AST%": 20.7,
+          "3PAr": 0.602,
+          "FTr": 0.088,
+          "ORB%": 4.3,
+          "DRB%": 11.1,
+          "STL%": 1.1,
+          "BLK%": 0.3,
+          "TOV%": 8.5,
+          "TS%": 0.597,
+          "BPM": 1
+        }
       }
     ]
   },
@@ -147,56 +355,160 @@
         "position": "C",
         "tier": 1,
         "offensiveArchetype": "Post Scorer",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 27.2,
+          "AST%": 46.6,
+          "3PAr": 0.146,
+          "FTr": 0.406,
+          "ORB%": 8.5,
+          "DRB%": 31.3,
+          "STL%": 1.8,
+          "BLK%": 1.8,
+          "TOV%": 17,
+          "TS%": 0.701,
+          "BPM": 13
+        }
       },
       {
         "name": "Jamal Murray",
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 26.1,
+          "AST%": 27.5,
+          "3PAr": 0.415,
+          "FTr": 0.207,
+          "ORB%": 2.7,
+          "DRB%": 11,
+          "STL%": 1.5,
+          "BLK%": 0.7,
+          "TOV%": 11.3,
+          "TS%": 0.571,
+          "BPM": 1.3
+        }
       },
       {
         "name": "Michael Porter Jr.",
         "position": "SF",
         "tier": 2,
         "offensiveArchetype": "Off Screen Shooter",
-        "defensiveRole": "Low Activity"
+        "defensiveRole": "Low Activity",
+        "style": {
+          "USG%": 22.7,
+          "AST%": 5.3,
+          "3PAr": 0.556,
+          "FTr": 0.147,
+          "ORB%": 4.2,
+          "DRB%": 17.2,
+          "STL%": 1,
+          "BLK%": 1.4,
+          "TOV%": 7.3,
+          "TS%": 0.621,
+          "BPM": 0.2
+        }
       },
       {
         "name": "Aaron Gordon",
         "position": "PF",
         "tier": 2,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 21.1,
+          "AST%": 14.2,
+          "3PAr": 0.227,
+          "FTr": 0.413,
+          "ORB%": 9.4,
+          "DRB%": 15.4,
+          "STL%": 1.3,
+          "BLK%": 2.2,
+          "TOV%": 9.8,
+          "TS%": 0.617,
+          "BPM": 2.1
+        }
       },
       {
         "name": "Kentavious Caldwell-Pope",
         "position": "SG",
         "tier": 2,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 14.1,
+          "AST%": 9.8,
+          "3PAr": 0.505,
+          "FTr": 0.198,
+          "ORB%": 1.7,
+          "DRB%": 8.1,
+          "STL%": 2.3,
+          "BLK%": 1.3,
+          "TOV%": 11.1,
+          "TS%": 0.598,
+          "BPM": -1
+        }
       },
       {
         "name": "Bruce Brown",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 17.8,
+          "AST%": 15.7,
+          "3PAr": 0.343,
+          "FTr": 0.206,
+          "ORB%": 3.3,
+          "DRB%": 13,
+          "STL%": 1.9,
+          "BLK%": 2,
+          "TOV%": 13.2,
+          "TS%": 0.571,
+          "BPM": -0.5
+        }
       },
       {
         "name": "Christian Braun",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 13,
+          "AST%": 6.4,
+          "3PAr": 0.332,
+          "FTr": 0.221,
+          "ORB%": 4.8,
+          "DRB%": 12.6,
+          "STL%": 1.7,
+          "BLK%": 1.3,
+          "TOV%": 9.9,
+          "TS%": 0.568,
+          "BPM": -2.4
+        }
       },
       {
         "name": "Jeff Green",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Versatile Big",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 17,
+          "AST%": 8.3,
+          "3PAr": 0.317,
+          "FTr": 0.357,
+          "ORB%": 4.1,
+          "DRB%": 10.9,
+          "STL%": 0.8,
+          "BLK%": 1.4,
+          "TOV%": 10.8,
+          "TS%": 0.576,
+          "BPM": -3.4
+        }
       }
     ]
   },
@@ -214,56 +526,160 @@
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Low Activity"
+        "defensiveRole": "Low Activity",
+        "style": {
+          "USG%": 30.8,
+          "AST%": 30.4,
+          "3PAr": 0.613,
+          "FTr": 0.243,
+          "ORB%": 1.7,
+          "DRB%": 14.4,
+          "STL%": 1.9,
+          "BLK%": 1,
+          "TOV%": 13.2,
+          "TS%": 0.601,
+          "BPM": 5.8
+        }
       },
       {
         "name": "Jordan Poole",
         "position": "SG",
         "tier": 2,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Low Activity"
+        "defensiveRole": "Low Activity",
+        "style": {
+          "USG%": 26,
+          "AST%": 21,
+          "3PAr": 0.548,
+          "FTr": 0.251,
+          "ORB%": 1.7,
+          "DRB%": 10.5,
+          "STL%": 1.3,
+          "BLK%": 1,
+          "TOV%": 13.7,
+          "TS%": 0.598,
+          "BPM": 1
+        }
       },
       {
         "name": "Kevon Looney",
         "position": "C",
         "tier": 3,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Anchor Big"
+        "defensiveRole": "Anchor Big",
+        "style": {
+          "USG%": 12.2,
+          "AST%": 13.2,
+          "3PAr": 0.003,
+          "FTr": 0.343,
+          "ORB%": 13.5,
+          "DRB%": 23.8,
+          "STL%": 1.4,
+          "BLK%": 2.9,
+          "TOV%": 13.8,
+          "TS%": 0.586,
+          "BPM": 0.9
+        }
       },
       {
         "name": "Klay Thompson",
         "position": "SG",
         "tier": 2,
         "offensiveArchetype": "Off Screen Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 29.6,
+          "AST%": 16.1,
+          "3PAr": 0.517,
+          "FTr": 0.089,
+          "ORB%": 1.8,
+          "DRB%": 12.4,
+          "STL%": 0.8,
+          "BLK%": 1.7,
+          "TOV%": 6.7,
+          "TS%": 0.547,
+          "BPM": 1.1
+        }
       },
       {
         "name": "Andrew Wiggins",
         "position": "SF",
         "tier": 2,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 23.1,
+          "AST%": 10.8,
+          "3PAr": 0.392,
+          "FTr": 0.231,
+          "ORB%": 4.1,
+          "DRB%": 10.9,
+          "STL%": 1.6,
+          "BLK%": 2.1,
+          "TOV%": 9,
+          "TS%": 0.56,
+          "BPM": 0.4
+        }
       },
       {
         "name": "Draymond Green",
         "position": "PF",
         "tier": 2,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 14.3,
+          "AST%": 32.5,
+          "3PAr": 0.21,
+          "FTr": 0.354,
+          "ORB%": 3.8,
+          "DRB%": 23.2,
+          "STL%": 2.2,
+          "BLK%": 3.6,
+          "TOV%": 31.9,
+          "TS%": 0.582,
+          "BPM": 3.2
+        }
       },
       {
         "name": "Gary Payton II",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Stretch Big",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 14.3,
+          "AST%": 7.6,
+          "3PAr": 0.349,
+          "FTr": 0.169,
+          "ORB%": 6.5,
+          "DRB%": 14.9,
+          "STL%": 3.8,
+          "BLK%": 1.7,
+          "TOV%": 9.8,
+          "TS%": 0.679,
+          "BPM": 3.7
+        }
       },
       {
         "name": "Otto Porter Jr.",
         "position": "SF",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 15,
+          "AST%": 9.6,
+          "3PAr": 0.519,
+          "FTr": 0.147,
+          "ORB%": 6.9,
+          "DRB%": 21,
+          "STL%": 2.4,
+          "BLK%": 2,
+          "TOV%": 7.7,
+          "TS%": 0.581,
+          "BPM": 3.1
+        }
       }
     ]
   },
@@ -281,56 +697,160 @@
         "position": "SG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 30.9,
+          "AST%": 23.9,
+          "3PAr": 0.48,
+          "FTr": 0.274,
+          "ORB%": 2.8,
+          "DRB%": 12.5,
+          "STL%": 2,
+          "BLK%": 0.7,
+          "TOV%": 9.2,
+          "TS%": 0.575,
+          "BPM": 3.7
+        }
       },
       {
         "name": "Darius Garland",
         "position": "PG",
         "tier": 2,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 27.2,
+          "AST%": 32.2,
+          "3PAr": 0.451,
+          "FTr": 0.217,
+          "ORB%": 2.3,
+          "DRB%": 7.6,
+          "STL%": 1.9,
+          "BLK%": 0.4,
+          "TOV%": 12.8,
+          "TS%": 0.6,
+          "BPM": 3.1
+        }
       },
       {
         "name": "Evan Mobley",
         "position": "PF",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 23.2,
+          "AST%": 15.1,
+          "3PAr": 0.254,
+          "FTr": 0.337,
+          "ORB%": 8.4,
+          "DRB%": 24,
+          "STL%": 1.4,
+          "BLK%": 4.7,
+          "TOV%": 12.2,
+          "TS%": 0.633,
+          "BPM": 4.6
+        }
       },
       {
         "name": "Jarrett Allen",
         "position": "C",
         "tier": 2,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 15.9,
+          "AST%": 9.5,
+          "3PAr": 0.008,
+          "FTr": 0.433,
+          "ORB%": 10.5,
+          "DRB%": 26.7,
+          "STL%": 1.6,
+          "BLK%": 2.9,
+          "TOV%": 11.3,
+          "TS%": 0.724,
+          "BPM": 4.2
+        }
       },
       {
         "name": "Max Strus",
         "position": "SF",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 14.7,
+          "AST%": 15.6,
+          "3PAr": 0.786,
+          "FTr": 0.091,
+          "ORB%": 4.6,
+          "DRB%": 13.6,
+          "STL%": 1,
+          "BLK%": 0.9,
+          "TOV%": 12.2,
+          "TS%": 0.607,
+          "BPM": 1.3
+        }
       },
       {
         "name": "Isaac Okoro",
         "position": "SF",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 12.5,
+          "AST%": 8,
+          "3PAr": 0.566,
+          "FTr": 0.172,
+          "ORB%": 5.2,
+          "DRB%": 8.1,
+          "STL%": 1.5,
+          "BLK%": 1.4,
+          "TOV%": 7.4,
+          "TS%": 0.587,
+          "BPM": -0.5
+        }
       },
       {
         "name": "De'Andre Hunter",
         "position": "SF",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 20.5,
+          "AST%": 7.1,
+          "3PAr": 0.522,
+          "FTr": 0.289,
+          "ORB%": 2.8,
+          "DRB%": 15,
+          "STL%": 1.4,
+          "BLK%": 1.1,
+          "TOV%": 7,
+          "TS%": 0.634,
+          "BPM": 1.6
+        }
       },
       {
         "name": "Ty Jerome",
         "position": "PG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 23.6,
+          "AST%": 24.5,
+          "3PAr": 0.409,
+          "FTr": 0.239,
+          "ORB%": 4,
+          "DRB%": 9.3,
+          "STL%": 2.7,
+          "BLK%": 0.2,
+          "TOV%": 11.9,
+          "TS%": 0.643,
+          "BPM": 4.3
+        }
       }
     ]
   },
@@ -348,56 +868,160 @@
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Low Activity"
+        "defensiveRole": "Low Activity",
+        "style": {
+          "USG%": 21.6,
+          "AST%": 38.9,
+          "3PAr": 0.559,
+          "FTr": 0.221,
+          "ORB%": 1.9,
+          "DRB%": 9.7,
+          "STL%": 2.1,
+          "BLK%": 1.8,
+          "TOV%": 9.8,
+          "TS%": 0.616,
+          "BPM": 5.8
+        }
       },
       {
         "name": "Pascal Siakam",
         "position": "PF",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 24.2,
+          "AST%": 15.7,
+          "3PAr": 0.274,
+          "FTr": 0.261,
+          "ORB%": 5.9,
+          "DRB%": 17.6,
+          "STL%": 1.3,
+          "BLK%": 1.5,
+          "TOV%": 7.6,
+          "TS%": 0.599,
+          "BPM": 1.7
+        }
       },
       {
         "name": "Andrew Nembhard",
         "position": "PG",
         "tier": 2,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 16.3,
+          "AST%": 22.5,
+          "3PAr": 0.325,
+          "FTr": 0.252,
+          "ORB%": 2,
+          "DRB%": 10.7,
+          "STL%": 2,
+          "BLK%": 0.5,
+          "TOV%": 15.8,
+          "TS%": 0.545,
+          "BPM": -2.3
+        }
       },
       {
         "name": "Myles Turner",
         "position": "C",
         "tier": 2,
         "offensiveArchetype": "Stretch Big",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 20.7,
+          "AST%": 7.1,
+          "3PAr": 0.486,
+          "FTr": 0.293,
+          "ORB%": 4.7,
+          "DRB%": 19.4,
+          "STL%": 1.2,
+          "BLK%": 6,
+          "TOV%": 11.8,
+          "TS%": 0.612,
+          "BPM": 0.4
+        }
       },
       {
         "name": "Aaron Nesmith",
         "position": "SF",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 17.4,
+          "AST%": 6.6,
+          "3PAr": 0.515,
+          "FTr": 0.211,
+          "ORB%": 3.7,
+          "DRB%": 13.9,
+          "STL%": 1.5,
+          "BLK%": 1.4,
+          "TOV%": 8.2,
+          "TS%": 0.653,
+          "BPM": -0.5
+        }
       },
       {
         "name": "Obi Toppin",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 20.1,
+          "AST%": 11.9,
+          "3PAr": 0.503,
+          "FTr": 0.19,
+          "ORB%": 4.1,
+          "DRB%": 18.7,
+          "STL%": 1.4,
+          "BLK%": 1.6,
+          "TOV%": 9.5,
+          "TS%": 0.642,
+          "BPM": 1.7
+        }
       },
       {
         "name": "T.J. McConnell",
         "position": "PG",
         "tier": 3,
         "offensiveArchetype": "Slasher",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 23.4,
+          "AST%": 37,
+          "3PAr": 0.079,
+          "FTr": 0.123,
+          "ORB%": 3.5,
+          "DRB%": 11.6,
+          "STL%": 2.8,
+          "BLK%": 1.3,
+          "TOV%": 14.2,
+          "TS%": 0.547,
+          "BPM": 1.2
+        }
       },
       {
         "name": "Bennedict Mathurin",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Secondary Ball Handler",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 22.8,
+          "AST%": 8.8,
+          "3PAr": 0.338,
+          "FTr": 0.389,
+          "ORB%": 4.6,
+          "DRB%": 15.2,
+          "STL%": 1.1,
+          "BLK%": 1,
+          "TOV%": 11.9,
+          "TS%": 0.579,
+          "BPM": -2.9
+        }
       }
     ]
   },
@@ -415,56 +1039,160 @@
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Low Activity"
+        "defensiveRole": "Low Activity",
+        "style": {
+          "USG%": 36,
+          "AST%": 44.3,
+          "3PAr": 0.45,
+          "FTr": 0.368,
+          "ORB%": 2.5,
+          "DRB%": 24.4,
+          "STL%": 1.8,
+          "BLK%": 1.3,
+          "TOV%": 12.8,
+          "TS%": 0.617,
+          "BPM": 9.9
+        }
       },
       {
         "name": "Kyrie Irving",
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 28.1,
+          "AST%": 23.8,
+          "3PAr": 0.372,
+          "FTr": 0.186,
+          "ORB%": 2.4,
+          "DRB%": 13.2,
+          "STL%": 1.7,
+          "BLK%": 1.2,
+          "TOV%": 8,
+          "TS%": 0.608,
+          "BPM": 4.9
+        }
       },
       {
         "name": "P.J. Washington",
         "position": "PF",
         "tier": 2,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 16.3,
+          "AST%": 6.2,
+          "3PAr": 0.56,
+          "FTr": 0.169,
+          "ORB%": 3.7,
+          "DRB%": 17.1,
+          "STL%": 1.7,
+          "BLK%": 2.5,
+          "TOV%": 8.5,
+          "TS%": 0.522,
+          "BPM": -1.2
+        }
       },
       {
         "name": "Daniel Gafford",
         "position": "C",
         "tier": 2,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Anchor Big"
+        "defensiveRole": "Anchor Big",
+        "style": {
+          "USG%": 16.4,
+          "AST%": 11.1,
+          "3PAr": 0,
+          "FTr": 0.301,
+          "ORB%": 11.3,
+          "DRB%": 23.9,
+          "STL%": 1.6,
+          "BLK%": 7.9,
+          "TOV%": 11.7,
+          "TS%": 0.769,
+          "BPM": 5.9
+        }
       },
       {
         "name": "Dereck Lively II",
         "position": "C",
         "tier": 3,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Anchor Big"
+        "defensiveRole": "Anchor Big",
+        "style": {
+          "USG%": 12.6,
+          "AST%": 6.4,
+          "3PAr": 0.007,
+          "FTr": 0.274,
+          "ORB%": 11.4,
+          "DRB%": 20.4,
+          "STL%": 1.3,
+          "BLK%": 5.2,
+          "TOV%": 13.1,
+          "TS%": 0.728,
+          "BPM": 0.5
+        }
       },
       {
         "name": "Derrick Jones Jr.",
         "position": "SF",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 14.9,
+          "AST%": 5.5,
+          "3PAr": 0.483,
+          "FTr": 0.275,
+          "ORB%": 5,
+          "DRB%": 10.3,
+          "STL%": 1.4,
+          "BLK%": 2.5,
+          "TOV%": 10.5,
+          "TS%": 0.592,
+          "BPM": -1.5
+        }
       },
       {
         "name": "Josh Green",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 13.1,
+          "AST%": 11.1,
+          "3PAr": 0.5,
+          "FTr": 0.152,
+          "ORB%": 2.9,
+          "DRB%": 10.4,
+          "STL%": 1.5,
+          "BLK%": 0.5,
+          "TOV%": 13.1,
+          "TS%": 0.588,
+          "BPM": -2.7
+        }
       },
       {
         "name": "Dante Exum",
         "position": "PG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 15,
+          "AST%": 19.3,
+          "3PAr": 0.358,
+          "FTr": 0.225,
+          "ORB%": 2.5,
+          "DRB%": 12.4,
+          "STL%": 1,
+          "BLK%": 0.4,
+          "TOV%": 12.9,
+          "TS%": 0.645,
+          "BPM": -0.6
+        }
       }
     ]
   },
@@ -482,56 +1210,160 @@
         "position": "C",
         "tier": 2,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Anchor Big"
+        "defensiveRole": "Anchor Big",
+        "style": {
+          "USG%": 15.4,
+          "AST%": 5.6,
+          "3PAr": 0.005,
+          "FTr": 0.635,
+          "ORB%": 13.1,
+          "DRB%": 29.2,
+          "STL%": 1,
+          "BLK%": 5.5,
+          "TOV%": 13.1,
+          "TS%": 0.675,
+          "BPM": 1.8
+        }
       },
       {
         "name": "Mike Conley",
         "position": "PG",
         "tier": 2,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 16,
+          "AST%": 28.4,
+          "3PAr": 0.629,
+          "FTr": 0.174,
+          "ORB%": 2,
+          "DRB%": 9,
+          "STL%": 2,
+          "BLK%": 0.7,
+          "TOV%": 12.8,
+          "TS%": 0.627,
+          "BPM": 3.4
+        }
       },
       {
         "name": "Anthony Edwards",
         "position": "SG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 32.3,
+          "AST%": 24.6,
+          "3PAr": 0.341,
+          "FTr": 0.325,
+          "ORB%": 2.2,
+          "DRB%": 14.8,
+          "STL%": 1.8,
+          "BLK%": 1.3,
+          "TOV%": 11.9,
+          "TS%": 0.575,
+          "BPM": 3.3
+        }
       },
       {
         "name": "Karl-Anthony Towns",
         "position": "C",
         "tier": 1,
         "offensiveArchetype": "Versatile Big",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 27.4,
+          "AST%": 15.1,
+          "3PAr": 0.344,
+          "FTr": 0.307,
+          "ORB%": 5.5,
+          "DRB%": 22.6,
+          "STL%": 1,
+          "BLK%": 1.8,
+          "TOV%": 14.1,
+          "TS%": 0.625,
+          "BPM": 2.5
+        }
       },
       {
         "name": "Naz Reid",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 23.1,
+          "AST%": 8.3,
+          "3PAr": 0.479,
+          "FTr": 0.174,
+          "ORB%": 4.4,
+          "DRB%": 19.3,
+          "STL%": 1.6,
+          "BLK%": 3.3,
+          "TOV%": 10.8,
+          "TS%": 0.595,
+          "BPM": 1.5
+        }
       },
       {
         "name": "Kyle Anderson",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 14.5,
+          "AST%": 25,
+          "3PAr": 0.111,
+          "FTr": 0.316,
+          "ORB%": 4,
+          "DRB%": 13,
+          "STL%": 2,
+          "BLK%": 2.3,
+          "TOV%": 15.6,
+          "TS%": 0.513,
+          "BPM": 1.1
+        }
       },
       {
         "name": "Nickeil Alexander-Walker",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 14.8,
+          "AST%": 14.5,
+          "3PAr": 0.623,
+          "FTr": 0.121,
+          "ORB%": 2.2,
+          "DRB%": 7.5,
+          "STL%": 1.6,
+          "BLK%": 1.9,
+          "TOV%": 11.8,
+          "TS%": 0.578,
+          "BPM": 0.2
+        }
       },
       {
         "name": "Jaden McDaniels",
         "position": "SF",
         "tier": 2,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 15.7,
+          "AST%": 6.8,
+          "3PAr": 0.406,
+          "FTr": 0.126,
+          "ORB%": 3.2,
+          "DRB%": 8.7,
+          "STL%": 1.5,
+          "BLK%": 1.8,
+          "TOV%": 11.6,
+          "TS%": 0.571,
+          "BPM": -2.6
+        }
       }
     ]
   },
@@ -549,56 +1381,160 @@
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Low Activity"
+        "defensiveRole": "Low Activity",
+        "style": {
+          "USG%": 32.5,
+          "AST%": 33.5,
+          "3PAr": 0.319,
+          "FTr": 0.302,
+          "ORB%": 1.8,
+          "DRB%": 9.7,
+          "STL%": 1.3,
+          "BLK%": 0.4,
+          "TOV%": 9.1,
+          "TS%": 0.592,
+          "BPM": 5.8
+        }
       },
       {
         "name": "Julius Randle",
         "position": "PF",
         "tier": 2,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 29.9,
+          "AST%": 22.8,
+          "3PAr": 0.292,
+          "FTr": 0.361,
+          "ORB%": 6.8,
+          "DRB%": 22.4,
+          "STL%": 0.8,
+          "BLK%": 0.7,
+          "TOV%": 14.1,
+          "TS%": 0.569,
+          "BPM": 1.9
+        }
       },
       {
         "name": "OG Anunoby",
         "position": "SF",
         "tier": 2,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 16.8,
+          "AST%": 6.2,
+          "3PAr": 0.406,
+          "FTr": 0.168,
+          "ORB%": 3.2,
+          "DRB%": 11.1,
+          "STL%": 2.5,
+          "BLK%": 2.7,
+          "TOV%": 12.1,
+          "TS%": 0.591,
+          "BPM": 0.6
+        }
       },
       {
         "name": "Donte DiVincenzo",
         "position": "SG",
         "tier": 2,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 21.3,
+          "AST%": 13.7,
+          "3PAr": 0.702,
+          "FTr": 0.114,
+          "ORB%": 3,
+          "DRB%": 11.2,
+          "STL%": 2.3,
+          "BLK%": 1.4,
+          "TOV%": 9.7,
+          "TS%": 0.597,
+          "BPM": 3.4
+        }
       },
       {
         "name": "Josh Hart",
         "position": "SF",
         "tier": 2,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 13.5,
+          "AST%": 16.3,
+          "3PAr": 0.38,
+          "FTr": 0.169,
+          "ORB%": 5.3,
+          "DRB%": 22.8,
+          "STL%": 1.4,
+          "BLK%": 0.8,
+          "TOV%": 13.9,
+          "TS%": 0.522,
+          "BPM": 0
+        }
       },
       {
         "name": "Mitchell Robinson",
         "position": "C",
         "tier": 3,
         "offensiveArchetype": "Athletic Finisher",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 10.2,
+          "AST%": 3.1,
+          "3PAr": 0,
+          "FTr": 0.52,
+          "ORB%": 20.7,
+          "DRB%": 17.7,
+          "STL%": 2.4,
+          "BLK%": 4.3,
+          "TOV%": 13.8,
+          "TS%": 0.554,
+          "BPM": 0
+        }
       },
       {
         "name": "Isaiah Hartenstein",
         "position": "C",
         "tier": 3,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 12,
+          "AST%": 13.5,
+          "3PAr": 0.008,
+          "FTr": 0.43,
+          "ORB%": 14.4,
+          "DRB%": 22.7,
+          "STL%": 2.3,
+          "BLK%": 4.2,
+          "TOV%": 17.6,
+          "TS%": 0.67,
+          "BPM": 3.5
+        }
       },
       {
         "name": "Miles McBride",
         "position": "PG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 16.4,
+          "AST%": 12.2,
+          "3PAr": 0.586,
+          "FTr": 0.11,
+          "ORB%": 2.6,
+          "DRB%": 5.9,
+          "STL%": 1.9,
+          "BLK%": 0.5,
+          "TOV%": 5.9,
+          "TS%": 0.59,
+          "BPM": -0.1
+        }
       }
     ]
   },
@@ -616,56 +1552,160 @@
         "position": "SF",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 25.6,
+          "AST%": 27.1,
+          "3PAr": 0.116,
+          "FTr": 0.625,
+          "ORB%": 7.5,
+          "DRB%": 13.3,
+          "STL%": 2.7,
+          "BLK%": 1,
+          "TOV%": 8.2,
+          "TS%": 0.647,
+          "BPM": 8.7
+        }
       },
       {
         "name": "Bam Adebayo",
         "position": "C",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 25.2,
+          "AST%": 15.9,
+          "3PAr": 0.011,
+          "FTr": 0.361,
+          "ORB%": 8,
+          "DRB%": 23.6,
+          "STL%": 1.7,
+          "BLK%": 2.4,
+          "TOV%": 12.7,
+          "TS%": 0.592,
+          "BPM": 1.5
+        }
       },
       {
         "name": "Tyler Herro",
         "position": "SG",
         "tier": 2,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 25.6,
+          "AST%": 19.9,
+          "3PAr": 0.484,
+          "FTr": 0.164,
+          "ORB%": 1.3,
+          "DRB%": 17.3,
+          "STL%": 1.1,
+          "BLK%": 0.7,
+          "TOV%": 11.7,
+          "TS%": 0.566,
+          "BPM": 0.6
+        }
       },
       {
         "name": "Caleb Martin",
         "position": "SF",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 14.4,
+          "AST%": 8.2,
+          "3PAr": 0.431,
+          "FTr": 0.206,
+          "ORB%": 4.8,
+          "DRB%": 15,
+          "STL%": 1.7,
+          "BLK%": 1.5,
+          "TOV%": 11.5,
+          "TS%": 0.571,
+          "BPM": -1.2
+        }
       },
       {
         "name": "Gabe Vincent",
         "position": "PG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 17.5,
+          "AST%": 13.9,
+          "3PAr": 0.617,
+          "FTr": 0.138,
+          "ORB%": 1.7,
+          "DRB%": 8.1,
+          "STL%": 1.8,
+          "BLK%": 0.3,
+          "TOV%": 13.3,
+          "TS%": 0.533,
+          "BPM": -3.4
+        }
       },
       {
         "name": "Max Strus",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 17.6,
+          "AST%": 11.2,
+          "3PAr": 0.713,
+          "FTr": 0.113,
+          "ORB%": 2.4,
+          "DRB%": 11.2,
+          "STL%": 0.9,
+          "BLK%": 0.5,
+          "TOV%": 7.8,
+          "TS%": 0.557,
+          "BPM": -1.7
+        }
       },
       {
         "name": "Kyle Lowry",
         "position": "PG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 16.7,
+          "AST%": 23.4,
+          "3PAr": 0.639,
+          "FTr": 0.278,
+          "ORB%": 2.8,
+          "DRB%": 12.9,
+          "STL%": 1.7,
+          "BLK%": 1.2,
+          "TOV%": 15.9,
+          "TS%": 0.565,
+          "BPM": 0.2
+        }
       },
       {
         "name": "Kevin Love",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 18.5,
+          "AST%": 14,
+          "3PAr": 0.727,
+          "FTr": 0.201,
+          "ORB%": 4.6,
+          "DRB%": 29.6,
+          "STL%": 1.1,
+          "BLK%": 1.2,
+          "TOV%": 13.2,
+          "TS%": 0.535,
+          "BPM": -1.1
+        }
       }
     ]
   },
@@ -683,56 +1723,160 @@
         "position": "C",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Anchor Big"
+        "defensiveRole": "Anchor Big",
+        "style": {
+          "USG%": 37,
+          "AST%": 22.9,
+          "3PAr": 0.151,
+          "FTr": 0.581,
+          "ORB%": 5.9,
+          "DRB%": 28.3,
+          "STL%": 1.4,
+          "BLK%": 4.6,
+          "TOV%": 11.9,
+          "TS%": 0.655,
+          "BPM": 9.2
+        }
       },
       {
         "name": "James Harden",
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 25,
+          "AST%": 43.3,
+          "3PAr": 0.496,
+          "FTr": 0.429,
+          "ORB%": 2.3,
+          "DRB%": 17.1,
+          "STL%": 1.6,
+          "BLK%": 1.4,
+          "TOV%": 16.3,
+          "TS%": 0.607,
+          "BPM": 5.4
+        }
       },
       {
         "name": "Tyrese Maxey",
         "position": "PG",
         "tier": 2,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 24.1,
+          "AST%": 16.9,
+          "3PAr": 0.404,
+          "FTr": 0.233,
+          "ORB%": 1.4,
+          "DRB%": 8.8,
+          "STL%": 1.2,
+          "BLK%": 0.4,
+          "TOV%": 7.4,
+          "TS%": 0.605,
+          "BPM": 0.6
+        }
       },
       {
         "name": "Tobias Harris",
         "position": "PF",
         "tier": 2,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 18.2,
+          "AST%": 11.4,
+          "3PAr": 0.383,
+          "FTr": 0.153,
+          "ORB%": 3.3,
+          "DRB%": 17,
+          "STL%": 1.4,
+          "BLK%": 1.5,
+          "TOV%": 9,
+          "TS%": 0.602,
+          "BPM": 0.7
+        }
       },
       {
         "name": "P.J. Tucker",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 6.5,
+          "AST%": 3.9,
+          "3PAr": 0.622,
+          "FTr": 0.102,
+          "ORB%": 5.9,
+          "DRB%": 12.1,
+          "STL%": 1,
+          "BLK%": 0.7,
+          "TOV%": 15.8,
+          "TS%": 0.566,
+          "BPM": -3
+        }
       },
       {
         "name": "De'Anthony Melton",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 16.4,
+          "AST%": 12.9,
+          "3PAr": 0.619,
+          "FTr": 0.134,
+          "ORB%": 3.9,
+          "DRB%": 13.1,
+          "STL%": 2.9,
+          "BLK%": 1.8,
+          "TOV%": 12.9,
+          "TS%": 0.566,
+          "BPM": 0.9
+        }
       },
       {
         "name": "Georges Niang",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 17,
+          "AST%": 7.3,
+          "3PAr": 0.765,
+          "FTr": 0.09,
+          "ORB%": 1.5,
+          "DRB%": 12.8,
+          "STL%": 1,
+          "BLK%": 0.9,
+          "TOV%": 9.4,
+          "TS%": 0.61,
+          "BPM": -1.4
+        }
       },
       {
         "name": "Paul Reed",
         "position": "C",
         "tier": 3,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 16.4,
+          "AST%": 5.3,
+          "3PAr": 0.029,
+          "FTr": 0.244,
+          "ORB%": 17.8,
+          "DRB%": 23.1,
+          "STL%": 3,
+          "BLK%": 6.3,
+          "TOV%": 16.3,
+          "TS%": 0.62,
+          "BPM": -0.1
+        }
       }
     ]
   },
@@ -750,56 +1894,160 @@
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Slasher",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 33.7,
+          "AST%": 34.1,
+          "3PAr": 0.218,
+          "FTr": 0.353,
+          "ORB%": 4.2,
+          "DRB%": 14.1,
+          "STL%": 1.7,
+          "BLK%": 1,
+          "TOV%": 12.6,
+          "TS%": 0.575,
+          "BPM": 6.1
+        }
       },
       {
         "name": "Desmond Bane",
         "position": "SG",
         "tier": 2,
         "offensiveArchetype": "Off Screen Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 23.1,
+          "AST%": 13.5,
+          "3PAr": 0.475,
+          "FTr": 0.141,
+          "ORB%": 2.1,
+          "DRB%": 13.6,
+          "STL%": 1.9,
+          "BLK%": 1.1,
+          "TOV%": 8.7,
+          "TS%": 0.592,
+          "BPM": 2.7
+        }
       },
       {
         "name": "Jaren Jackson Jr.",
         "position": "PF",
         "tier": 1,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Mobile Big"
+        "defensiveRole": "Mobile Big",
+        "style": {
+          "USG%": 25.4,
+          "AST%": 5.8,
+          "3PAr": 0.387,
+          "FTr": 0.333,
+          "ORB%": 5.7,
+          "DRB%": 16.9,
+          "STL%": 1.6,
+          "BLK%": 7.4,
+          "TOV%": 9.9,
+          "TS%": 0.535,
+          "BPM": -0.1
+        }
       },
       {
         "name": "Dillon Brooks",
         "position": "SF",
         "tier": 2,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 28.8,
+          "AST%": 15.4,
+          "3PAr": 0.283,
+          "FTr": 0.202,
+          "ORB%": 3.4,
+          "DRB%": 8.8,
+          "STL%": 1.9,
+          "BLK%": 0.8,
+          "TOV%": 8,
+          "TS%": 0.515,
+          "BPM": -1.8
+        }
       },
       {
         "name": "Steven Adams",
         "position": "C",
         "tier": 2,
         "offensiveArchetype": "Post Scorer",
-        "defensiveRole": "Anchor Big"
+        "defensiveRole": "Anchor Big",
+        "style": {
+          "USG%": 12,
+          "AST%": 16.1,
+          "3PAr": 0.003,
+          "FTr": 0.518,
+          "ORB%": 17.9,
+          "DRB%": 22,
+          "STL%": 1.6,
+          "BLK%": 2.7,
+          "TOV%": 19.6,
+          "TS%": 0.56,
+          "BPM": 2
+        }
       },
       {
         "name": "Tyus Jones",
         "position": "PG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 16.6,
+          "AST%": 28.2,
+          "3PAr": 0.371,
+          "FTr": 0.12,
+          "ORB%": 1.1,
+          "DRB%": 11,
+          "STL%": 2,
+          "BLK%": 0.1,
+          "TOV%": 7.3,
+          "TS%": 0.544,
+          "BPM": 1.7
+        }
       },
       {
         "name": "Brandon Clarke",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 17.7,
+          "AST%": 10.3,
+          "3PAr": 0.049,
+          "FTr": 0.291,
+          "ORB%": 11.1,
+          "DRB%": 17.8,
+          "STL%": 1.5,
+          "BLK%": 4.9,
+          "TOV%": 6.3,
+          "TS%": 0.66,
+          "BPM": 4.2
+        }
       },
       {
         "name": "De'Anthony Melton",
         "position": "SG",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 21.3,
+          "AST%": 16,
+          "3PAr": 0.535,
+          "FTr": 0.173,
+          "ORB%": 4,
+          "DRB%": 17.1,
+          "STL%": 3,
+          "BLK%": 2.1,
+          "TOV%": 13,
+          "TS%": 0.529,
+          "BPM": 1.9
+        }
       }
     ]
   },
@@ -817,56 +2065,160 @@
         "position": "PG",
         "tier": 1,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Low Activity"
+        "defensiveRole": "Low Activity",
+        "style": {
+          "USG%": 19.7,
+          "AST%": 44.5,
+          "3PAr": 0.27,
+          "FTr": 0.274,
+          "ORB%": 1.1,
+          "DRB%": 12.8,
+          "STL%": 2.7,
+          "BLK%": 0.8,
+          "TOV%": 15.6,
+          "TS%": 0.581,
+          "BPM": 5.4
+        }
       },
       {
         "name": "Devin Booker",
         "position": "SG",
         "tier": 1,
         "offensiveArchetype": "Shot Creator",
-        "defensiveRole": "Chaser"
+        "defensiveRole": "Chaser",
+        "style": {
+          "USG%": 32,
+          "AST%": 22.4,
+          "3PAr": 0.336,
+          "FTr": 0.255,
+          "ORB%": 2.1,
+          "DRB%": 13.2,
+          "STL%": 1.6,
+          "BLK%": 1,
+          "TOV%": 9.3,
+          "TS%": 0.576,
+          "BPM": 4.1
+        }
       },
       {
         "name": "Mikal Bridges",
         "position": "SF",
         "tier": 2,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Point of Attack"
+        "defensiveRole": "Point of Attack",
+        "style": {
+          "USG%": 15,
+          "AST%": 8.7,
+          "3PAr": 0.364,
+          "FTr": 0.183,
+          "ORB%": 2.9,
+          "DRB%": 10,
+          "STL%": 1.6,
+          "BLK%": 1.1,
+          "TOV%": 6.8,
+          "TS%": 0.627,
+          "BPM": 1.6
+        }
       },
       {
         "name": "Deandre Ayton",
         "position": "C",
         "tier": 2,
         "offensiveArchetype": "Post Scorer",
-        "defensiveRole": "Anchor Big"
+        "defensiveRole": "Anchor Big",
+        "style": {
+          "USG%": 21.4,
+          "AST%": 7.6,
+          "3PAr": 0.027,
+          "FTr": 0.204,
+          "ORB%": 9.6,
+          "DRB%": 27.1,
+          "STL%": 1.1,
+          "BLK%": 2.1,
+          "TOV%": 10.7,
+          "TS%": 0.656,
+          "BPM": 2.8
+        }
       },
       {
         "name": "Jae Crowder",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Movement Shooter",
-        "defensiveRole": "Wing Stopper"
+        "defensiveRole": "Wing Stopper",
+        "style": {
+          "USG%": 14.6,
+          "AST%": 8.3,
+          "3PAr": 0.671,
+          "FTr": 0.165,
+          "ORB%": 1.8,
+          "DRB%": 18,
+          "STL%": 2.4,
+          "BLK%": 1.4,
+          "TOV%": 8.6,
+          "TS%": 0.541,
+          "BPM": 1.1
+        }
       },
       {
         "name": "Cam Johnson",
         "position": "PF",
         "tier": 3,
         "offensiveArchetype": "Stationary Shooter",
-        "defensiveRole": "Helper"
+        "defensiveRole": "Helper",
+        "style": {
+          "USG%": 17.5,
+          "AST%": 7.7,
+          "3PAr": 0.644,
+          "FTr": 0.188,
+          "ORB%": 2.7,
+          "DRB%": 14,
+          "STL%": 1.6,
+          "BLK%": 0.8,
+          "TOV%": 6.7,
+          "TS%": 0.625,
+          "BPM": 2.7
+        }
       },
       {
         "name": "Cameron Payne",
         "position": "PG",
         "tier": 3,
         "offensiveArchetype": "Primary Ball Handler",
-        "defensiveRole": "Low Activity"
+        "defensiveRole": "Low Activity",
+        "style": {
+          "USG%": 24.6,
+          "AST%": 30.7,
+          "3PAr": 0.359,
+          "FTr": 0.152,
+          "ORB%": 2.1,
+          "DRB%": 12.3,
+          "STL%": 1.5,
+          "BLK%": 1.2,
+          "TOV%": 14.1,
+          "TS%": 0.5,
+          "BPM": 0
+        }
       },
       {
         "name": "JaVale McGee",
         "position": "C",
         "tier": 3,
         "offensiveArchetype": "Roll + Cut Big",
-        "defensiveRole": "Anchor Big"
+        "defensiveRole": "Anchor Big",
+        "style": {
+          "USG%": 22.8,
+          "AST%": 5.4,
+          "3PAr": 0.02,
+          "FTr": 0.319,
+          "ORB%": 15.3,
+          "DRB%": 29.7,
+          "STL%": 0.9,
+          "BLK%": 6.1,
+          "TOV%": 15.8,
+          "TS%": 0.651,
+          "BPM": 0.8
+        }
       }
     ]
   }

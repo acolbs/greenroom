@@ -140,7 +140,7 @@ export default function AnalysisPage() {
             ))}
           </div>
           <p className="footnote" style={{ marginTop: "0.75rem" }}>
-            Match = 70% offensive and defensive role, 20% position, 10% star level.
+            Match = 75% play style (usage, playmaking, shot profile, rebounding, defense and efficiency from that season's stats), 15% role, 10% position.
           </p>
         </section>
 

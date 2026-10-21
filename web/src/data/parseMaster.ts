@@ -1,4 +1,4 @@
-import type { RosterPlayer, Position, OffensiveArchetype, DefensiveRole, TalentTier } from "../types/simulator";
+import type { RosterPlayer, Position, OffensiveArchetype, DefensiveRole, TalentTier, StyleStats } from "../types/simulator";
 import {
   normalizeName,
   playerMatchKey,
@@ -10,6 +10,9 @@ import {
 import type { ContractRow } from "./parseContracts";
 import { teamIdFromCsvAbbrev } from "./constants";
 import { buildNbaPools, nbaTalent, talentTier } from "../lib/talentScore";
+import styleScale from "./styleScale.json";
+
+const STYLE_KEYS = Object.keys(styleScale);
 
 // ---------------------------------------------------------------------------
 // Raw shape parsed directly from master.csv columns
@@ -30,6 +33,7 @@ export interface MasterRow {
   /** 0–100 unified Talent Score, computed across the full league pool. */
   talentScore: number;
   talentTier: TalentTier;
+  style: StyleStats;
 }
 
 // ---------------------------------------------------------------------------
@@ -91,6 +95,7 @@ export function parseMasterRows(
         ws: toFloat(row["WS"]),
         usgPct: toFloat(row["USG%"]),
       },
+      style: Object.fromEntries(STYLE_KEYS.map((k) => [k, toFloat(row[k])])),
       talentScore: 0, // filled in the post-pass below once the pool is complete
       talentTier: "Depth",
     });
@@ -151,6 +156,7 @@ export function buildTeamRoster(params: BuildRosterParams): RosterPlayer[] {
       stats: row.stats,
       talentScore: row.talentScore,
       talentTier: row.talentTier,
+      style: row.style,
     });
   }
 

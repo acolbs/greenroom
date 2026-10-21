@@ -10,7 +10,7 @@ import {
 import RadarChart from "./RadarChart";
 import PhysicalsCompare from "./PhysicalsCompare";
 
-const SUBJECT_COLOR = "#46A877"; // pine
+const SUBJECT_COLOR = "#34D399"; // mint accent
 const COMP_COLOR = "#39E3FF"; // cyan
 
 export default function ProspectComparison({ prospect }: { prospect: DraftProspect }) {

@@ -32,39 +32,39 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Color — Dark ("locker room") is the default ─────────────────────────── */
+/* ── Color — Dark ("black") is the default ─────────────────────────── */
 :root,
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --color-bg: #0f1613;
-  --color-surface: #16201b;
-  --color-surface-raised: #1c2a23;
-  --color-surface-hover: #22332c;
-  --color-border: #283730;
-  --color-border-subtle: #1e2b25;
+  --color-bg: #0a0a0b;
+  --color-surface: #121314;
+  --color-surface-raised: #18191b;
+  --color-surface-hover: #1f2124;
+  --color-border: #2a2c30;
+  --color-border-subtle: #1c1d20;
 
-  --color-text: #ecf1ed;
-  --color-text-primary: #ecf1ed;
-  --color-text-secondary: #b4c5bc;
-  --color-text-muted: #90a89b;
+  --color-text: #f2f4f3;
+  --color-text-primary: #f2f4f3;
+  --color-text-secondary: #b9bfbc;
+  --color-text-muted: #8b928f;
 
-  /* Pine green, the original Greenroom accent */
-  --color-accent: #46a877;
-  --color-accent-hover: #5bbf8c;
-  --color-accent-dim: #1b3329;
-  --color-accent-subtle: #14241d;
-  --color-on-accent: #06120c;
+  /* Bright mint green, the one accent */
+  --color-accent: #34d399;
+  --color-accent-hover: #5ee0b0;
+  --color-accent-dim: #0f3325;
+  --color-accent-subtle: #0b1c15;
+  --color-on-accent: #03140c;
 
-  --color-danger: #e0735a;
-  --color-danger-dim: #3a1a14;
-  --color-warning: #d6a23e;
-  --color-warning-dim: #2d2206;
-  --color-info: #6ba8e8;
+  --color-danger: #f87171;
+  --color-danger-dim: #3a1515;
+  --color-warning: #f5b14c;
+  --color-warning-dim: #33240b;
+  --color-info: #60a5fa;
 
   /* Stage colors */
-  --stage-contender: #46a877;
-  --stage-middle: #6ba8e8;
-  --stage-rebuilding: #d6a23e;
+  --stage-contender: #34d399;
+  --stage-middle: #60a5fa;
+  --stage-rebuilding: #f5b14c;
 
   --glow-accent: none;
   --glow-accent-tight: none;
@@ -73,33 +73,33 @@ html {
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --color-bg: #eef0ec;
-  --color-surface: #fbfcfa;
+  --color-bg: #f4f5f6;
+  --color-surface: #ffffff;
   --color-surface-raised: #ffffff;
-  --color-surface-hover: #f1f4ef;
-  --color-border: #d6dcd5;
-  --color-border-subtle: #e3e8e1;
+  --color-surface-hover: #eef0f2;
+  --color-border: #dcdfe3;
+  --color-border-subtle: #e8eaed;
 
-  --color-text: #10211a;
-  --color-text-primary: #10211a;
-  --color-text-secondary: #3c4d45;
-  --color-text-muted: #5c6f66;
+  --color-text: #0f1112;
+  --color-text-primary: #0f1112;
+  --color-text-secondary: #3d4246;
+  --color-text-muted: #636a70;
 
-  --color-accent: #1b5e3f;
-  --color-accent-hover: #237a52;
-  --color-accent-dim: #cfe3d6;
-  --color-accent-subtle: #e4eee7;
+  --color-accent: #0e9f6e;
+  --color-accent-hover: #0b8a5f;
+  --color-accent-dim: #d1f4e3;
+  --color-accent-subtle: #ebfaf2;
   --color-on-accent: #ffffff;
 
-  --color-danger: #b4452e;
-  --color-danger-dim: #f2d9d2;
-  --color-warning: #b07a1e;
-  --color-warning-dim: #f0e3cb;
-  --color-info: #2b6cb0;
+  --color-danger: #c2412d;
+  --color-danger-dim: #f8dcd6;
+  --color-warning: #a8740f;
+  --color-warning-dim: #f6e8c8;
+  --color-info: #2563eb;
 
-  --stage-contender: #1b5e3f;
-  --stage-middle: #2b6cb0;
-  --stage-rebuilding: #9a6a14;
+  --stage-contender: #0e9f6e;
+  --stage-middle: #2563eb;
+  --stage-rebuilding: #a8740f;
 
   --shadow-pop: 0 12px 40px rgba(17, 24, 39, 0.14);
 }

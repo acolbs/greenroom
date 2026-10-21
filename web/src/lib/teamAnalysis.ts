@@ -20,9 +20,11 @@ import type {
   Position,
   RosterDeficit,
   RosterPlayer,
+  StyleStats,
   TeamStrengthLabel,
 } from "../types/simulator";
 import blueprintTeamsRaw from "../data/blueprintTeams.json";
+import styleScale from "../data/styleScale.json";
 import { normalizeName } from "../data/csvUtils";
 
 // ---------------------------------------------------------------------------
@@ -38,6 +40,8 @@ export interface BlueprintPlayer {
   tier: BlueprintTier;
   offensiveArchetype: OffensiveArchetype;
   defensiveRole: DefensiveRole;
+  /** Advanced stats from that season (see scripts/build_blueprints.mjs). */
+  style: StyleStats;
 }
 
 export interface BlueprintTeam {
@@ -120,6 +124,60 @@ export function roleSimilarity(a: Roles, b: Roles): number {
   );
   const def = side(a.defensiveRole, b.defensiveRole, DEF_FAMILY[a.defensiveRole], DEF_FAMILY[b.defensiveRole]);
   return OFF_SHARE * off + (1 - OFF_SHARE) * def;
+}
+
+// ---------------------------------------------------------------------------
+// Play-style similarity
+//
+// Compares the advanced stats that describe how someone plays: how much he
+// uses the ball (USG%), creates for others (AST%), shoots threes (3PAr) or
+// gets to the line (FTr), rebounds, defends (STL%, BLK%), and how well (TS%,
+// BPM). Each stat is measured in league standard deviations, so a gap in
+// assist rate counts the same as an equally rare gap in block rate.
+// ---------------------------------------------------------------------------
+
+const STYLE_WEIGHT: Record<string, number> = {
+  "USG%": 1.5, "AST%": 1.5, "3PAr": 1.2, "FTr": 0.6, "ORB%": 0.8, "DRB%": 0.8,
+  "STL%": 0.6, "BLK%": 0.9, "TOV%": 0.4, "TS%": 0.6, "BPM": 1.0,
+};
+const SCALE = styleScale as Record<string, { mean: number; sd: number }>;
+/** Style distance (in SDs) at which similarity falls to about 50%. */
+const STYLE_SPREAD = 0.85;
+
+/** 0–1 play-style similarity, or null if either side has no stats. */
+export function styleSimilarity(a?: StyleStats, b?: StyleStats): number | null {
+  if (!a || !b) return null;
+  let sum = 0;
+  let wSum = 0;
+  for (const [k, w] of Object.entries(STYLE_WEIGHT)) {
+    const x = a[k];
+    const y = b[k];
+    if (!Number.isFinite(x) || !Number.isFinite(y) || !SCALE[k]?.sd) continue;
+    sum += w * ((x - y) / SCALE[k].sd) ** 2;
+    wSum += w;
+  }
+  if (wSum === 0) return null;
+  return Math.exp(-sum / wSum / (2 * STYLE_SPREAD ** 2));
+}
+
+const POSITION_ORDER: Position[] = ["PG", "SG", "SF", "PF", "C"];
+
+/** 1 = same position, 0.5 = next to it, 0 = further apart. */
+function positionSimilarity(a: Position, b: Position): number {
+  const d = Math.abs(POSITION_ORDER.indexOf(a) - POSITION_ORDER.indexOf(b));
+  return d === 0 ? 1 : d === 1 ? 0.5 : 0;
+}
+
+/**
+ * 0–1 overall match between a current player and a blueprint player:
+ * 75% play style, 15% role, 10% position. Falls back to role and position
+ * when there are no stats (e.g. a drafted rookie).
+ */
+export function playerSimilarity(p: RosterPlayer, b: BlueprintPlayer): number {
+  const role = roleSimilarity(p, b);
+  const pos = positionSimilarity(p.position, b.position);
+  const style = styleSimilarity(p.style, b.style);
+  return style === null ? 0.8 * role + 0.2 * pos : 0.75 * style + 0.15 * role + 0.1 * pos;
 }
 
 // ---------------------------------------------------------------------------
@@ -242,11 +300,6 @@ export function computeStage(roster: RosterPlayer[], winPct: number | null): Sta
 /** How much each blueprint role counts toward the match, by that player's tier. */
 const TIER_WEIGHT: Record<BlueprintTier, number> = { 1: 1, 2: 0.75, 3: 0.5 };
 
-/** The app's talent tier on the blueprint's 1–3 scale. */
-function playerTier(p: RosterPlayer): BlueprintTier {
-  return p.talentTier === "Star" ? 1 : p.talentTier === "Starter" ? 2 : 3;
-}
-
 export interface SlotPairing {
   blueprintPlayer: BlueprintPlayer;
   slotIndex: number;
@@ -278,7 +331,7 @@ function pairRoster(core: RosterPlayer[], bp: BlueprintTeam): SlotPairing[] {
   const pairs: { pi: number; si: number; sim: number; score: number }[] = [];
   bp.players.forEach((bpP, si) => {
     core.forEach((p, pi) => {
-      const sim = roleSimilarity(p, bpP);
+      const sim = playerSimilarity(p, bpP);
       if (sim > 0) pairs.push({ pi, si, sim, score: sim * TIER_WEIGHT[bp.players[si].tier] });
     });
   });
@@ -314,7 +367,7 @@ export function matchBlueprint(roster: RosterPlayer[], bp: BlueprintTeam): Bluep
   // blueprint's stars.
   let star = 0;
   for (const p of core.slice(0, 2)) {
-    for (const b of bp.players.filter((x) => x.tier === 1)) star = Math.max(star, roleSimilarity(p, b));
+    for (const b of bp.players.filter((x) => x.tier === 1)) star = Math.max(star, playerSimilarity(p, b));
   }
 
   return {
@@ -344,31 +397,20 @@ export interface PlayerComp {
   similarity: number;
 }
 
-const POSITION_ORDER: Position[] = ["PG", "SG", "SF", "PF", "C"];
-
-/** 1 = same position, 0.5 = next to it, 0 = further apart. */
-function positionSimilarity(a: Position, b: Position): number {
-  const d = Math.abs(POSITION_ORDER.indexOf(a) - POSITION_ORDER.indexOf(b));
-  return d === 0 ? 1 : d === 1 ? 0.5 : 0;
-}
-
 /**
  * For each of the team's top players, the most similar player from any past
- * contender: same role first, then same position and same tier (stars are
- * compared with stars). Ties go to champions. Never compares a player to his
- * own past self.
+ * contender, by play style, role and position. Ties go to champions. Never
+ * compares a player to his own past self.
  */
 export function starComps(roster: RosterPlayer[], count = 3): PlayerComp[] {
   return coreRotation(roster, count).flatMap((player) => {
     const self = normalizeName(player.name);
-    const tier = playerTier(player);
     let best: PlayerComp | null = null;
     let bestKey = -1;
     for (const bp of BLUEPRINT_TEAMS) {
       for (const c of bp.players) {
         if (normalizeName(c.name) === self) continue;
-        const role = roleSimilarity(player, c);
-        const similarity = 0.7 * role + 0.2 * positionSimilarity(player.position, c.position) + 0.1 * (c.tier === tier ? 1 : 0);
+        const similarity = playerSimilarity(player, c);
         const key = similarity + (bp.champion ? 0.001 : 0);
         if (key > bestKey) {
           bestKey = key;
