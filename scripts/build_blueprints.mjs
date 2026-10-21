@@ -1,5 +1,11 @@
 // Builds web/src/data/blueprintTeams.json from the 13 contender rosters in
-// web/public/data/top_teams/. Run: node scripts/build_blueprints.mjs
+// web/public/data/top_teams/, plus web/src/data/styleScale.json.
+//
+// Each blueprint player also gets his play-style stats from that season
+// (Basketball-Reference advanced stats), read from scripts/data/blueprint_advanced.csv.
+// To refresh that file, pass the full Advanced.csv from
+// github.com/sumitrodatta/bball-reference-datasets:
+//   node scripts/build_blueprints.mjs [path/to/Advanced.csv]
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -44,6 +50,58 @@ const PROFILE = {
   PHX_2022: { "Chris Paul": "PG1", "Devin Booker": "SG1", "Mikal Bridges": "SF2", "Deandre Ayton": "C2", "Jae Crowder": "PF3", "Cam Johnson": "PF3", "Cameron Payne": "PG3", "JaVale McGee": "C3" },
 };
 
+// ── Play-style stats ──────────────────────────────────────────────────────
+// Advanced-stat columns that describe how a player plays, keyed by the
+// master.csv header, with the matching Basketball-Reference dataset column.
+const STYLE = {
+  "USG%": "usg_percent", "AST%": "ast_percent", "3PAr": "x3p_ar", "FTr": "f_tr",
+  "ORB%": "orb_percent", "DRB%": "drb_percent", "STL%": "stl_percent", "BLK%": "blk_percent",
+  "TOV%": "tov_percent", "TS%": "ts_percent", "BPM": "bpm",
+};
+const BREF_TEAM = { PHX: "PHO", BKN: "BRK", CHA: "CHO" };
+// Blueprint spelling → Basketball-Reference spelling.
+const ALIAS = { "cam johnson": "cameron johnson" };
+const norm0 = (n) => n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z ]/g, "").replace(/\b(jr|sr|ii|iii|iv)\b/g, "").replace(/\s+/g, " ").trim();
+const norm = (n) => ALIAS[norm0(n)] ?? norm0(n);
+const readCsv = (f) => Papa.parse(fs.readFileSync(f, "utf8"), { header: true, skipEmptyLines: true }).data;
+
+const advPath = path.join(root, "scripts/data/blueprint_advanced.csv");
+const wanted = new Set(
+  Object.entries(PROFILE).flatMap(([key, ps]) => Object.keys(ps).map((n) => `${key.slice(4)}|${norm(n)}`))
+);
+if (process.argv[2]) {
+  // Keep only blueprint seasons for blueprint players (team row and season total).
+  const rows = readCsv(process.argv[2]).filter((r) => wanted.has(`${r.season}|${norm(r.player)}`));
+  fs.mkdirSync(path.dirname(advPath), { recursive: true });
+  fs.writeFileSync(advPath, Papa.unparse(rows) + "\n");
+  console.log(`Wrote ${rows.length} rows to scripts/data/blueprint_advanced.csv`);
+}
+const adv = readCsv(advPath);
+
+function styleFor(key, name) {
+  const season = key.slice(4);
+  const team = BREF_TEAM[key.slice(0, 3)] ?? key.slice(0, 3);
+  const rows = adv.filter((r) => r.season === season && norm(r.player) === norm(name));
+  const row = rows.find((r) => r.team === team) ?? rows.find((r) => /TOT|\dTM/.test(r.team));
+  if (!row) throw new Error(`No ${season} stats for ${name} (${key})`);
+  return Object.fromEntries(Object.entries(STYLE).map(([k, col]) => [k, Number(row[col])]));
+}
+
+// League spread for each style stat (players with 500+ minutes in the
+// app's 2025-26 data), so every stat is compared in standard deviations.
+const master = readCsv(path.join(root, "web/public/data/master.csv")).filter(
+  (r) => !/\dTM/.test(r.Team) && Number(r.MP) >= 500
+);
+const scale = Object.fromEntries(
+  Object.keys(STYLE).map((k) => {
+    const xs = master.map((r) => Number(r[k])).filter(Number.isFinite);
+    const mean = xs.reduce((a, b) => a + b, 0) / xs.length;
+    const sd = Math.sqrt(xs.reduce((a, b) => a + (b - mean) ** 2, 0) / xs.length);
+    return [k, { mean: +mean.toFixed(4), sd: +sd.toFixed(4) }];
+  })
+);
+fs.writeFileSync(path.join(root, "web/src/data/styleScale.json"), JSON.stringify(scale, null, 2) + "\n");
+
 const out = [];
 for (const f of fs.readdirSync(dir).filter((f) => f.endsWith(".csv")).sort()) {
   const key = f.match(/\(([A-Z]{3}_\d{4})\)/)?.[1];
@@ -61,6 +119,7 @@ for (const f of fs.readdirSync(dir).filter((f) => f.endsWith(".csv")).sort()) {
     // One file spells the header "Offemsive Role".
     offensiveArchetype: (r["Offensive Role"] ?? r["Offemsive Role"]).trim(),
     defensiveRole: r["Defensive Role"].trim(),
+    style: styleFor(key, name),
     };
   });
   out.push({ id: key, abbrev: key.slice(0, 3), ...meta, players });
