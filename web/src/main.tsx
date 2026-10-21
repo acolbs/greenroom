@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./styles/global.css";
 import "./styles/app.css";
+import "./styles/ui.css";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "") || undefined;
 

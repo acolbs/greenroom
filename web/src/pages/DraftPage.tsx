@@ -1,597 +1,364 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
-import { useSimulatorStore, selectCurrentUserPick, teamForPick } from "../store/simulatorStore";
-import {
-  rankProspectsForTeam,
-  getSmartRecommendation,
-} from "../data/prospectRanking";
-import type { RankedProspect } from "../data/prospectRanking";
+import { useSimulatorStore, selectCurrentUserPick, teamForPick, setCpuPickDelay } from "../store/simulatorStore";
+import { rankProspectsForTeam, FIT_WEIGHT, type RankedProspect } from "../data/prospectRanking";
 import { TEAMS, DRAFT_ORDER_2026 } from "../data/constants";
-import type { DraftProspect, Position } from "../types/simulator";
-import NavBar from "../components/NavBar";
+import type { DraftProspect, Position, RosterDeficit, TeamStrengthLabel } from "../types/simulator";
+import AppHeader from "../components/AppHeader";
 import PlayerAvatar from "../components/PlayerAvatar";
-import ScoutChat from "../components/ScoutChat";
-import DraftAdvisorBanner from "../components/DraftAdvisorBanner";
-import BlueprintSlotTracker from "../components/BlueprintSlotTracker";
 import PlayerDetailModal from "../components/PlayerDetailModal";
 import TeamLogo from "../components/TeamLogo";
-import Tooltip from "../components/Tooltip";
+import StageBadge from "../components/StageBadge";
+import ScoreCell from "../components/ScoreCell";
+import { blueprintById, blueprintLabel } from "../lib/teamAnalysis";
+import { roleLabel } from "../lib/format";
 
-// ── Draft setup screen ─────────────────────────────────────────────────────
+type Sort = "recommended" | "bigboard";
+const POSITIONS: (Position | "ALL")[] = ["ALL", "PG", "SG", "SF", "PF", "C"];
+const BOARD_LIMIT = 30;
+const SPEEDS = [
+  { label: "Normal", ms: 600 },
+  { label: "Fast", ms: 120 },
+];
+
+/** Fit at or above this means the pick is about filling a blueprint role. */
+const FIT_PICK = 40;
+
+function matchedNeed(p: DraftProspect, needs: RosterDeficit[]): RosterDeficit | null {
+  return (
+    needs.find((n) => n.offensiveArchetype === p.offensiveArchetype && n.defensiveRole === p.defensiveRole) ??
+    needs.find((n) => n.offensiveArchetype === p.offensiveArchetype || n.defensiveRole === p.defensiveRole) ??
+    null
+  );
+}
+
+function whyTag(p: RankedProspect) {
+  return p.fitScore >= FIT_PICK ? <span className="tag tag--fit">Fit</span> : <span className="tag tag--bpa">Best available</span>;
+}
+
+/** One sentence on why this prospect is the pick for this team. */
+function explain(p: RankedProspect, label: TeamStrengthLabel, needs: RosterDeficit[], bestTalent: RankedProspect): string {
+  const need = matchedNeed(p, needs);
+  const exact = need && need.offensiveArchetype === p.offensiveArchetype && need.defensiveRole === p.defensiveRole;
+  const fitPart = need
+    ? exact
+      ? `fills your ${roleLabel(need)} need exactly`
+      : `partly fills your ${roleLabel(need)} need`
+    : "doesn't fill a blueprint need";
+
+  if (p.id === bestTalent.id) {
+    return `Highest talent left on the board (${p.valueScore}), and he ${fitPart}.`;
+  }
+  if (label === "Contender") {
+    return `As a contender you weight fit ${Math.round(FIT_WEIGHT.Contender * 100)}%. He ${fitPart}, which outweighs the ${
+      bestTalent.valueScore - p.valueScore
+    }-point talent gap to ${bestTalent.name}.`;
+  }
+  return `He ${fitPart}, and his talent (${p.valueScore}) is close enough to ${bestTalent.name} (${bestTalent.valueScore}) to take the fit.`;
+}
+
+/** Blueprint needs grouped by role, e.g. two Anchor Bigs → one chip "×2". */
+function groupNeeds(needs: RosterDeficit[]): { role: RosterDeficit; count: number }[] {
+  const out = new Map<string, { role: RosterDeficit; count: number }>();
+  for (const n of needs) {
+    const k = roleLabel(n);
+    const hit = out.get(k);
+    if (hit) hit.count++;
+    else out.set(k, { role: n, count: 1 });
+  }
+  return [...out.values()];
+}
+
+function NeedChips({ needs, small }: { needs: RosterDeficit[]; small?: boolean }) {
+  if (needs.length === 0) return <span className="muted" style={{ fontSize: "0.88rem" }}>No open roles. You're drafting on talent.</span>;
+  return (
+    <>
+      {groupNeeds(needs).map(({ role, count }) => (
+        <span key={roleLabel(role)} className="need" style={small ? { fontSize: "0.78rem" } : undefined}>
+          <b>{role.offensiveArchetype}</b>
+          <span className="muted">/ {role.defensiveRole}</span>
+          {count > 1 && <span className="num accent">×{count}</span>}
+        </span>
+      ))}
+    </>
+  );
+}
+
+// ── Setup ──────────────────────────────────────────────────────────────────
 
 function DraftSetup() {
   const setUserPickNumbers = useSimulatorStore((s) => s.setUserPickNumbers);
   const startDraftSimulation = useSimulatorStore((s) => s.startDraftSimulation);
-  const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
+  const teamId = useSimulatorStore((s) => s.selectedTeamId);
+  const strength = useSimulatorStore((s) => s.teamStrength);
+  const targetId = useSimulatorStore((s) => s.targetBlueprintId);
+  const needs = useSimulatorStore((s) => s.rosterDeficits);
 
-  const team = TEAMS.find((t) => t.id === selectedTeamId);
-
-  // Picks your team owns, derived from the ACTUAL 2026 draft order.
-  const autoPicks = useMemo(
-    () =>
-      DRAFT_ORDER_2026.reduce<number[]>((acc, id, i) => {
-        if (id === selectedTeamId) acc.push(i + 1);
-        return acc;
-      }, []),
-    [selectedTeamId]
+  const team = TEAMS.find((t) => t.id === teamId);
+  const target = targetId ? blueprintById(targetId) : undefined;
+  const picks = useMemo(
+    () => DRAFT_ORDER_2026.flatMap((id, i) => (id === teamId ? [i + 1] : [])),
+    [teamId]
   );
 
-  function handleStart() {
-    setUserPickNumbers(autoPicks);
+  function start(ms: number) {
+    setCpuPickDelay(ms);
+    setUserPickNumbers(picks);
     startDraftSimulation();
   }
 
   return (
-    <div className="draft-setup">
-      <h2>Set Up Draft</h2>
-      <p className="draft-setup-desc">
-        Using the <strong>actual 2026 NBA draft order</strong> (60 picks, 2 rounds,
-        traded picks included). CPU teams pick every other slot in real order.
-      </p>
-
-      <div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
-        {autoPicks.length > 0 ? (
-          <>
-            {team ? `${team.city} ${team.name}` : "Your team"} pick at{" "}
-            <strong style={{ color: "var(--color-accent)" }}>
-              {autoPicks.join(", ")}
-            </strong>
-            .
-          </>
-        ) : (
-          <>
-            {team ? `${team.city} ${team.name}` : "Your team"} hold no picks in this
-            draft — you'll watch all 60 picks play out in the real order.
-          </>
-        )}
+    <div className="grid grid-2" style={{ alignItems: "start" }}>
+      <div className="card">
+        <div className="eyebrow">Your picks in the real 2026 order</div>
+        <div className="display h2" style={{ marginTop: "0.6rem" }}>
+          {picks.length > 0 ? picks.map((p) => `#${p}`).join("  ") : "No picks"}
+        </div>
+        <p className="muted" style={{ marginTop: "0.75rem", fontSize: "0.9rem" }}>
+          {picks.length > 0
+            ? `${team?.name ?? "You"} pick ${picks.length === 1 ? "once" : `${picks.length} times`}. The other 29 teams take the best player left on the big board.`
+            : `${team?.name ?? "Your team"} traded away both picks, so you'll watch all 60 play out.`}
+        </p>
+        <div style={{ display: "flex", gap: "0.6rem", marginTop: "1.25rem", flexWrap: "wrap" }}>
+          {SPEEDS.map((s, i) => (
+            <button key={s.label} type="button" className={`btn ${i === 0 ? "btn-primary" : ""} btn-lg`} onClick={() => start(s.ms)}>
+              {i === 0 ? "Start the draft" : "Start, fast CPU picks"}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <button className="btn btn-primary" onClick={handleStart}>
-        Start Draft
-      </button>
-    </div>
-  );
-}
-
-// ── Horizontal pick history strip ──────────────────────────────────────────
-
-interface PickStripProps {
-  history: { pickNumber: number; prospectId: string; pickedBy: string }[];
-  draftClass: DraftProspect[];
-  selectedTeamId: string | null;
-}
-
-function PickStrip({ history, draftClass, selectedTeamId }: PickStripProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
-    }
-  }, [history.length]);
-
-  if (history.length === 0) return null;
-
-  return (
-    <div className="pick-strip-wrap">
-      <div className="pick-strip-label">Pick History</div>
-      <div className="pick-strip" ref={scrollRef}>
-        {history.map((entry) => {
-          const prospect = draftClass.find((p) => p.id === entry.prospectId);
-          const isUser = entry.pickedBy === selectedTeamId;
-          const team = TEAMS.find((t) => t.id === entry.pickedBy);
-
-          return (
-            <div
-              key={entry.pickNumber}
-              className={`pick-strip__item${isUser ? " pick-strip__item--user" : ""}`}
-              title={`#${entry.pickNumber} · ${prospect?.name ?? "Unknown"} · ${isUser ? "You" : team?.name ?? entry.pickedBy}`}
-            >
-              <span className="pick-strip__num">#{entry.pickNumber}</span>
-              <PlayerAvatar
-                name={prospect?.name ?? "?"}
-                position={prospect?.position ?? "PG"}
-                size={40}
-                headshotPool="prospect"
-                school={prospect?.school}
-              />
-              {team && (
-                <div className="pick-strip__logo">
-                  <TeamLogo teamId={team.id} size={16} />
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ── Prospect row ───────────────────────────────────────────────────────────
-
-type DraftTab = "bigboard" | "needs";
-type GradeFilter = "ALL" | "ELITE" | "HIGH" | "MID" | "DEV";
-
-interface ProspectRowProps {
-  prospect: RankedProspect;
-  isRecommended: boolean;
-  isUserTurn: boolean;
-  tab: DraftTab;
-  onDraft: (id: string) => void;
-  onOpen: (p: DraftProspect) => void;
-}
-
-function ProspectRow({
-  prospect,
-  isRecommended,
-  isUserTurn,
-  tab,
-  onDraft,
-  onOpen,
-}: ProspectRowProps) {
-  return (
-    <div
-      className={`draft-card${isRecommended ? " draft-card--recommended" : ""}`}
-      onClick={() => onOpen(prospect)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onOpen(prospect)}
-      style={{ cursor: "pointer" }}
-    >
-      <div className="draft-card__photo-wrap">
-        <span className="draft-card__rank-badge">#{prospect.rank}</span>
-        <PlayerAvatar
-          name={prospect.name}
-          position={prospect.position}
-          size={88}
-          headshotPool="prospect"
-          school={prospect.school}
-        />
-      </div>
-
-      <div className="draft-card__name-block">
-        <div className="draft-card__name">{prospect.name}</div>
-        {isRecommended ? (
-          <span className="draft-card__scout-tag">★ Scout</span>
-        ) : null}
-      </div>
-      <div className="draft-card__meta">
-        {prospect.school}
-        <span className="draft-card__meta-dot"> · </span>
-        <span className="draft-card__meta-arch">{prospect.offensiveArchetype}</span>
-      </div>
-
-      <div className="draft-card__footer">
-        <div className="draft-card__metric">
-          <Tooltip
-            text={
-              tab === "bigboard"
-                ? "Overall scout ranking — lower number = better prospect (1 = top of class)"
-                : "How well this prospect fills your team's biggest positional and archetype gaps. Higher = better fit."
-            }
-          >
-            <span className="draft-card__metric-label">
-              {tab === "bigboard" ? "Scout rank" : "Needs fit"}
-            </span>
-          </Tooltip>
-          <span
-            className="draft-card__metric-val"
-            style={{
-              color:
-                tab === "needs" ? "var(--color-accent)" : "var(--color-text-secondary)",
-            }}
-          >
-            {tab === "bigboard" ? prospect.rank : prospect.needsScore}
+      <div className="card">
+        <div className="eyebrow">How you're drafting</div>
+        <div style={{ marginTop: "0.6rem", display: "flex", gap: "0.6rem", alignItems: "center", flexWrap: "wrap" }}>
+          <StageBadge label={strength.label} />
+          <span className="num muted" style={{ fontSize: "0.85rem" }}>
+            {Math.round(FIT_WEIGHT[strength.label] * 100)}% fit · {100 - Math.round(FIT_WEIGHT[strength.label] * 100)}% talent
           </span>
         </div>
-        {isUserTurn ? (
-          <button
-            type="button"
-            className="btn btn-primary draft-card__draft-btn"
-            onClick={(e) => { e.stopPropagation(); onDraft(prospect.id); }}
-          >
-            Draft
-          </button>
-        ) : null}
+        <p className="muted" style={{ marginTop: "0.75rem", fontSize: "0.9rem" }}>
+          Fit means a prospect's role matches one the {target ? blueprintLabel(target) : "blueprint"} had and you don't.
+        </p>
+        <div className="needs" style={{ marginTop: "0.9rem" }}>
+          <NeedChips needs={needs} />
+        </div>
       </div>
     </div>
   );
-}
-
-// ── Filter bar ─────────────────────────────────────────────────────────────
-
-const GRADE_FILTER_LABELS: Record<GradeFilter, string> = {
-  ALL: "All Grades",
-  ELITE: "Elite 90+",
-  HIGH: "High 80s",
-  MID: "Mid 70s",
-  DEV: "Dev <70",
-};
-
-function gradeMatchesFilter(grade: number, filter: GradeFilter): boolean {
-  if (filter === "ALL") return true;
-  if (filter === "ELITE") return grade >= 90;
-  if (filter === "HIGH") return grade >= 80 && grade < 90;
-  if (filter === "MID") return grade >= 70 && grade < 80;
-  if (filter === "DEV") return grade < 70;
-  return true;
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────
 
 export default function DraftPage() {
   const navigate = useSmoothNavigate();
-  const [activeTab, setActiveTab] = useState<DraftTab>("bigboard");
-  const [detailProspect, setDetailProspect] = useState<DraftProspect | null>(null);
-  const [posFilter, setPosFilter] = useState<Position | "ALL">("ALL");
-  const [gradeFilter, setGradeFilter] = useState<GradeFilter>("ALL");
+  const [sort, setSort] = useState<Sort>("recommended");
+  const [pos, setPos] = useState<Position | "ALL">("ALL");
+  const [detail, setDetail] = useState<DraftProspect | null>(null);
 
-  const draftSimActive = useSimulatorStore((s) => s.draftSimActive);
-  const draftSimComplete = useSimulatorStore((s) => s.draftSimComplete);
-  const draftCurrentPick = useSimulatorStore((s) => s.draftCurrentPick);
-  const draftTotalPicks = useSimulatorStore((s) => s.draftTotalPicks);
-  const userPickNumbers = useSimulatorStore((s) => s.userPickNumbers);
+  const active = useSimulatorStore((s) => s.draftSimActive);
+  const complete = useSimulatorStore((s) => s.draftSimComplete);
+  const currentPick = useSimulatorStore((s) => s.draftCurrentPick);
+  const totalPicks = useSimulatorStore((s) => s.draftTotalPicks);
+  const userPicks = useSimulatorStore((s) => s.userPickNumbers);
   const available = useSimulatorStore((s) => s.draftAvailableProspects);
   const draftClass = useSimulatorStore((s) => s.draftClass);
   const history = useSimulatorStore((s) => s.draftHistory);
-  const deficits = useSimulatorStore((s) => s.rosterDeficits);
-  const teamStrength = useSimulatorStore((s) => s.teamStrength);
-  const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
-  const roster = useSimulatorStore((s) => s.roster);
+  const needs = useSimulatorStore((s) => s.rosterDeficits);
+  const strength = useSimulatorStore((s) => s.teamStrength);
+  const teamId = useSimulatorStore((s) => s.selectedTeamId);
   const userDraftPick = useSimulatorStore((s) => s.userDraftPick);
   const advanceToPhase = useSimulatorStore((s) => s.advanceToPhase);
+  const phase = useSimulatorStore((s) => s.phase);
+  const userPick = useSimulatorStore(selectCurrentUserPick);
+  const userTurn = userPick !== null;
 
-  const currentUserPick = useSimulatorStore(selectCurrentUserPick);
-  const isUserTurn = currentUserPick !== null;
+  const ranked = useMemo(() => rankProspectsForTeam(available, needs, strength), [available, needs, strength]);
+  const byScore = useMemo(() => [...ranked].sort((a, b) => b.needsScore - a.needsScore), [ranked]);
+  const byTalent = useMemo(() => [...ranked].sort((a, b) => b.valueScore - a.valueScore), [ranked]);
+  const rec = byScore[0];
 
-  // Which CPU team is on the clock right now
-  const cpuTeam = !isUserTurn && draftSimActive
-    ? TEAMS.find((t) => t.id === teamForPick(draftCurrentPick)) ?? null
-    : null;
+  const board = (sort === "recommended" ? byScore : [...ranked].sort((a, b) => a.rank - b.rank))
+    .filter((p) => pos === "ALL" || p.position === pos)
+    .slice(0, BOARD_LIMIT);
 
-  // Rank all available prospects
-  const ranked = draftSimActive
-    ? rankProspectsForTeam(available, deficits, teamStrength)
-    : [];
+  const prospectById = useMemo(() => new Map(draftClass.map((p) => [p.id, p])), [draftClass]);
+  const myPicks = history.filter((h) => h.pickedBy === teamId);
+  const nextUserPick = userPicks.find((p) => p >= currentPick);
+  const clockTeam = TEAMS.find((t) => t.id === (userTurn ? teamId : teamForPick(currentPick)));
 
-  // Big Board: original CSV scout ranking (rank ascending)
-  const bigBoard = [...ranked].sort((a, b) => a.rank - b.rank);
-
-  // Team Needs: our blended needs score (needsScore descending)
-  const needsBoard = [...ranked].sort((a, b) => b.needsScore - a.needsScore);
-
-  const displayedProspects =
-    activeTab === "bigboard" ? bigBoard : needsBoard;
-
-  // Apply filters
-  const filteredProspects = displayedProspects.filter((p) => {
-    if (posFilter !== "ALL" && p.position !== posFilter) return false;
-    if (!gradeMatchesFilter(p.grade, gradeFilter)) return false;
-    return true;
-  });
-
-  const recommendation = draftSimActive
-    ? getSmartRecommendation(available, deficits, teamStrength)
-    : null;
-
-  function handleDraft(prospectId: string) {
-    userDraftPick(prospectId);
+  function finish() {
+    if (phase === "DRAFT") advanceToPhase("COMPLETE");
+    navigate("/results");
   }
 
-  function handleFinish() {
-    advanceToPhase("COMPLETE");
-    navigate("/roster-summary");
-  }
-
-  // Show setup if draft hasn't started
-  if (!draftSimActive && !draftSimComplete) {
-    return (
-      <div className="page">
-        <NavBar />
-        <div className="page-content">
-          <DraftSetup />
-        </div>
-      </div>
-    );
-  }
-
-  const round = Math.ceil(draftCurrentPick / 30);
-  const pickInRound = ((draftCurrentPick - 1) % 30) + 1;
+  const started = active || complete;
 
   return (
     <div className="page">
-      <PlayerDetailModal
-        subject={detailProspect}
-        onClose={() => setDetailProspect(null)}
-        teamId={selectedTeamId}
-      />
-      <NavBar />
-
-      <div className="page-content">
-
-        {/* ── Full-width pick history strip ── */}
-        {draftSimActive && (
-          <PickStrip
-            history={history}
-            draftClass={draftClass}
-            selectedTeamId={selectedTeamId}
-          />
-        )}
-
-        {/* ── Scout AI advisor banner ── */}
-        {draftSimActive && !draftSimComplete && (
-          <DraftAdvisorBanner
-            recommendation={recommendation}
-            deficits={deficits}
-            teamStrength={teamStrength}
-            roster={roster}
-            isUserTurn={isUserTurn}
-            isCpuPicking={!isUserTurn}
-          />
-        )}
-
-        {/* ── Pick indicator / CPU banner ── */}
-        {!draftSimComplete && (
-          isUserTurn ? (
-            <div className="pick-indicator user-pick">
-              <div>
-                <div className="pick-num">{draftCurrentPick}</div>
-                <div className="pick-label">
-                  Round {round}, Pick {pickInRound}
-                </div>
-              </div>
-              <div>
-                <div className="pick-status yours">Your pick</div>
-                <div className="pick-label">
-                  Your picks: {userPickNumbers.join(", ")}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="cpu-banner">
-              {cpuTeam && (
-                <div className="cpu-banner__logo">
-                  <TeamLogo teamId={cpuTeam.id} size={32} />
-                </div>
-              )}
-              <div className="cpu-banner__info">
-                <div className="cpu-banner__team">
-                  {cpuTeam ? `${cpuTeam.city} ${cpuTeam.name}` : "CPU"}
-                </div>
-                <div className="cpu-banner__status">CPU is picking…</div>
-              </div>
-              <div className="cpu-banner__pick">
-                <div className="pick-num" style={{ fontSize: "1.3rem" }}>{draftCurrentPick}</div>
-                <div className="pick-label">Round {round}, Pick {pickInRound}</div>
-              </div>
-              <div style={{ marginLeft: "auto", fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
-                Your picks: {userPickNumbers.join(", ")}
-              </div>
-            </div>
-          )
-        )}
-
-        {draftSimComplete && (
-          <div
-            style={{
-              padding: "0.75rem 1rem",
-              background: "var(--color-accent-subtle)",
-              border: "1px solid var(--color-accent)",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <span style={{ fontWeight: 700, color: "var(--color-accent)" }}>
-              Draft complete — {draftTotalPicks} picks made.
-            </span>
-            <button className="btn btn-primary" onClick={handleFinish}>
-              View Roster Summary →
-            </button>
-          </div>
-        )}
-
-        <div className="split-layout">
-          {/* ── Left: draft board with filters + tabs ── */}
+      <PlayerDetailModal subject={detail} onClose={() => setDetail(null)} teamId={teamId} />
+      <AppHeader />
+      <main className="wrap">
+        <div className="page-head">
           <div>
-            {/* Filter bar */}
-            {draftSimActive && (
-              <div className="filter-bar">
-                <div className="filter-group">
-                  {(["ALL", "PG", "SG", "SF", "PF", "C"] as const).map((pos) => (
-                    <button
-                      key={pos}
-                      className={`filter-chip${posFilter === pos ? " filter-chip--active" : ""}`}
-                      onClick={() => setPosFilter(pos)}
-                    >
-                      {pos === "ALL" ? "All" : pos}
-                    </button>
-                  ))}
-                </div>
-                <div className="filter-group">
-                  {(["ALL", "ELITE", "HIGH", "MID", "DEV"] as GradeFilter[]).map((g) => (
-                    <button
-                      key={g}
-                      className={`filter-chip${gradeFilter === g ? " filter-chip--active" : ""}`}
-                      onClick={() => setGradeFilter(g)}
-                    >
-                      {GRADE_FILTER_LABELS[g]}
-                    </button>
-                  ))}
-                </div>
-                {(posFilter !== "ALL" || gradeFilter !== "ALL") && (
-                  <span style={{ fontSize: "0.68rem", color: "var(--color-text-muted)", alignSelf: "center" }}>
-                    {filteredProspects.length} shown
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Tab bar */}
-            <div
-              style={{
-                display: "flex",
-                gap: "0",
-                marginBottom: "0.75rem",
-                borderBottom: "1px solid var(--color-border)",
-              }}
-            >
-              {(["bigboard", "needs"] as DraftTab[]).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    borderBottom: activeTab === tab
-                      ? "2px solid var(--color-accent)"
-                      : "2px solid transparent",
-                    color: activeTab === tab
-                      ? "var(--color-text)"
-                      : "var(--color-text-muted)",
-                    cursor: "pointer",
-                    fontSize: "0.78rem",
-                    fontWeight: activeTab === tab ? 700 : 400,
-                    padding: "0.5rem 1rem",
-                    marginBottom: "-1px",
-                    letterSpacing: "0.04em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {tab === "bigboard" ? "Big Board" : "Team Needs"}
-                </button>
-              ))}
-
-              {/* Column label on right */}
-              <div
-                style={{
-                  marginLeft: "auto",
-                  fontSize: "0.65rem",
-                  color: "var(--color-text-muted)",
-                  alignSelf: "center",
-                  paddingRight: "0.5rem",
-                }}
-              >
-                {activeTab === "bigboard" ? "SCOUT RANK" : "NEEDS SCORE"}
-              </div>
-            </div>
-
-            <div className="draft-board">
-              {filteredProspects.length === 0 ? (
-                <div className="empty-state">
-                  {displayedProspects.length === 0
-                    ? "No prospects remaining."
-                    : "No prospects match the current filters."}
-                </div>
-              ) : (
-                filteredProspects.map((p) => (
-                  <ProspectRow
-                    key={p.id}
-                    prospect={p}
-                    isRecommended={recommendation?.prospect.id === p.id}
-                    isUserTurn={isUserTurn}
-                    tab={activeTab}
-                    onDraft={handleDraft}
-                    onOpen={setDetailProspect}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* ── Right: Blueprint tracker + Scout Chat + history ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {/* Blueprint slot tracker */}
-            {draftSimActive && (
-              <BlueprintSlotTracker roster={roster} />
-            )}
-
-            {/* Scout Chat AI */}
-            {draftSimActive && (
-              <ScoutChat
-                recommendation={recommendation}
-                available={available}
-                deficits={deficits}
-                teamStrength={teamStrength}
-                roster={roster}
-              />
-            )}
-            {/* Draft history (vertical, right panel) */}
-            <div
-              style={{
-                background: "var(--color-surface-raised)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "8px",
-                padding: "1rem",
-                maxHeight: "400px",
-                overflowY: "auto",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "0.65rem",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  color: "var(--color-text-muted)",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Draft History
-              </div>
-              {history.length === 0 ? (
-                <div style={{ fontSize: "0.78rem", color: "var(--color-text-muted)" }}>
-                  No picks yet.
-                </div>
-              ) : (
-                [...history].reverse().map((entry) => {
-                  const teamName =
-                    TEAMS.find((t) => t.id === entry.pickedBy)?.name ??
-                    entry.pickedBy;
-                  const isUser = entry.pickedBy === selectedTeamId;
-                  const prospect = draftClass.find((p) => p.id === entry.prospectId);
-
-                  return (
-                    <div key={entry.pickNumber} className="history-row">
-                      <span className="history-pick-num">#{entry.pickNumber}</span>
-                      <span className={`history-name${isUser ? " history-user" : ""}`}>
-                        {prospect?.name ?? entry.prospectId}
-                      </span>
-                      <span className="history-team">
-                        {isUser ? "You" : teamName}
-                      </span>
-                    </div>
-                  );
-                })
-              )}
-            </div>
+            <div className="eyebrow">Step 4 · 2026 NBA Draft</div>
+            <h1 className="display h1" style={{ marginTop: "0.5rem" }}>The draft</h1>
+            <p className="lede">
+              Every prospect gets a talent score and a fit score. Your stage decides how they're mixed:{" "}
+              <span className="num">{Math.round(FIT_WEIGHT[strength.label] * 100)}%</span> fit as a{" "}
+              <StageBadge label={strength.label} />.
+            </p>
           </div>
         </div>
-      </div>
+
+        {!started ? (
+          <DraftSetup />
+        ) : (
+          <div className="draft-layout">
+            <section className="card card--flush">
+              <div className="board-tools">
+                <div className="segmented" role="group" aria-label="Sort board">
+                  <button type="button" aria-pressed={sort === "recommended"} onClick={() => setSort("recommended")}>For your team</button>
+                  <button type="button" aria-pressed={sort === "bigboard"} onClick={() => setSort("bigboard")}>Big board</button>
+                </div>
+                <label className="footnote" style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                  Position
+                  <select className="select" value={pos} onChange={(e) => setPos(e.target.value as Position | "ALL")}>
+                    {POSITIONS.map((p) => <option key={p} value={p}>{p === "ALL" ? "All" : p}</option>)}
+                  </select>
+                </label>
+              </div>
+              <div className="table-wrap">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Prospect</th>
+                      <th className="r hide-sm">Talent</th>
+                      <th className="r hide-sm">Fit</th>
+                      <th className="r">Score</th>
+                      <th className="hide-sm">Why</th>
+                      <th aria-label="Draft" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {board.map((p) => (
+                      <tr key={p.id} className="is-clickable" onClick={() => setDetail(p)}>
+                        <td className="num muted">{p.rank}</td>
+                        <td>
+                          <div className="cell-player">
+                            <PlayerAvatar name={p.name} position={p.position} size={32} headshotPool="prospect" school={p.school} />
+                            <div style={{ minWidth: 0 }}>
+                              <div className="cell-player__name">{p.name}</div>
+                              <div className="cell-player__sub">{p.position} · {p.school}</div>
+                              <div className="cell-player__sub">{roleLabel(p)}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="r hide-sm"><ScoreCell value={p.valueScore} /></td>
+                        <td className="r hide-sm"><ScoreCell value={p.fitScore} /></td>
+                        <td className="r"><ScoreCell value={p.needsScore} accent /></td>
+                        <td className="hide-sm">{whyTag(p)}</td>
+                        <td className="r">
+                          {userTurn && (
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                userDraftPick(p.id);
+                              }}
+                            >
+                              Draft
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="footnote" style={{ padding: "0.75rem 1rem" }}>
+                Score = talent × {100 - Math.round(FIT_WEIGHT[strength.label] * 100)}% + fit × {Math.round(FIT_WEIGHT[strength.label] * 100)}%, with fit
+                scaled by talent so a low-talent fit can't jump a much better player. Showing the top {BOARD_LIMIT}.
+              </p>
+            </section>
+
+            <aside className="sticky-side">
+              {complete ? (
+                <div className="card clock is-user">
+                  <div style={{ gridColumn: "1 / -1" }}>
+                    <div className="eyebrow">Draft complete</div>
+                    <div className="clock__team" style={{ marginTop: "0.3rem" }}>
+                      {myPicks.length > 0 ? `You made ${myPicks.length} pick${myPicks.length > 1 ? "s" : ""}.` : "All 60 picks are in."}
+                    </div>
+                    <button type="button" className="btn btn-primary" style={{ marginTop: "0.9rem", width: "100%" }} onClick={finish}>
+                      See results vs the real draft
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className={`card clock${userTurn ? " is-user" : ""}`}>
+                  {clockTeam && <TeamLogo teamId={clockTeam.id} size={36} />}
+                  <div>
+                    <div className="clock__pick">
+                      Pick {currentPick} of {totalPicks} · Round {currentPick <= 30 ? 1 : 2}
+                    </div>
+                    <div className="clock__team">{userTurn ? "You're on the clock" : `${clockTeam?.name ?? "CPU"} on the clock`}</div>
+                  </div>
+                  <span className="footnote num">{nextUserPick && !userTurn ? `You: #${nextUserPick}` : ""}</span>
+                </div>
+              )}
+
+              {rec && !complete && (
+                <div className="card">
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: "0.5rem" }}>
+                    <span className="eyebrow">{userTurn ? "Recommended pick" : "Your board's top player"}</span>
+                    {whyTag(rec)}
+                  </div>
+                  <div className="rec__name">{rec.name}</div>
+                  <div className="cell-player__sub">{rec.position} · {rec.school} · {roleLabel(rec)}</div>
+                  <p className="rec__why">{explain(rec, strength.label, needs, byTalent[0])}</p>
+                  <div className="rec__split">
+                    <div><small>Talent</small><span className="num">{rec.valueScore}</span></div>
+                    <div><small>Fit</small><span className="num">{rec.fitScore}</span></div>
+                    <div><small>Score</small><span className="num accent">{rec.needsScore}</span></div>
+                  </div>
+                  {userTurn && (
+                    <button type="button" className="btn btn-primary" style={{ marginTop: "0.9rem", width: "100%" }} onClick={() => userDraftPick(rec.id)}>
+                      Draft {rec.name}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              <div className="card">
+                <div className="eyebrow">Open blueprint roles</div>
+                <div className="needs" style={{ marginTop: "0.6rem" }}>
+                  <NeedChips needs={needs} small />
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="eyebrow">Pick log</div>
+                <div className="log" style={{ marginTop: "0.5rem" }}>
+                  {history.length === 0 && <p className="muted" style={{ fontSize: "0.85rem" }}>No picks yet.</p>}
+                  {[...history].reverse().map((h) => {
+                    const p = prospectById.get(h.prospectId);
+                    const mine = h.pickedBy === teamId;
+                    return (
+                      <div key={h.pickNumber} className={`log__row${mine ? " is-user" : ""}`}>
+                        <span className="num muted">#{h.pickNumber}</span>
+                        <TeamLogo teamId={h.pickedBy} size={22} />
+                        <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p?.name ?? "Unknown"}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </aside>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
-

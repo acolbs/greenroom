@@ -7,6 +7,7 @@ import type { OffensiveArchetype, DefensiveRole } from "../data/archetypes";
 export type { OffensiveArchetype, DefensiveRole };
 import type { Physicals } from "../data/parsePhysicals";
 import type { NbaRadarStats } from "../data/parseNbaRadar";
+import type { StageReport, BlueprintMatchResult, PlayerComp } from "../lib/teamAnalysis";
 
 export type Position = "PG" | "SG" | "SF" | "PF" | "C";
 
@@ -18,7 +19,7 @@ export type FreeAgencyDecision =
   | "PICK_UP_OPTION"  // User picks up a Club option
   | "DECLINE_OPTION"; // User declines a Club option
 
-export type SimulatorPhase = "SELECT_TEAM" | "FREE_AGENCY" | "DRAFT" | "COMPLETE";
+export type SimulatorPhase = "SELECT_TEAM" | "ANALYSIS" | "FREE_AGENCY" | "DRAFT" | "COMPLETE";
 
 export type TeamStrengthLabel = "Contender" | "Middle" | "Rebuilding";
 
@@ -272,11 +273,23 @@ export interface SimulatorState {
   draftSimActive: boolean;
   draftSimComplete: boolean;
 
-  // Analysis
-  championshipFormula: ChampionshipFormula | null;
+  // Analysis (computed once from the full 2025-26 roster when a team is picked)
+  /** Everyone who played for the team in 2025-26, before any offseason moves. */
+  seasonRoster: RosterPlayer[];
+  stage: StageReport | null;
+  /** User's manual stage choice; null = use the computed stage. */
+  stageOverride: TeamStrengthLabel | null;
+  blueprintRanking: BlueprintMatchResult[];
+  /** Blueprint the user is building toward (defaults to the closest match). */
+  targetBlueprintId: string | null;
+  comps: PlayerComp[];
+  /** Roles the target blueprint has that the current roster is missing. */
   rosterDeficits: RosterDeficit[];
+  /** Effective stage, fed to the draft ranking. */
   teamStrength: TeamStrength;
-  blueprintMatch: BlueprintMatch | null;
+
+  // Real-world 2026 draft, for the results comparison
+  actualDraft: ActualDraftPick[];
 
   // Comparison data for the player-detail radar / physicals (loaded with draft data)
   comparisonData: ComparisonData | null;
@@ -284,6 +297,13 @@ export interface SimulatorState {
   // Async state
   loading: boolean;
   error: string | null;
+}
+
+export interface ActualDraftPick {
+  pick: number;
+  player: string;
+  teamId: string;
+  school: string;
 }
 
 /** Lookups powering the player-comparison radar + physicals overlay. */
