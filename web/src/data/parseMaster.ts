@@ -38,15 +38,23 @@ export interface MasterRow {
 // Skips "2TM" and "3TM" aggregate rows.
 // ---------------------------------------------------------------------------
 
-export function parseMasterRows(rows: Record<string, string>[]): Map<string, MasterRow> {
+export function parseMasterRows(
+  rows: Record<string, string>[],
+  /** Pre-draft team by playerMatchKey ("FA" = not on a roster). See roster_moves_2026.csv. */
+  moves: Map<string, string> = new Map()
+): Map<string, MasterRow> {
   const byId = new Map<string, MasterRow>();
 
   for (const row of rows) {
-    const csvTeam = row["Team"]?.trim() ?? "";
-    if (csvTeam === "2TM" || csvTeam === "3TM") continue;
-
     const name = row["Player"]?.trim();
     if (!name) continue;
+
+    // A moved player's full-season row ("2TM") is used, filed under his pre-draft team.
+    const move = moves.get(playerMatchKey(name));
+    const rawTeam = row["Team"]?.trim() ?? "";
+    const isTotal = /^\dTM$/.test(rawTeam);
+    if (isTotal && !move) continue;
+    const csvTeam = move ?? rawTeam;
 
     const id = row["Player-additional"]?.trim() || normalizeName(name);
 
@@ -59,7 +67,7 @@ export function parseMasterRows(rows: Record<string, string>[]): Map<string, Mas
     const games = toFloat(row["G"]);
     const existing = byId.get(id);
 
-    // Keep the stint with the most games (≈ current team for traded players)
+    // Keep the row with the most games (the season total for moved players)
     if (existing && existing.games >= games) continue;
 
     byId.set(id, {
@@ -68,7 +76,7 @@ export function parseMasterRows(rows: Record<string, string>[]): Map<string, Mas
       name,
       age: toFloat(row["Age"]),
       csvTeamAbbrev: csvTeam,
-      canonicalTeamId: teamIdFromCsvAbbrev(csvTeam),
+      canonicalTeamId: csvTeam === "FA" ? null : teamIdFromCsvAbbrev(csvTeam),
       position: parsePosition(row["Pos"] ?? ""),
       offensiveArchetype: oa,
       defensiveRole: dr,

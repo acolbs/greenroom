@@ -185,6 +185,12 @@ export function stageLabel(score: number): TeamStrengthLabel {
   return "Rebuilding";
 }
 
+/** "Derrick Jones Jr." -> "Jones" */
+function lastName(name: string): string {
+  const parts = name.split(" ").filter((w) => !/^(jr\.?|sr\.?|ii|iii|iv)$/i.test(w));
+  return parts[parts.length - 1] ?? name;
+}
+
 export function computeStage(roster: RosterPlayer[], winPct: number | null): StageReport {
   const core = coreRotation(roster);
   const top3 = core.slice(0, 3);
@@ -200,7 +206,7 @@ export function computeStage(roster: RosterPlayer[], winPct: number | null): Sta
     {
       key: "talent",
       label: "Top-3 talent",
-      display: top3.map((p) => p.name.split(" ").slice(-1)[0]).join(", ") || "None",
+      display: top3.map((p) => lastName(p.name)).join(", ") || "None",
       // Every team's top 3 sit above the league median, so stretch the
       // realistic range (65 = no real star, 95 = MVP-level trio) onto 0–100.
       points: Math.round(rescale(talent, 65, 95)),

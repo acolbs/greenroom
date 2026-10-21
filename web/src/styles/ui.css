@@ -534,13 +534,13 @@
 /* ── Welcome ─────────────────────────────────────────────────────────────── */
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   gap: 3rem;
   align-items: center;
   padding-top: clamp(1rem, 5vw, 4rem);
 }
 @media (max-width: 900px) { .hero { grid-template-columns: minmax(0, 1fr); gap: 2rem; } }
-.hero__title { font-size: clamp(2.4rem, 6.4vw, 4.8rem); }
+.hero__title { font-size: clamp(2.2rem, 5.6vw, 4.4rem); overflow-wrap: anywhere; }
 .hero__title em { font-style: normal; color: var(--color-accent); }
 .hero .lede { margin-top: 1.25rem; }
 .hero__cta { margin-top: 2rem; display: flex; gap: 0.75rem; flex-wrap: wrap; }
