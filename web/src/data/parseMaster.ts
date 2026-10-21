@@ -1,6 +1,7 @@
 import type { RosterPlayer, Position, OffensiveArchetype, DefensiveRole, TalentTier } from "../types/simulator";
 import {
   normalizeName,
+  playerMatchKey,
   parseOffensiveArchetype,
   parseDefensiveRole,
   parsePosition,
@@ -63,7 +64,7 @@ export function parseMasterRows(rows: Record<string, string>[]): Map<string, Mas
 
     byId.set(id, {
       id,
-      nameKey: normalizeName(name),
+      nameKey: playerMatchKey(name),
       name,
       age: toFloat(row["Age"]),
       csvTeamAbbrev: csvTeam,

@@ -45,6 +45,11 @@ export function isPlayerOptionSalary(raw: string): boolean {
   return String(raw ?? "").trim().startsWith("P$");
 }
 
+/** True when the raw Hoopshype salary string has a "T$" team-option prefix. */
+export function isTeamOptionSalary(raw: string): boolean {
+  return String(raw ?? "").trim().startsWith("T$");
+}
+
 // ---------------------------------------------------------------------------
 // Name normalization — used as a fuzzy match key across CSVs
 // ---------------------------------------------------------------------------
@@ -57,6 +62,26 @@ export function normalizeName(name: string): string {
     .replace(/[^a-z\s]/g, "")        // keep only letters and spaces
     .replace(/\s+/g, " ")
     .trim();
+}
+
+const NAME_ALIASES: Record<string, string> = {
+  "nicolas claxton": "nic claxton",
+  "santiago aldama": "santi aldama",
+  "herbert jones": "herb jones",
+  "carlton carrington": "bub carrington",
+  "hansen yang": "yang hansen",
+  "cameron whitmore": "cam whitmore",
+  "gregory jackson": "gg jackson",
+  "yanic konan niederhauser": "yannick niederhauser",
+};
+
+/**
+ * Sources disagree on suffixes ("Jr.", "III") and nicknames, so cross-CSV
+ * joins (contracts, options, ACE) use this looser key instead of normalizeName.
+ */
+export function playerMatchKey(name: string): string {
+  const base = normalizeName(name).replace(/\s(jr|sr|ii|iii|iv|v)$/, "");
+  return NAME_ALIASES[base] ?? base;
 }
 
 // ---------------------------------------------------------------------------

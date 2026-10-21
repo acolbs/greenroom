@@ -7,9 +7,9 @@ import type {
   DraftProspect,
   DraftHistoryEntry,
 } from "../types/simulator";
-import { SALARY_CAP, TOTAL_DRAFT_PICKS, TEAMS, DRAFT_ORDER_2026, rookieSalaryFromGrade } from "../data/constants";
+import { SALARY_CAP, LUXURY_TAX, FIRST_APRON, SECOND_APRON, TOTAL_DRAFT_PICKS, TEAMS, DRAFT_ORDER_2026, rookieSalaryFromGrade } from "../data/constants";
 import { assetUrl } from "../data/assetUrl";
-import { parseCsv, normalizeName } from "../data/csvUtils";
+import { parseCsv, playerMatchKey } from "../data/csvUtils";
 import { buildAceLookup } from "../data/aceModel";
 import { parseHoopshypeContracts, parseOptionsContracts, buildExpiringContracts, resolvePlayerOptions } from "../data/parseContracts";
 import type { ContractRow, OptionRow } from "../data/parseContracts";
@@ -95,7 +95,11 @@ function loadAllData(): Promise<LoadedData> {
     const masterRowsParsed = parseCsv(masterText);
     const masterRows = parseMasterRows(masterRowsParsed);
     const contractMap = parseHoopshypeContracts(parseCsv(contractsText));
-    const optionRows = parseOptionsContracts(parseCsv(optionsText));
+    const optionRows = addHoopshypeOptions(
+      parseOptionsContracts(parseCsv(optionsText)),
+      masterRows,
+      contractMap
+    );
     const aceMap = buildAceLookup(parseCsv(statsText));
     const prospectStatsByName = parseProspectStatsByName(parseCsv(prospectStatsText));
     const compsByName = parseProspectCompsByName(parseCsv(prospectCompsText));
@@ -135,6 +139,39 @@ function loadAllData(): Promise<LoadedData> {
 }
 
 // ---------------------------------------------------------------------------
+// options_contracts.csv misses some P$/T$ options that hoopshype lists, which
+// made them count as guaranteed money. Fill the gaps from the contract map.
+// ---------------------------------------------------------------------------
+
+function addHoopshypeOptions(
+  optionRows: OptionRow[],
+  masterRows: Map<string, MasterRow>,
+  contractMap: Map<string, ContractRow>
+): OptionRow[] {
+  const known = new Set(optionRows.map((o) => o.nameKey));
+  const result = [...optionRows];
+
+  for (const row of masterRows.values()) {
+    const contract = contractMap.get(row.nameKey);
+    if (!contract || contract.nextSeasonSalary === null) continue;
+    if (!contract.nextIsPlayerOption && !contract.nextIsTeamOption) continue;
+    if (!row.canonicalTeamId || known.has(row.nameKey)) continue;
+
+    known.add(row.nameKey);
+    result.push({
+      name: row.name,
+      nameKey: row.nameKey,
+      position: row.position,
+      teamAbbrev: row.canonicalTeamId,
+      optionType: contract.nextIsTeamOption ? "Club" : "Player",
+      optionSalary: contract.nextSeasonSalary,
+    });
+  }
+
+  return result;
+}
+
+// ---------------------------------------------------------------------------
 // Cap space helper
 // ---------------------------------------------------------------------------
 
@@ -144,11 +181,28 @@ function computeCapSpace(roster: RosterPlayer[]): number {
 }
 
 // ---------------------------------------------------------------------------
-// CPU draft pick assignment
-// Simple model: pick N belongs to TEAMS[(N-1) % 30]
+// Drafted rookies — tagged by id prefix so a re-run draft can strip them
 // ---------------------------------------------------------------------------
 
-function teamForPick(pickNumber: number): string {
+const DRAFTED_ID_PREFIX = "draft-";
+
+function rosterWithoutRookies(roster: RosterPlayer[]) {
+  const kept = roster.filter((p) => !p.id.startsWith(DRAFTED_ID_PREFIX));
+  return {
+    roster: kept,
+    capSpace: computeCapSpace(kept),
+    rosterDeficits: computeRosterDeficits(kept),
+    teamStrength: computeTeamStrength(kept),
+    blueprintMatch: findClosestBlueprint(kept),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// CPU draft pick assignment
+// Uses the real 2026 order, round-robin past its end
+// ---------------------------------------------------------------------------
+
+export function teamForPick(pickNumber: number): string {
   // Use the actual 2026 draft order; fall back to round-robin if out of range.
   return DRAFT_ORDER_2026[pickNumber - 1] ?? TEAMS[(pickNumber - 1) % 30].id;
 }
@@ -346,7 +400,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         );
 
         const hasOption = (p: RosterPlayer) =>
-          teamOptionNameKeys.has(normalizeName(p.name));
+          teamOptionNameKeys.has(playerMatchKey(p.name));
 
         // Committed = guaranteed 2026-27 salary with no option clause.
         // Set currentSalary to next-season value so cap math is correct.
@@ -362,7 +416,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
             .map((p) => ({
               id: p.id,
               name: p.name,
-              nameKey: normalizeName(p.name),
+              nameKey: playerMatchKey(p.name),
               age: p.age,
               position: p.position,
               offensiveArchetype: p.offensiveArchetype,
@@ -390,7 +444,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         const optedInPlayers: RosterPlayer[] = optedIn.flatMap(({ playerId }) => {
           const match = fullRoster.find((p) => p.id === playerId);
           const optRow = data.optionRows.find(
-            (o) => o.teamAbbrev === teamId && match && o.nameKey === normalizeName(match.name)
+            (o) => o.teamAbbrev === teamId && match && o.nameKey === playerMatchKey(match.name)
           );
           if (!match || !optRow) return [];
           return [{ ...match, currentSalary: optRow.optionSalary }];
@@ -416,7 +470,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         });
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to load data.";
-        set({ loading: false, error: message });
+        set({ loading: false, error: message, selectedTeamId: null });
       }
     },
 
@@ -486,6 +540,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         update.draftSimActive = false;
         update.draftSimComplete = false;
         update.userPickNumbers = [];
+        Object.assign(update, rosterWithoutRookies(state.roster));
       }
 
       set(update);
@@ -516,6 +571,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         draftCurrentPick: 1,
         draftHistory: [],
         draftAvailableProspects: [...state.draftClass],
+        ...rosterWithoutRookies(state.roster),
       });
 
       // If pick 1 belongs to CPU, start auto-picking immediately
@@ -543,7 +599,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
 
       // Add prospect to roster as a rookie
       const rookiePlayer: RosterPlayer = {
-        id: `draft-${prospect.id}`,
+        id: `${DRAFTED_ID_PREFIX}${prospect.id}`,
         name: prospect.name,
         age: 20,
         position: prospect.position,
@@ -595,13 +651,13 @@ export const selectPayroll = (state: SimulatorStore) =>
   state.roster.reduce((sum, p) => sum + p.currentSalary, 0);
 
 export const selectIsOverTax = (state: SimulatorStore) =>
-  selectPayroll(state) > 201_000_000;
+  selectPayroll(state) > LUXURY_TAX;
 
 export const selectIsOverFirstApron = (state: SimulatorStore) =>
-  selectPayroll(state) > 209_000_000;
+  selectPayroll(state) > FIRST_APRON;
 
 export const selectIsOverSecondApron = (state: SimulatorStore) =>
-  selectPayroll(state) > 222_000_000;
+  selectPayroll(state) > SECOND_APRON;
 
 export const selectCurrentUserPick = (state: SimulatorStore): number | null => {
   if (!state.draftSimActive) return null;

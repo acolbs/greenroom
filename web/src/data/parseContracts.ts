@@ -2,7 +2,8 @@ import type { ExpiringContract, OptionType, OffensiveArchetype, DefensiveRole, P
 import {
   parseSalaryString,
   isPlayerOptionSalary,
-  normalizeName,
+  isTeamOptionSalary,
+  playerMatchKey,
   parsePosition,
 } from "./csvUtils";
 
@@ -26,6 +27,8 @@ export interface ContractRow {
   nextSeasonSalary: number | null;
   /** True when the 2026-27 column has a "P$" prefix. */
   nextIsPlayerOption: boolean;
+  /** True when the 2026-27 column has a "T$" prefix. */
+  nextIsTeamOption: boolean;
 }
 
 export function parseHoopshypeContracts(rows: Record<string, string>[]): Map<string, ContractRow> {
@@ -41,13 +44,15 @@ export function parseHoopshypeContracts(rows: Record<string, string>[]): Map<str
     const nextRaw = row["2026-27"] ?? "";
     const nextSeasonSalary = parseSalaryString(nextRaw);
     const nextIsPlayerOption = isPlayerOptionSalary(nextRaw);
+    const nextIsTeamOption = isTeamOptionSalary(nextRaw);
 
     const entry: ContractRow = {
       name,
-      nameKey: normalizeName(name),
+      nameKey: playerMatchKey(name),
       currentSalary,
       nextSeasonSalary,
       nextIsPlayerOption,
+      nextIsTeamOption,
     };
 
     // Prefer the first occurrence (highest-ranked contract) if a player
@@ -92,7 +97,7 @@ export function parseOptionsContracts(rows: Record<string, string>[]): OptionRow
 
     results.push({
       name,
-      nameKey: normalizeName(name),
+      nameKey: playerMatchKey(name),
       position: parsePosition(row["Pos"] ?? ""),
       teamAbbrev: row["Team"]?.trim() ?? "",
       optionType: optionRaw as OptionType,
