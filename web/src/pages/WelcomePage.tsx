@@ -1,83 +1,80 @@
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
+import AppHeader from "../components/AppHeader";
+import StageBadge from "../components/StageBadge";
+import { BLUEPRINT_TEAMS } from "../lib/teamAnalysis";
 
-const HOW_TO_STEPS = [
-  {
-    num: 1,
-    title: "Pick Your Team",
-    desc: "Choose any of the 30 NBA franchises and take control of their offseason.",
-  },
-  {
-    num: 2,
-    title: "Handle Contracts",
-    desc: "Pick up club options, re-sign free agents, and shape your cap situation.",
-  },
-  {
-    num: 3,
-    title: "Run the Draft",
-    desc: "Make your picks across 2 rounds (60 total). CPU teams fill all other slots.",
-  },
-  {
-    num: 4,
-    title: "See Your Score",
-    desc: "Get a championship readiness rating based on the formula used by title contenders.",
-  },
-];
+const STAGE_RULES = [
+  { label: "Contender", rule: "Draft for fit. Fill the roles your champion blueprint has and you don't." },
+  { label: "Middle", rule: "Balance both. Take fit when the talent is close, talent when it isn't." },
+  { label: "Rebuilding", rule: "Best player available. Talent first, fit can wait." },
+] as const;
+
+const champions = BLUEPRINT_TEAMS.filter((b) => b.champion).length;
 
 export default function WelcomePage() {
   const navigate = useSmoothNavigate();
 
   return (
-    <div className="welcome-page">
-      <div className="welcome-inner">
-        <div className="welcome-eyebrow">NBA Offseason GM Simulator</div>
-
-        <div className="welcome-logo">
-          Green<span>room</span>
-        </div>
-
-        <p className="welcome-tagline">
-          Build your championship roster. Navigate free agency, resolve
-          contracts, and run your draft board for the 2026–27 season.
-        </p>
-
-        {/* How to play steps */}
-        <div className="welcome-steps">
-          {HOW_TO_STEPS.map((step) => (
-            <div key={step.num} className="welcome-step">
-              <div className="welcome-step__num">{step.num}</div>
-              <div className="welcome-step__title">{step.title}</div>
-              <div className="welcome-step__desc">{step.desc}</div>
+    <div className="page">
+      <AppHeader />
+      <main className="wrap">
+        <section className="hero">
+          <div>
+            <div className="eyebrow">2026 NBA offseason · 2025-26 rosters</div>
+            <h1 className="display hero__title" style={{ marginTop: "1rem" }}>
+              Build like a <em>champion</em>
+            </h1>
+            <p className="lede">
+              Pick a team. Greenroom reads its 2025-26 roster, decides whether it's a contender, in
+              the middle, or rebuilding, and finds the past title team it's built most like. Then you
+              run the offseason to close the gap.
+            </p>
+            <div className="hero__cta">
+              <button type="button" className="btn btn-primary btn-lg" onClick={() => navigate("/select-team")}>
+                Choose a team
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
 
-        <button
-          className="btn btn-primary btn-lg"
-          onClick={() => navigate("/select-team")}
-        >
-          Start Simulator
-        </button>
+          <div className="card">
+            <div className="eyebrow">How your stage changes the draft</div>
+            <div className="rule-list">
+              {STAGE_RULES.map((r) => (
+                <div key={r.label} className="rule">
+                  <span><StageBadge label={r.label} /></span>
+                  <span>{r.rule}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-        <div className="welcome-meta">
-          <span>2026–27 Season</span>
-          <span className="welcome-meta-dot" />
-          <span>$165M Salary Cap</span>
-          <span className="welcome-meta-dot" />
-          <span>30 Teams</span>
-        </div>
-      </div>
+        <section className="how">
+          <div className="how__item">
+            <div className="how__n">1 · Scouting report</div>
+            <h2 className="h3" style={{ marginTop: "0.5rem" }}>Read the team</h2>
+            <p>A stage score from star talent, last season's record and core age, plus who your best players play like.</p>
+          </div>
+          <div className="how__item">
+            <div className="how__n">2 · Blueprint</div>
+            <h2 className="h3" style={{ marginTop: "0.5rem" }}>Pick a model</h2>
+            <p>
+              Your rotation lined up role by role against {BLUEPRINT_TEAMS.length} recent contenders, {champions} of
+              them champions. The roles you're missing become your draft targets.
+            </p>
+          </div>
+          <div className="how__item">
+            <div className="how__n">3 · Offseason</div>
+            <h2 className="h3" style={{ marginTop: "0.5rem" }}>Run it, then check it</h2>
+            <p>Re-sign or let players walk, draft in the real 2026 order, and compare your picks with what teams actually did.</p>
+          </div>
+        </section>
 
-      <footer className="welcome-footer">
-        <div className="welcome-credits">
-          <span className="welcome-credits-label">Developed by</span>
-          <span className="welcome-credits-names">
-            Anthony Colby &amp; Ali Razfar
-          </span>
-        </div>
-        <span style={{ fontSize: "0.65rem", opacity: 0.4 }}>
-          Greenroom · 2026
-        </span>
-      </footer>
+        <footer className="bottom-bar footnote">
+          <span>Developed by Anthony Colby &amp; Ali Razfar</span>
+          <span>Stats: 2025-26 regular season. Contracts: HoopsHype.</span>
+        </footer>
+      </main>
     </div>
   );
 }

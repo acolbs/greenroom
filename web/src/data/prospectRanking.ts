@@ -122,31 +122,25 @@ export function computeTeamStrength(roster: RosterPlayer[]): TeamStrength {
   return { score, label };
 }
 
+/** How much fit is allowed to matter, by team situation (the rest is talent). */
+export const FIT_WEIGHT: Record<TeamStrengthLabel, number> = {
+  Contender: 0.45,
+  Middle: 0.3,
+  Rebuilding: 0.12,
+};
+
 /**
- * Blended recommendation score weighted by team strength.
- *   Contender  → 75% fit  + 25% value (maximize championship formula fit)
- *   Middle     → 40% fit  + 60% value (balance ceiling and needs)
- *   Rebuilding → 10% fit  + 90% value (maximize ceiling and long-term value)
+ * Blended recommendation score weighted by team strength (see FIT_WEIGHT):
+ *   Contender  → 45% fit + 55% talent
+ *   Middle     → 30% fit + 70% talent
+ *   Rebuilding → 12% fit + 88% talent
  */
 export function computeNeedsScore(
   valueScore: number,
   fitScore: number,
   teamStrength: TeamStrength
 ): number {
-  // How much fit is allowed to matter, by team situation.
-  let fitWeight: number;
-  switch (teamStrength.label) {
-    case "Contender":
-      fitWeight = 0.45;
-      break;
-    case "Middle":
-      fitWeight = 0.30;
-      break;
-    case "Rebuilding":
-    default:
-      fitWeight = 0.12;
-      break;
-  }
+  const fitWeight = FIT_WEIGHT[teamStrength.label] ?? FIT_WEIGHT.Rebuilding;
 
   // Talent is the floor. Fit is DISCOUNTED by the player's own talent, so a
   // perfect-fit low-talent player can't leapfrog a clearly better one — while a

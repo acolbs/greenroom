@@ -1,382 +1,229 @@
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSmoothNavigate } from "../hooks/useSmoothNavigate";
 import { useSimulatorStore, selectPayroll } from "../store/simulatorStore";
-import type { ExpiringContract, FreeAgencyDecision, RosterPlayer } from "../types/simulator";
-import NavBar from "../components/NavBar";
-import CapBar from "../components/CapBar";
+import type { ExpiringContract, FreeAgencyDecision, RosterDeficit } from "../types/simulator";
+import { SALARY_CAP, LUXURY_TAX, FIRST_APRON, SECOND_APRON } from "../data/constants";
+import AppHeader from "../components/AppHeader";
 import PlayerAvatar from "../components/PlayerAvatar";
 import PlayerDetailModal, { type ModalSubject } from "../components/PlayerDetailModal";
-import Tooltip from "../components/Tooltip";
-import { honorReducedMotion } from "../utils/motionPrefs";
+import { blueprintById, blueprintLabel } from "../lib/teamAnalysis";
+import { fmtMoney, roleLabel } from "../lib/format";
 
-const FA_EASE = [0.22, 1, 0.36, 1] as const;
+const DECISION_LABEL: Record<FreeAgencyDecision, string> = {
+  RE_SIGN: "Re-signed",
+  LET_WALK: "Let walk",
+  PICK_UP_OPTION: "Option picked up",
+  DECLINE_OPTION: "Option declined",
+};
 
-function isKept(d: FreeAgencyDecision): boolean {
-  return d === "RE_SIGN" || d === "PICK_UP_OPTION";
-}
-
-function fmt(n: number): string {
-  return "$" + (n / 1_000_000).toFixed(1) + "M";
-}
-
-interface ContractCardProps {
-  contract: ExpiringContract;
-  decision: FreeAgencyDecision | undefined;
-  onDecide: (d: FreeAgencyDecision) => void;
-  onOpen: () => void;
-  teamId: string | null;
-  motionOk: boolean;
-}
-
-function ContractCard({ contract, decision, onDecide, onOpen, teamId, motionOk }: ContractCardProps) {
-  const isClub = contract.optionType === "Club";
-  const decided = decision !== undefined;
-  const kept = decision !== undefined && isKept(decision);
-
-  const bpmColor =
-    contract.stats.bpm >= 3
-      ? "var(--color-accent)"
-      : contract.stats.bpm < 0
-      ? "var(--color-danger)"
-      : "var(--color-text-muted)";
-
-  const outcomeClass = decided
-    ? kept
-      ? " fa-card--outcome-yes"
-      : " fa-card--outcome-no"
-    : "";
-
-  function handleDecide(e: React.MouseEvent, d: FreeAgencyDecision) {
-    e.stopPropagation();
-    onDecide(d);
+/** "exact" when the player's role pair is a blueprint need, "partial" when one side matches. */
+function needMatch(c: ExpiringContract, needs: RosterDeficit[]): "exact" | "partial" | null {
+  let partial = false;
+  for (const n of needs) {
+    const off = n.offensiveArchetype === c.offensiveArchetype;
+    const def = n.defensiveRole === c.defensiveRole;
+    if (off && def) return "exact";
+    if (off || def) partial = true;
   }
+  return partial ? "partial" : null;
+}
+
+function ContractRow({
+  c,
+  decision,
+  needs,
+  teamId,
+  onDecide,
+  onUndo,
+  onOpen,
+}: {
+  c: ExpiringContract;
+  decision: FreeAgencyDecision | undefined;
+  needs: RosterDeficit[];
+  teamId: string | null;
+  onDecide: (d: FreeAgencyDecision) => void;
+  onUndo: () => void;
+  onOpen: () => void;
+}) {
+  const isClub = c.optionType === "Club";
+  const price = isClub && c.optionSalary ? c.optionSalary : c.estimatedMarketSalary;
+  const fit = needMatch(c, needs);
 
   return (
-    <div
-      className={`fa-card${decided ? " fa-card--decided" : ""}${outcomeClass}`}
-      onClick={onOpen}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onOpen()}
-    >
-      <div className="fa-card__avatar">
-        <PlayerAvatar
-          name={contract.name}
-          position={contract.position}
-          size={48}
-          headshotPool={contract.playerId.startsWith("draft-") ? "prospect" : "nba"}
-          teamId={teamId}
-        />
+    <div className={`fa-row${decision ? " is-decided" : ""}`}>
+      <button type="button" onClick={onOpen} style={{ background: "none", border: 0, padding: 0 }} aria-label={`Open ${c.name}`}>
+        <PlayerAvatar name={c.name} position={c.position} size={42} teamId={teamId} />
+      </button>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+          <button type="button" onClick={onOpen} className="cell-player__name" style={{ background: "none", border: 0, padding: 0, fontSize: "0.95rem" }}>
+            {c.name}
+          </button>
+          {isClub && <span className="tag">Team option</span>}
+          {c.playerOptedOut && <span className="tag">Opted out</span>}
+          {fit === "exact" && <span className="tag tag--fit">Fills a need</span>}
+          {fit === "partial" && <span className="tag">Partial fit</span>}
+        </div>
+        <div className="cell-player__sub">
+          {c.position} · Age {c.age} · {roleLabel(c)}
+        </div>
+        <div className="cell-player__sub num">
+          {c.stats.pts.toFixed(1)} pts · {c.stats.trb.toFixed(1)} reb · {c.stats.ast.toFixed(1)} ast · BPM {c.stats.bpm >= 0 ? "+" : ""}
+          {c.stats.bpm.toFixed(1)}
+        </div>
       </div>
-
-      <div className="fa-card__body">
-        <div className="fa-card__top">
-          <span className="fa-card__name">{contract.name}</span>
-          <span className="card-pos">{contract.position}</span>
-          <span className="fa-card__arch">{contract.offensiveArchetype}</span>
-          <span className="fa-card__sub">Age {contract.age} · {contract.defensiveRole}</span>
-          <div className="fa-card__badges">
-            {isClub && <span className="badge badge-club-opt">Club Opt</span>}
-            {contract.optionType === "Player" && contract.playerOptedOut && (
-              <span className="badge badge-opted-out">Opted Out</span>
-            )}
-          </div>
-        </div>
-
-        <div className="fa-card__bottom">
-          <div className="fa-card__stats" role="group" aria-label="Season stats">
-            <div className="fa-card__stat">
-              <span className="fa-card__stat-val">{contract.stats.pts.toFixed(1)}</span>
-              <Tooltip text="Points Per Game">
-                <span className="fa-card__stat-lbl">PTS</span>
-              </Tooltip>
-            </div>
-            <div className="fa-card__stat">
-              <span className="fa-card__stat-val">{contract.stats.trb.toFixed(1)}</span>
-              <Tooltip text="Rebounds Per Game">
-                <span className="fa-card__stat-lbl">REB</span>
-              </Tooltip>
-            </div>
-            <div className="fa-card__stat">
-              <span className="fa-card__stat-val">{contract.stats.ast.toFixed(1)}</span>
-              <Tooltip text="Assists Per Game">
-                <span className="fa-card__stat-lbl">AST</span>
-              </Tooltip>
-            </div>
-            <div className="fa-card__stat">
-              <span className="fa-card__stat-val" style={{ color: bpmColor }}>
-                {contract.stats.bpm >= 0 ? "+" : ""}{contract.stats.bpm.toFixed(1)}
-              </span>
-              <Tooltip text="Box Plus/Minus — net points contributed per 100 possessions vs. league average. Positive = above average.">
-                <span className="fa-card__stat-lbl">BPM</span>
-              </Tooltip>
-            </div>
-          </div>
-
-          <div className="fa-card__right">
-            <div className="fa-card__salary">
-              <div className="fa-card__salary-label">{isClub ? "Option" : "Market"}</div>
-              <div className="fa-card__salary-main">
-                {isClub && contract.optionSalary ? fmt(contract.optionSalary) : fmt(contract.estimatedMarketSalary)}
-              </div>
-              <div className="fa-card__salary-sub">{fmt(contract.currentSalary)} cur</div>
-            </div>
-
-            {decided ? (
-              <motion.div
-                className={`fa-card__decision${kept ? " fa-card__decision--yes" : " fa-card__decision--no"}`}
-                initial={motionOk ? { opacity: 0, x: 8 } : false}
-                animate={{ opacity: 1, x: 0 }}
-                transition={motionOk ? { duration: 0.28, ease: FA_EASE } : { duration: 0 }}
-              >
-                <span>{kept ? "✓" : "✗"}</span>
-                <span>
-                  {decision === "RE_SIGN" && "Re-signed"}
-                  {decision === "LET_WALK" && "Let walk"}
-                  {decision === "PICK_UP_OPTION" && "Picked up"}
-                  {decision === "DECLINE_OPTION" && "Declined"}
-                </span>
-              </motion.div>
-            ) : (
-              <div className="fa-card__actions" onClick={(e) => e.stopPropagation()}>
-                {isClub ? (
-                  <>
-                    <motion.button
-                      type="button"
-                      className="btn btn-primary fa-card__action-btn"
-                      onClick={(e) => handleDecide(e, "PICK_UP_OPTION")}
-                      whileTap={motionOk ? { scale: 0.97 } : undefined}
-                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
-                    >
-                      Pick Up
-                    </motion.button>
-                    <motion.button
-                      type="button"
-                      className="btn btn-danger fa-card__action-btn"
-                      onClick={(e) => handleDecide(e, "DECLINE_OPTION")}
-                      whileTap={motionOk ? { scale: 0.97 } : undefined}
-                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
-                    >
-                      Decline
-                    </motion.button>
-                  </>
-                ) : (
-                  <>
-                    <motion.button
-                      type="button"
-                      className="btn btn-primary fa-card__action-btn"
-                      onClick={(e) => handleDecide(e, "RE_SIGN")}
-                      whileTap={motionOk ? { scale: 0.97 } : undefined}
-                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
-                    >
-                      Re-Sign
-                    </motion.button>
-                    <motion.button
-                      type="button"
-                      className="btn btn-secondary fa-card__action-btn"
-                      onClick={(e) => handleDecide(e, "LET_WALK")}
-                      whileTap={motionOk ? { scale: 0.97 } : undefined}
-                      transition={{ type: "spring", stiffness: 480, damping: 28 }}
-                    >
-                      Let Walk
-                    </motion.button>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="fa-row__money">
+        <div className="num">{fmtMoney(price)}</div>
+        <div className="footnote">{isClub ? "option" : c.isSalaryEstimate ? "est. ask" : "market value"}</div>
+      </div>
+      <div className="fa-row__actions">
+        {decision ? (
+          <>
+            <span className="footnote" style={{ alignSelf: "center" }}>{DECISION_LABEL[decision]}</span>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={onUndo}>Undo</button>
+          </>
+        ) : isClub ? (
+          <>
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => onDecide("PICK_UP_OPTION")}>Pick up</button>
+            <button type="button" className="btn btn-sm" onClick={() => onDecide("DECLINE_OPTION")}>Decline</button>
+          </>
+        ) : (
+          <>
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => onDecide("RE_SIGN")}>Re-sign</button>
+            <button type="button" className="btn btn-sm" onClick={() => onDecide("LET_WALK")}>Let walk</button>
+          </>
+        )}
       </div>
     </div>
   );
 }
 
+function CapPanel({ payroll }: { payroll: number }) {
+  const ceiling = SECOND_APRON * 1.1;
+  const at = (v: number) => `${Math.min(100, (v / ceiling) * 100)}%`;
+  const over = payroll > SALARY_CAP;
+  const status =
+    payroll > SECOND_APRON ? "Over the second apron" : payroll > FIRST_APRON ? "Over the first apron" : payroll > LUXURY_TAX ? "Paying luxury tax" : over ? "Over the cap" : "Under the cap";
+
+  return (
+    <div className="card">
+      <div className="eyebrow">2026-27 payroll</div>
+      <div className="num" style={{ fontSize: "1.6rem", fontWeight: 600, marginTop: "0.3rem" }}>{fmtMoney(payroll)}</div>
+      <div className="footnote">{status}</div>
+      <div className="capbar" aria-hidden="true">
+        <div className={`capbar__fill${payroll > LUXURY_TAX ? " is-over" : ""}`} style={{ width: at(payroll) }} />
+        {[SALARY_CAP, LUXURY_TAX, FIRST_APRON, SECOND_APRON].map((v) => (
+          <span key={v} className="capbar__tick" style={{ left: at(v) }} />
+        ))}
+      </div>
+      <div className="kv"><span>Cap</span><span className="num">{fmtMoney(SALARY_CAP)}</span></div>
+      <div className="kv"><span>Luxury tax</span><span className="num">{fmtMoney(LUXURY_TAX)}</span></div>
+      <div className="kv"><span>First apron</span><span className="num">{fmtMoney(FIRST_APRON)}</span></div>
+      <div className="kv"><span>Second apron</span><span className="num">{fmtMoney(SECOND_APRON)}</span></div>
+    </div>
+  );
+}
+
 export default function FreeAgencyPage() {
-  const motionOk = !honorReducedMotion();
   const navigate = useSmoothNavigate();
   const roster = useSimulatorStore((s) => s.roster);
   const expiring = useSimulatorStore((s) => s.expiringContracts);
   const decisions = useSimulatorStore((s) => s.decisions);
+  const needs = useSimulatorStore((s) => s.rosterDeficits);
+  const targetId = useSimulatorStore((s) => s.targetBlueprintId);
   const makeFreeAgencyDecision = useSimulatorStore((s) => s.makeFreeAgencyDecision);
+  const undo = useSimulatorStore((s) => s.undoFreeAgencyDecision);
   const advanceToPhase = useSimulatorStore((s) => s.advanceToPhase);
+  const phase = useSimulatorStore((s) => s.phase);
   const payroll = useSimulatorStore(selectPayroll);
-  const selectedTeamId = useSimulatorStore((s) => s.selectedTeamId);
+  const teamId = useSimulatorStore((s) => s.selectedTeamId);
 
-  const [detailPlayer, setDetailPlayer] = useState<ModalSubject | null>(null);
+  const [detail, setDetail] = useState<ModalSubject | null>(null);
 
-  function pendingFirst(a: ExpiringContract, b: ExpiringContract): number {
-    const da = decisions[a.playerId] !== undefined;
-    const db = decisions[b.playerId] !== undefined;
-    if (da === db) return 0;
-    return da ? 1 : -1;
-  }
+  const target = targetId ? blueprintById(targetId) : undefined;
+  const pending = expiring.filter((c) => decisions[c.playerId] === undefined).length;
+  const options = expiring.filter((c) => c.optionType === "Club");
+  const agents = expiring.filter((c) => c.optionType !== "Club");
 
-  const clubOptions = expiring
-    .filter((c) => c.optionType === "Club")
-    .sort(pendingFirst);
-  const freeAgents = expiring
-    .filter((c) => c.optionType !== "Club")
-    .sort(pendingFirst);
-  const pendingCount = expiring.filter((c) => decisions[c.playerId] === undefined).length;
-
-  function handleAdvanceToDraft() {
-    advanceToPhase("DRAFT");
+  function next() {
+    // Re-entering the draft resets it, so only advance the phase the first time.
+    if (phase === "FREE_AGENCY") advanceToPhase("DRAFT");
     navigate("/draft");
   }
 
-  function openRosterPlayer(p: RosterPlayer) {
-    setDetailPlayer(p);
-  }
+  const rowProps = (c: ExpiringContract) => ({
+    c,
+    decision: decisions[c.playerId],
+    needs,
+    teamId,
+    onDecide: (d: FreeAgencyDecision) => makeFreeAgencyDecision(c.playerId, d),
+    onUndo: () => undo(c.playerId),
+    onOpen: () => setDetail(c),
+  });
 
   return (
     <div className="page">
-      <PlayerDetailModal
-        subject={detailPlayer}
-        onClose={() => setDetailPlayer(null)}
-        teamId={selectedTeamId}
-      />
-      <NavBar />
-
-      <div className="page-content">
-        <div style={{ marginBottom: "1.75rem" }}>
-          <h1 style={{
-            fontFamily: "var(--font-poster)",
-            fontSize: "2.4rem",
-            lineHeight: 1,
-            textTransform: "uppercase",
-            letterSpacing: "0.01em",
-            marginBottom: "0.5rem",
-          }}>
-            Free Agency
-          </h1>
-          <p style={{ fontSize: "0.83rem", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-            Resolve every expiring contract and club option, then advance to the draft.
-          </p>
+      <PlayerDetailModal subject={detail} onClose={() => setDetail(null)} teamId={teamId} />
+      <AppHeader />
+      <main className="wrap">
+        <div className="page-head">
+          <div>
+            <div className="eyebrow">Step 3</div>
+            <h1 className="display h1" style={{ marginTop: "0.5rem" }}>Free agency</h1>
+            <p className="lede">
+              Decide who comes back for 2026-27. Players tagged <span className="tag tag--fit">Fills a need</span> match a
+              role the {target ? blueprintLabel(target) : "blueprint"} had that you're missing.
+            </p>
+          </div>
         </div>
-        <div className="split-layout">
 
-          {/* ── Left: decisions ── */}
-          <motion.div
-            initial={motionOk ? { opacity: 0, y: 14 } : false}
-            animate={{ opacity: 1, y: 0 }}
-            transition={
-              motionOk ? { duration: 0.4, ease: FA_EASE, delay: 0.04 } : { duration: 0 }
-            }
-          >
-            {clubOptions.length > 0 && (
-              <div style={{ marginBottom: "1.75rem" }}>
-                <div className="section-header">
-                  <span className="section-title">Club Options</span>
-                  <span className="section-count">
-                    ({clubOptions.filter((c) => !decisions[c.playerId]).length} pending)
-                  </span>
-                </div>
-                {clubOptions.map((c) => (
-                  <ContractCard
-                    key={c.playerId}
-                    contract={c}
-                    decision={decisions[c.playerId]}
-                    onDecide={(d) => makeFreeAgencyDecision(c.playerId, d)}
-                    onOpen={() => setDetailPlayer(c)}
-                    teamId={selectedTeamId}
-                    motionOk={motionOk}
-                  />
+        <div className="fa-layout">
+          <div style={{ display: "grid", gap: "1.25rem" }}>
+            {options.length > 0 && (
+              <section className="card card--flush">
+                <div className="board-tools"><h2 className="eyebrow">Team options · {options.length}</h2></div>
+                {options.map((c) => <ContractRow key={c.playerId} {...rowProps(c)} />)}
+              </section>
+            )}
+            <section className="card card--flush">
+              <div className="board-tools"><h2 className="eyebrow">Expiring contracts · {agents.length}</h2></div>
+              {agents.length === 0 ? (
+                <p className="muted" style={{ padding: "1rem" }}>No expiring contracts on this roster.</p>
+              ) : (
+                agents.map((c) => <ContractRow key={c.playerId} {...rowProps(c)} />)
+              )}
+            </section>
+
+            <div className="bottom-bar" style={{ marginTop: "0.5rem" }}>
+              <span className="footnote">
+                {pending > 0 ? `${pending} undecided. Anyone undecided leaves in free agency.` : "All decisions made."}
+              </span>
+              <button type="button" className="btn btn-primary btn-lg" onClick={next}>Next: draft</button>
+            </div>
+          </div>
+
+          <aside className="sticky-side">
+            <CapPanel payroll={payroll} />
+            <div className="card">
+              <div className="eyebrow">Under contract · {roster.length}</div>
+              <div style={{ marginTop: "0.6rem" }}>
+                {roster.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setDetail(p)}
+                    className="kv"
+                    style={{ width: "100%", background: "none", border: 0, textAlign: "left" }}
+                  >
+                    <span style={{ color: "var(--color-text)" }}>{p.name}</span>
+                    <span className="num">{fmtMoney(p.currentSalary)}</span>
+                  </button>
                 ))}
               </div>
-            )}
-
-            <div>
-              <div className="section-header">
-                <span className="section-title">Free Agents</span>
-                <span className="section-count">
-                  ({freeAgents.length} · {freeAgents.filter((c) => !decisions[c.playerId]).length} pending)
-                </span>
-              </div>
-              {freeAgents.length === 0 ? (
-                <div className="empty-state">No free agents for this team.</div>
-              ) : (
-                freeAgents.map((c) => (
-                  <ContractCard
-                    key={c.playerId}
-                    contract={c}
-                    decision={decisions[c.playerId]}
-                    onDecide={(d) => makeFreeAgencyDecision(c.playerId, d)}
-                    onOpen={() => setDetailPlayer(c)}
-                    teamId={selectedTeamId}
-                    motionOk={motionOk}
-                  />
-                ))
-              )}
             </div>
-
-            <div style={{ marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              {pendingCount > 0 && (
-                <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                  {pendingCount} decision{pendingCount !== 1 ? "s" : ""} remaining
-                </span>
-              )}
-              <motion.button
-                className="btn btn-primary btn-lg"
-                style={{ marginLeft: "auto" }}
-                onClick={handleAdvanceToDraft}
-                whileTap={motionOk ? { scale: 0.98 } : undefined}
-                transition={{ type: "spring", stiffness: 450, damping: 26 }}
-              >
-                Advance to Draft →
-              </motion.button>
-            </div>
-          </motion.div>
-
-          {/* ── Right: cap + roster ── */}
-          <motion.div
-            className="roster-panel"
-            initial={motionOk ? { opacity: 0, y: 10 } : false}
-            animate={{ opacity: 1, y: 0 }}
-            transition={
-              motionOk ? { duration: 0.38, ease: FA_EASE, delay: 0.1 } : { duration: 0 }
-            }
-          >
-            <CapBar payroll={payroll} />
-
-            <div>
-              <div className="section-header">
-                <span className="section-title">Under Contract</span>
-                <span className="section-count">({roster.length})</span>
-              </div>
-              {roster.length === 0 ? (
-                <div className="empty-state">No committed players yet.</div>
-              ) : (
-                roster.map((p) => (
-                  <div
-                    key={p.id}
-                    className="roster-row roster-row--clickable"
-                    onClick={() => openRosterPlayer(p)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => e.key === "Enter" && openRosterPlayer(p)}
-                  >
-                    <PlayerAvatar
-                      name={p.name}
-                      position={p.position}
-                      size={40}
-                      headshotPool={p.id.startsWith("draft-") ? "prospect" : "nba"}
-                      teamId={p.teamAbbrev || selectedTeamId}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div className="roster-row-name">{p.name}</div>
-                      <div className="roster-row-arch">{p.offensiveArchetype}</div>
-                    </div>
-                    <span className="card-pos">{p.position}</span>
-                    <span className="roster-row-salary">{fmt(p.currentSalary)}</span>
-                  </div>
-                ))
-              )}
-            </div>
-          </motion.div>
-
+          </aside>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

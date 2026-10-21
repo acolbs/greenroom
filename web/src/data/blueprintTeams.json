@@ -1,0 +1,873 @@
+[
+  {
+    "id": "OKC_2025",
+    "abbrev": "OKC",
+    "team": "Oklahoma City Thunder",
+    "season": "2024-25",
+    "champion": true,
+    "result": "NBA Champion",
+    "identity": "SGA's downhill scoring behind a swarming, turnover-forcing defense and two bigs.",
+    "players": [
+      {
+        "name": "Shai Gilgeous-Alexander",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Jalen Williams",
+        "position": "SF",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Isaiah Hartenstein",
+        "position": "C",
+        "tier": 2,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Alex Caruso",
+        "position": "SG",
+        "tier": 2,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Cason Wallace",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Aaron Wiggins",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Luguentz Dort",
+        "position": "SG",
+        "tier": 2,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Chet Holmgren",
+        "position": "C",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Mobile Big"
+      }
+    ]
+  },
+  {
+    "id": "BOS_2024",
+    "abbrev": "BOS",
+    "team": "Boston Celtics",
+    "season": "2023-24",
+    "champion": true,
+    "result": "NBA Champion",
+    "identity": "Five-out spacing with two star wings, a stretch big, and guards who can guard anyone.",
+    "players": [
+      {
+        "name": "Jayson Tatum",
+        "position": "SF",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Derrick White",
+        "position": "SG",
+        "tier": 2,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Kristaps Porzingis",
+        "position": "C",
+        "tier": 2,
+        "offensiveArchetype": "Versatile Big",
+        "defensiveRole": "Anchor Big"
+      },
+      {
+        "name": "Al Horford",
+        "position": "C",
+        "tier": 2,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Jrue Holiday",
+        "position": "PG",
+        "tier": 2,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Jaylen Brown",
+        "position": "SG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Sam Hauser",
+        "position": "SF",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Payton Pritchard",
+        "position": "PG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      }
+    ]
+  },
+  {
+    "id": "DEN_2023",
+    "abbrev": "DEN",
+    "team": "Denver Nuggets",
+    "season": "2022-23",
+    "champion": true,
+    "result": "NBA Champion",
+    "identity": "Jokić as the offensive hub, a deadly two-man game with Murray, and two-way wings around them.",
+    "players": [
+      {
+        "name": "Nikola Jokic",
+        "position": "C",
+        "tier": 1,
+        "offensiveArchetype": "Post Scorer",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Jamal Murray",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Michael Porter Jr.",
+        "position": "SF",
+        "tier": 2,
+        "offensiveArchetype": "Off Screen Shooter",
+        "defensiveRole": "Low Activity"
+      },
+      {
+        "name": "Aaron Gordon",
+        "position": "PF",
+        "tier": 2,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Kentavious Caldwell-Pope",
+        "position": "SG",
+        "tier": 2,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Bruce Brown",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Christian Braun",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Jeff Green",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Versatile Big",
+        "defensiveRole": "Helper"
+      }
+    ]
+  },
+  {
+    "id": "GSW_2022",
+    "abbrev": "GSW",
+    "team": "Golden State Warriors",
+    "season": "2021-22",
+    "champion": true,
+    "result": "NBA Champion",
+    "identity": "Curry's off-ball gravity in a motion offense, with Draymond Green running a switchable defense.",
+    "players": [
+      {
+        "name": "Stephen Curry",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Low Activity"
+      },
+      {
+        "name": "Jordan Poole",
+        "position": "SG",
+        "tier": 2,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Low Activity"
+      },
+      {
+        "name": "Kevon Looney",
+        "position": "C",
+        "tier": 3,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Anchor Big"
+      },
+      {
+        "name": "Klay Thompson",
+        "position": "SG",
+        "tier": 2,
+        "offensiveArchetype": "Off Screen Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Andrew Wiggins",
+        "position": "SF",
+        "tier": 2,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Draymond Green",
+        "position": "PF",
+        "tier": 2,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Gary Payton II",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Stretch Big",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Otto Porter Jr.",
+        "position": "SF",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Helper"
+      }
+    ]
+  },
+  {
+    "id": "CLE_2025",
+    "abbrev": "CLE",
+    "team": "Cleveland Cavaliers",
+    "season": "2024-25",
+    "champion": false,
+    "result": "Second Round (64-18)",
+    "identity": "A two-guard backcourt (Mitchell, Garland) in front of twin bigs Mobley and Allen.",
+    "players": [
+      {
+        "name": "Donovan Mitchell",
+        "position": "SG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Darius Garland",
+        "position": "PG",
+        "tier": 2,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Evan Mobley",
+        "position": "PF",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Jarrett Allen",
+        "position": "C",
+        "tier": 2,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Max Strus",
+        "position": "SF",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Isaac Okoro",
+        "position": "SF",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "De'Andre Hunter",
+        "position": "SF",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Ty Jerome",
+        "position": "PG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Chaser"
+      }
+    ]
+  },
+  {
+    "id": "IND_2025",
+    "abbrev": "IND",
+    "team": "Indiana Pacers",
+    "season": "2024-25",
+    "champion": false,
+    "result": "NBA Finals",
+    "identity": "Haliburton-run pace and ball movement with a stretch big and a deep, balanced rotation.",
+    "players": [
+      {
+        "name": "Tyrese Haliburton",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Low Activity"
+      },
+      {
+        "name": "Pascal Siakam",
+        "position": "PF",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Andrew Nembhard",
+        "position": "PG",
+        "tier": 2,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Myles Turner",
+        "position": "C",
+        "tier": 2,
+        "offensiveArchetype": "Stretch Big",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Aaron Nesmith",
+        "position": "SF",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Obi Toppin",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "T.J. McConnell",
+        "position": "PG",
+        "tier": 3,
+        "offensiveArchetype": "Slasher",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Bennedict Mathurin",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Secondary Ball Handler",
+        "defensiveRole": "Chaser"
+      }
+    ]
+  },
+  {
+    "id": "DAL_2024",
+    "abbrev": "DAL",
+    "team": "Dallas Mavericks",
+    "season": "2023-24",
+    "champion": false,
+    "result": "NBA Finals",
+    "identity": "Two elite creators (Dončić, Irving) surrounded by lob-catching bigs and corner shooters.",
+    "players": [
+      {
+        "name": "Luka Doncic",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Low Activity"
+      },
+      {
+        "name": "Kyrie Irving",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "P.J. Washington",
+        "position": "PF",
+        "tier": 2,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Daniel Gafford",
+        "position": "C",
+        "tier": 2,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Anchor Big"
+      },
+      {
+        "name": "Dereck Lively II",
+        "position": "C",
+        "tier": 3,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Anchor Big"
+      },
+      {
+        "name": "Derrick Jones Jr.",
+        "position": "SF",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Josh Green",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Dante Exum",
+        "position": "PG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      }
+    ]
+  },
+  {
+    "id": "MIN_2024",
+    "abbrev": "MIN",
+    "team": "Minnesota Timberwolves",
+    "season": "2023-24",
+    "champion": false,
+    "result": "Conference Finals",
+    "identity": "Edwards' creation on top of elite size: Gobert anchoring, Towns spacing the floor.",
+    "players": [
+      {
+        "name": "Rudy Gobert",
+        "position": "C",
+        "tier": 2,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Anchor Big"
+      },
+      {
+        "name": "Mike Conley",
+        "position": "PG",
+        "tier": 2,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Anthony Edwards",
+        "position": "SG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Karl-Anthony Towns",
+        "position": "C",
+        "tier": 1,
+        "offensiveArchetype": "Versatile Big",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Naz Reid",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Kyle Anderson",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Nickeil Alexander-Walker",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Jaden McDaniels",
+        "position": "SF",
+        "tier": 2,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Point of Attack"
+      }
+    ]
+  },
+  {
+    "id": "NYK_2024",
+    "abbrev": "NYK",
+    "team": "New York Knicks",
+    "season": "2023-24",
+    "champion": false,
+    "result": "Second Round",
+    "identity": "Brunson's isolation scoring backed by tough, rebounding wings and bigs.",
+    "players": [
+      {
+        "name": "Jalen Brunson",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Low Activity"
+      },
+      {
+        "name": "Julius Randle",
+        "position": "PF",
+        "tier": 2,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "OG Anunoby",
+        "position": "SF",
+        "tier": 2,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Donte DiVincenzo",
+        "position": "SG",
+        "tier": 2,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Josh Hart",
+        "position": "SF",
+        "tier": 2,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Mitchell Robinson",
+        "position": "C",
+        "tier": 3,
+        "offensiveArchetype": "Athletic Finisher",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Isaiah Hartenstein",
+        "position": "C",
+        "tier": 3,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Miles McBride",
+        "position": "PG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      }
+    ]
+  },
+  {
+    "id": "MIA_2023",
+    "abbrev": "MIA",
+    "team": "Miami Heat",
+    "season": "2022-23",
+    "champion": false,
+    "result": "NBA Finals",
+    "identity": "Butler-led toughness, Bam Adebayo as the defensive hub, and shooters spread around them.",
+    "players": [
+      {
+        "name": "Jimmy Butler",
+        "position": "SF",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Bam Adebayo",
+        "position": "C",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Tyler Herro",
+        "position": "SG",
+        "tier": 2,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Caleb Martin",
+        "position": "SF",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Gabe Vincent",
+        "position": "PG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Max Strus",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Kyle Lowry",
+        "position": "PG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Kevin Love",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Helper"
+      }
+    ]
+  },
+  {
+    "id": "PHI_2023",
+    "abbrev": "PHI",
+    "team": "Philadelphia 76ers",
+    "season": "2022-23",
+    "champion": false,
+    "result": "Second Round",
+    "identity": "MVP Embiid as a post hub with Harden setting the table.",
+    "players": [
+      {
+        "name": "Joel Embiid",
+        "position": "C",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Anchor Big"
+      },
+      {
+        "name": "James Harden",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Tyrese Maxey",
+        "position": "PG",
+        "tier": 2,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Tobias Harris",
+        "position": "PF",
+        "tier": 2,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "P.J. Tucker",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "De'Anthony Melton",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Georges Niang",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Paul Reed",
+        "position": "C",
+        "tier": 3,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Mobile Big"
+      }
+    ]
+  },
+  {
+    "id": "MEM_2022",
+    "abbrev": "MEM",
+    "team": "Memphis Grizzlies",
+    "season": "2021-22",
+    "champion": false,
+    "result": "Second Round (56-26)",
+    "identity": "Morant's rim pressure, offensive rebounding, and Jaren Jackson Jr.'s shot blocking.",
+    "players": [
+      {
+        "name": "Ja Morant",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Slasher",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Desmond Bane",
+        "position": "SG",
+        "tier": 2,
+        "offensiveArchetype": "Off Screen Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Jaren Jackson Jr.",
+        "position": "PF",
+        "tier": 1,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Mobile Big"
+      },
+      {
+        "name": "Dillon Brooks",
+        "position": "SF",
+        "tier": 2,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Steven Adams",
+        "position": "C",
+        "tier": 2,
+        "offensiveArchetype": "Post Scorer",
+        "defensiveRole": "Anchor Big"
+      },
+      {
+        "name": "Tyus Jones",
+        "position": "PG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Brandon Clarke",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "De'Anthony Melton",
+        "position": "SG",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Chaser"
+      }
+    ]
+  },
+  {
+    "id": "PHX_2022",
+    "abbrev": "PHX",
+    "team": "Phoenix Suns",
+    "season": "2021-22",
+    "champion": false,
+    "result": "Second Round (64-18)",
+    "identity": "Paul and Booker's mid-range two-man game with Ayton as the roll man.",
+    "players": [
+      {
+        "name": "Chris Paul",
+        "position": "PG",
+        "tier": 1,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Low Activity"
+      },
+      {
+        "name": "Devin Booker",
+        "position": "SG",
+        "tier": 1,
+        "offensiveArchetype": "Shot Creator",
+        "defensiveRole": "Chaser"
+      },
+      {
+        "name": "Mikal Bridges",
+        "position": "SF",
+        "tier": 2,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Point of Attack"
+      },
+      {
+        "name": "Deandre Ayton",
+        "position": "C",
+        "tier": 2,
+        "offensiveArchetype": "Post Scorer",
+        "defensiveRole": "Anchor Big"
+      },
+      {
+        "name": "Jae Crowder",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Movement Shooter",
+        "defensiveRole": "Wing Stopper"
+      },
+      {
+        "name": "Cam Johnson",
+        "position": "PF",
+        "tier": 3,
+        "offensiveArchetype": "Stationary Shooter",
+        "defensiveRole": "Helper"
+      },
+      {
+        "name": "Cameron Payne",
+        "position": "PG",
+        "tier": 3,
+        "offensiveArchetype": "Primary Ball Handler",
+        "defensiveRole": "Low Activity"
+      },
+      {
+        "name": "JaVale McGee",
+        "position": "C",
+        "tier": 3,
+        "offensiveArchetype": "Roll + Cut Big",
+        "defensiveRole": "Anchor Big"
+      }
+    ]
+  }
+]

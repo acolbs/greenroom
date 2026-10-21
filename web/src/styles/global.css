@@ -5,235 +5,130 @@
 }
 
 html {
-  /* Avoid horizontal jump when scrollbar toggles (route transitions, content height) */
   scrollbar-gutter: stable;
 }
 
+/* ── Type ─────────────────────────────────────────────────────────────────
+   Archivo (expanded width) for headings, IBM Plex Sans for reading,
+   IBM Plex Mono for every number on the page.                              */
 :root {
-  /* ── Typography — "Front Office" ───────────────────────── */
-  --font-display: "Schibsted Grotesk", system-ui, sans-serif;
-  --font-body:    "Schibsted Grotesk", system-ui, sans-serif;
-  --font-poster:  "Anton", "Schibsted Grotesk", system-ui, sans-serif;
-  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+  --font-display: "Archivo", "IBM Plex Sans", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-poster: "Archivo", "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --page-max: 1200px;
+  --gutter: clamp(16px, 4vw, 40px);
 
   font-family: var(--font-body);
   font-size: 16px;
+  line-height: 1.5;
   color: var(--color-text);
   background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /* ── Cap thresholds ────────────────────────────────────── */
-  --cap-salary:    165000000;
-  --tax-line:      201000000;
-  --first-apron:   209000000;
-  --second-apron:  222000000;
 }
 
-/* ── Color palette — Light (default) ───────────────────────── */
+/* ── Color — Dark ("film room") is the default ─────────────────────────── */
 :root,
-:root[data-theme="light"] {
-  --color-bg:             #eef0ec;
-  --color-surface:        #fbfcfa;
-  --color-surface-raised: #ffffff;
-  --color-surface-hover:  #f1f4ef;
-  --color-border:         #d6dcd5;
-  --color-border-subtle:  #e3e8e1;
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #0c111b;
+  --color-surface: #131a27;
+  --color-surface-raised: #1a2232;
+  --color-surface-hover: #212b3d;
+  --color-border: #2a3447;
+  --color-border-subtle: #1e2738;
 
-  --color-text:           #10211a;
-  --color-text-secondary: #3c4d45;
-  --color-text-muted:     #5c6f66;
+  --color-text: #e8ecf3;
+  --color-text-primary: #e8ecf3;
+  --color-text-secondary: #b3bccd;
+  --color-text-muted: #8691a6;
 
-  --color-accent:         #1b5e3f;  /* pine */
-  --color-accent-hover:   #237a52;
-  --color-accent-dim:     #cfe3d6;
-  --color-accent-subtle:  #e4eee7;
+  /* Basketball leather orange — the one accent */
+  --color-accent: #f08a3c;
+  --color-accent-hover: #ff9d55;
+  --color-accent-dim: #3a2416;
+  --color-accent-subtle: #22180f;
+  --color-on-accent: #160c04;
 
-  --color-danger:         #b4452e;
-  --color-danger-dim:     #f2d9d2;
-  --color-warning:        #b07a1e;
-  --color-warning-dim:    #f0e3cb;
-  --color-info:           #2b6cb0;
+  --color-danger: #f0745e;
+  --color-danger-dim: #3a1a16;
+  --color-warning: #e6b34a;
+  --color-warning-dim: #33280f;
+  --color-info: #79a8e8;
 
-  --glow-accent:          0 1px 3px rgba(16, 33, 26, 0.10);
-  --glow-accent-tight:    0 1px 2px rgba(16, 33, 26, 0.12);
-  --glow-info:            none;
-  --glow-border:          0 0 0 1px rgba(27, 94, 63, 0.08);
+  /* Stage colors */
+  --stage-contender: #f08a3c;
+  --stage-middle: #79a8e8;
+  --stage-rebuilding: #57c4a4;
+
+  --glow-accent: none;
+  --glow-accent-tight: none;
+  --shadow-pop: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
-/* ── Color palette — Dark ──────────────────────────────────── */
-:root[data-theme="dark"] {
-  --color-bg:             #0f1613;
-  --color-surface:        #16201b;
-  --color-surface-raised: #1c2a23;
-  --color-surface-hover:  #22332c;
-  --color-border:         #283730;
-  --color-border-subtle:  #1e2b25;
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #f2f4f8;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-surface-hover: #eef1f6;
+  --color-border: #d5dbe5;
+  --color-border-subtle: #e4e8ef;
 
-  --color-text:           #ecf1ed;
-  --color-text-secondary: #b4c5bc;
-  --color-text-muted:     #90a89b;
+  --color-text: #111827;
+  --color-text-primary: #111827;
+  --color-text-secondary: #3b4558;
+  --color-text-muted: #5f6b80;
 
-  --color-accent:         #46a877;  /* pine, brightened for dark */
-  --color-accent-hover:   #5bbf8c;
-  --color-accent-dim:     #1b3329;
-  --color-accent-subtle:  #14241d;
+  --color-accent: #c95f17;
+  --color-accent-hover: #b0510f;
+  --color-accent-dim: #f8dcc7;
+  --color-accent-subtle: #fcefe5;
+  --color-on-accent: #ffffff;
 
-  --color-danger:         #e0735a;
-  --color-danger-dim:     #3a1a14;
-  --color-warning:        #d6a23e;
-  --color-warning-dim:    #2d2206;
-  --color-info:           #6ba8e8;
+  --color-danger: #c2412d;
+  --color-danger-dim: #f8dcd6;
+  --color-warning: #a8740f;
+  --color-warning-dim: #f6e8c8;
+  --color-info: #2f65b5;
 
-  --glow-accent:          0 0 28px rgba(70, 168, 119, 0.20);
-  --glow-accent-tight:    0 0 14px rgba(70, 168, 119, 0.32);
-  --glow-info:            0 0 36px rgba(107, 168, 232, 0.07);
-  --glow-border:          0 0 1px rgba(70, 168, 119, 0.15);
+  --stage-contender: #c95f17;
+  --stage-middle: #2f65b5;
+  --stage-rebuilding: #13876a;
+
+  --shadow-pop: 0 12px 40px rgba(17, 24, 39, 0.14);
 }
 
 body {
   min-height: 100dvh;
-  position: relative;
-}
-
-/* Ambient glow + court-grid (non-interactive). Light: subtle. Dark: pine glow. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    radial-gradient(ellipse 120% 70% at 50% -30%, rgba(27, 94, 63, 0.06), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 0% 85%, rgba(27, 94, 63, 0.03), transparent 50%);
-}
-
-:root[data-theme="dark"] body::before {
-  background:
-    radial-gradient(ellipse 120% 70% at 50% -30%, rgba(70, 168, 119, 0.10), transparent 52%),
-    radial-gradient(ellipse 55% 45% at 100% 20%, rgba(107, 168, 232, 0.05), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(70, 168, 119, 0.05), transparent 45%);
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.5;
-  background-image:
-    linear-gradient(rgba(16, 33, 26, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 33, 26, 0.025) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, black 12%, transparent 72%);
-}
-
-:root[data-theme="dark"] body::after {
-  opacity: 0.35;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-}
-
-/* Milestone pulse (phase change / draft complete) */
-html.action-complete-glow::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  background: radial-gradient(
-    circle at 50% 42%,
-    rgba(46, 140, 90, 0.22) 0%,
-    rgba(46, 140, 90, 0.06) 38%,
-    transparent 58%
-  );
-  animation: action-glow-pulse 0.85s ease-out forwards;
-}
-
-@keyframes action-glow-pulse {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  35% {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    transform: scale(1.08);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html.action-complete-glow:not(.edge-force-motion)::after {
-    animation: none;
-    opacity: 0;
-  }
-
-  body::after {
-    opacity: 0.12;
-  }
-
-  html.edge-force-motion body::after {
-    opacity: 0.35;
-  }
-}
-
-/* Edge: keep milestone glow animating even under reduced-motion media */
-html.edge-force-motion.action-complete-glow::after {
-  animation: action-glow-pulse 0.85s ease-out forwards;
+  background: var(--color-bg);
 }
 
 #root {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  position: relative;
-  z-index: 1;
 }
 
-.app-layout {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-  min-width: 0;
-}
-
-.app-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  min-width: 0;
-}
-
+.app-layout,
+.app-main,
 .route-transition-root {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
   min-width: 0;
-  position: relative;
-}
-
-.route-transition-root--stacked {
-  min-height: 100dvh;
 }
 
 .route-shell {
-  position: absolute;
-  inset: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100%;
   min-width: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-gutter: stable;
 }
 
 a {
@@ -244,8 +139,21 @@ a {
 button {
   font-family: inherit;
   cursor: pointer;
+  color: inherit;
 }
 
 input, select, textarea {
   font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -31,13 +31,15 @@ import { attachProspectTalent } from "../lib/talentScore";
 import { parseRingerRolesByName, applyRingerRoles } from "../data/parseRingerRoles";
 import { parseNbaRadarByName } from "../data/parseNbaRadar";
 import type { NbaRadarStats } from "../data/parseNbaRadar";
-import type { ComparisonData } from "../types/simulator";
+import type { ComparisonData, ActualDraftPick, TeamStrength, TeamStrengthLabel } from "../types/simulator";
 import {
-  CHAMPIONSHIP_FORMULA,
-  computeRosterDeficits,
-} from "../data/championshipFormula";
-import { computeTeamStrength } from "../data/prospectRanking";
-import { findClosestBlueprint } from "../data/blueprintScore";
+  computeStage,
+  rankBlueprints,
+  starComps,
+  blueprintNeeds,
+  blueprintById,
+  type StageReport,
+} from "../lib/teamAnalysis";
 
 // ---------------------------------------------------------------------------
 // Singleton data cache — CSVs are fetched once, then reused across team switches
@@ -50,6 +52,9 @@ interface LoadedData {
   aceMap: Map<string, number>;
   draftClass: DraftProspect[];
   comparisonData: ComparisonData;
+  /** 2025-26 win % by master.csv team abbreviation (BRK, CHO, PHO, ...). */
+  winPctByCsvTeam: Map<string, number>;
+  actualDraft: ActualDraftPick[];
 }
 
 let dataCache: Promise<LoadedData> | null = null;
@@ -74,6 +79,7 @@ function loadAllData(): Promise<LoadedData> {
       prospectCompsText,
       prospectSuccessText,
       physicalsText,
+      actualDraftText,
     ] = await Promise.all([
       fetchText("data/master.csv"),
       fetchText("data/2025-2026_Stats.csv"),
@@ -84,6 +90,7 @@ function loadAllData(): Promise<LoadedData> {
       fetchText("data/prospect_comps.csv"),
       fetchText("data/prospect_success.csv"),
       fetchText("data/physicals.csv"),
+      fetchText("data/actual_draft_2026.csv"),
     ]);
 
     // Optional, user-maintained archetype overrides. Missing file → no overrides.
@@ -100,7 +107,19 @@ function loadAllData(): Promise<LoadedData> {
       masterRows,
       contractMap
     );
-    const aceMap = buildAceLookup(parseCsv(statsText));
+    const statsRows = parseCsv(statsText);
+    const aceMap = buildAceLookup(statsRows);
+    const winPctByCsvTeam = new Map<string, number>();
+    for (const row of statsRows) {
+      const w = Number(row["WIN %"]);
+      if (row["Team"] && Number.isFinite(w) && w > 0) winPctByCsvTeam.set(row["Team"], w);
+    }
+    const actualDraft: ActualDraftPick[] = parseCsv(actualDraftText).map((r) => ({
+      pick: Number(r["Pick"]),
+      player: r["Player"],
+      teamId: r["Team"],
+      school: r["School"],
+    }));
     const prospectStatsByName = parseProspectStatsByName(parseCsv(prospectStatsText));
     const compsByName = parseProspectCompsByName(parseCsv(prospectCompsText));
     const successByName = parseProspectSuccessByName(parseCsv(prospectSuccessText));
@@ -129,7 +148,16 @@ function loadAllData(): Promise<LoadedData> {
       prospectPhysicals,
     };
 
-    return { masterRows, contractMap, optionRows, aceMap, draftClass, comparisonData };
+    return {
+      masterRows,
+      contractMap,
+      optionRows,
+      aceMap,
+      draftClass,
+      comparisonData,
+      winPctByCsvTeam,
+      actualDraft,
+    };
   })();
 
   // On error, clear the cache so the next attempt can retry
@@ -181,20 +209,34 @@ function computeCapSpace(roster: RosterPlayer[]): number {
 }
 
 // ---------------------------------------------------------------------------
-// Drafted rookies � tagged by id prefix so a re-run draft can strip them
+// Roster-derived state
 // ---------------------------------------------------------------------------
 
+/** Cap space and blueprint needs for a roster, given the blueprint target. */
+function rosterDerived(roster: RosterPlayer[], targetBlueprintId: string | null) {
+  const bp = targetBlueprintId ? blueprintById(targetBlueprintId) : undefined;
+  return {
+    capSpace: computeCapSpace(roster),
+    rosterDeficits: bp ? blueprintNeeds(roster, bp) : [],
+  };
+}
+
+function effectiveStrength(stage: StageReport | null, override: TeamStrengthLabel | null): TeamStrength {
+  return { score: (stage?.score ?? 0) / 100, label: override ?? stage?.label ?? "Rebuilding" };
+}
+
+// Drafted rookies are tagged by id prefix so a re-run draft can strip them.
 const DRAFTED_ID_PREFIX = "draft-";
 
-function rosterWithoutRookies(roster: RosterPlayer[]) {
+function rosterWithoutRookies(roster: RosterPlayer[], targetBlueprintId: string | null) {
   const kept = roster.filter((p) => !p.id.startsWith(DRAFTED_ID_PREFIX));
-  return {
-    roster: kept,
-    capSpace: computeCapSpace(kept),
-    rosterDeficits: computeRosterDeficits(kept),
-    teamStrength: computeTeamStrength(kept),
-    blueprintMatch: findClosestBlueprint(kept),
-  };
+  return { roster: kept, ...rosterDerived(kept, targetBlueprintId) };
+}
+
+/** Stage of every team from its 2025-26 roster, for the team picker. */
+export interface TeamStageSummary {
+  score: number;
+  label: TeamStrengthLabel;
 }
 
 // ---------------------------------------------------------------------------
@@ -223,6 +265,13 @@ function cpuSelectProspect(available: DraftProspect[]): DraftProspect | null {
 
 let cpuTimer: ReturnType<typeof setTimeout> | null = null;
 
+/** Milliseconds between CPU picks. */
+let cpuDelay = 600;
+
+export function setCpuPickDelay(ms: number) {
+  cpuDelay = ms;
+}
+
 function clearCpuTimer() {
   if (cpuTimer) { clearTimeout(cpuTimer); cpuTimer = null; }
 }
@@ -245,10 +294,15 @@ const INITIAL_STATE: SimulatorState & { capSpace: number } = {
   userPickNumbers: [],
   draftSimActive: false,
   draftSimComplete: false,
-  championshipFormula: CHAMPIONSHIP_FORMULA,
+  seasonRoster: [],
+  stage: null,
+  stageOverride: null,
+  blueprintRanking: [],
+  targetBlueprintId: null,
+  comps: [],
   rosterDeficits: [],
   teamStrength: { score: 0, label: "Rebuilding" },
-  blueprintMatch: null,
+  actualDraft: [],
   comparisonData: null,
   loading: false,
   error: null,
@@ -272,6 +326,9 @@ interface SimulatorStore extends SimulatorState {
    */
   makeFreeAgencyDecision: (playerId: string, decision: FreeAgencyDecision) => void;
 
+  /** Take back a free-agency decision (removes the player if they'd been kept). */
+  undoFreeAgencyDecision: (playerId: string) => void;
+
   /** Move the simulator forward to the given phase. */
   advanceToPhase: (phase: SimulatorPhase) => void;
 
@@ -289,6 +346,15 @@ interface SimulatorStore extends SimulatorState {
 
   /** User selects a prospect at their current pick. */
   userDraftPick: (prospectId: string) => void;
+
+  /** Force a stage (or null to go back to the computed one). */
+  setStageOverride: (label: TeamStrengthLabel | null) => void;
+
+  /** Choose which past contender to build toward. */
+  setTargetBlueprint: (blueprintId: string) => void;
+
+  /** Stage of all 30 teams, for the team picker. */
+  loadTeamStages: () => Promise<Record<string, TeamStageSummary>>;
 
   /** Reset everything back to the initial state. */
   reset: () => void;
@@ -345,7 +411,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
       });
 
       if (!isDraftOver) scheduleCpuPicks();
-    }, 600);
+    }, cpuDelay);
   }
 
   // ── After any draft pick, check what comes next ─────────────────────────
@@ -454,19 +520,28 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
           (a, b) => b.currentSalary - a.currentSalary
         );
 
+        const stage = computeStage(fullRoster, data.winPctByCsvTeam.get(team.csvAbbrev) ?? null);
+        const blueprintRanking = rankBlueprints(fullRoster);
+        const targetBlueprintId = blueprintRanking[0]?.blueprint.id ?? null;
+
         set({
           loading: false,
-          phase: "FREE_AGENCY",
+          phase: "ANALYSIS",
+          seasonRoster: fullRoster,
+          stage,
+          stageOverride: null,
+          blueprintRanking,
+          targetBlueprintId,
+          comps: starComps(fullRoster),
+          teamStrength: effectiveStrength(stage, null),
+          actualDraft: data.actualDraft,
           roster: finalRoster,
           expiringContracts: expiring,
           decisions: {},
           draftClass: data.draftClass,
           draftAvailableProspects: data.draftClass,
           comparisonData: data.comparisonData,
-          capSpace: computeCapSpace(finalRoster),
-          rosterDeficits: computeRosterDeficits(finalRoster),
-          teamStrength: computeTeamStrength(finalRoster),
-          blueprintMatch: findClosestBlueprint(finalRoster),
+          ...rosterDerived(finalRoster, targetBlueprintId),
         });
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to load data.";
@@ -521,11 +596,18 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         // animations can run; UI uses `decisions` to show resolved state.
         expiringContracts: state.expiringContracts,
         decisions: { ...state.decisions, [playerId]: decision },
-        capSpace: computeCapSpace(roster),
-        rosterDeficits: computeRosterDeficits(roster),
-        teamStrength: computeTeamStrength(roster),
-        blueprintMatch: findClosestBlueprint(roster),
+        ...rosterDerived(roster, state.targetBlueprintId),
       });
+    },
+
+    // ── undoFreeAgencyDecision ───────────────────────────────────────────────
+    undoFreeAgencyDecision: (playerId) => {
+      const state = get();
+      if (!(playerId in state.decisions)) return;
+      const decisions = { ...state.decisions };
+      delete decisions[playerId];
+      const roster = state.roster.filter((p) => p.id !== playerId);
+      set({ decisions, roster, ...rosterDerived(roster, state.targetBlueprintId) });
     },
 
     // ── advanceToPhase ───────────────────────────────────────────────────────
@@ -540,7 +622,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         update.draftSimActive = false;
         update.draftSimComplete = false;
         update.userPickNumbers = [];
-        Object.assign(update, rosterWithoutRookies(state.roster));
+        Object.assign(update, rosterWithoutRookies(state.roster, state.targetBlueprintId));
       }
 
       set(update);
@@ -571,7 +653,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
         draftCurrentPick: 1,
         draftHistory: [],
         draftAvailableProspects: [...state.draftClass],
-        ...rosterWithoutRookies(state.roster),
+        ...rosterWithoutRookies(state.roster, state.targetBlueprintId),
       });
 
       // If pick 1 belongs to CPU, start auto-picking immediately
@@ -620,10 +702,7 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
 
       set({
         roster: nextRoster,
-        capSpace: computeCapSpace(nextRoster),
-        rosterDeficits: computeRosterDeficits(nextRoster),
-        teamStrength: computeTeamStrength(nextRoster),
-        blueprintMatch: findClosestBlueprint(nextRoster),
+        ...rosterDerived(nextRoster, state.targetBlueprintId),
         draftAvailableProspects: state.draftAvailableProspects.filter(
           (p) => p.id !== prospectId
         ),
@@ -632,6 +711,34 @@ export const useSimulatorStore = create<SimulatorStore>((set, get) => {
       });
 
       advanceDraftAfterPick();
+    },
+
+    // ── stage override / blueprint target ────────────────────────────────────
+    setStageOverride: (label) => {
+      const state = get();
+      set({ stageOverride: label, teamStrength: effectiveStrength(state.stage, label) });
+    },
+
+    setTargetBlueprint: (blueprintId) => {
+      const state = get();
+      if (!blueprintById(blueprintId)) return;
+      set({ targetBlueprintId: blueprintId, ...rosterDerived(state.roster, blueprintId) });
+    },
+
+    loadTeamStages: async () => {
+      const data = await loadAllData();
+      const out: Record<string, TeamStageSummary> = {};
+      for (const team of TEAMS) {
+        const roster = buildTeamRoster({
+          teamId: team.id,
+          masterRows: data.masterRows,
+          contractMap: data.contractMap,
+          aceMap: data.aceMap,
+        });
+        const stage = computeStage(roster, data.winPctByCsvTeam.get(team.csvAbbrev) ?? null);
+        out[team.id] = { score: stage.score, label: stage.label };
+      }
+      return out;
     },
 
     // ── reset ────────────────────────────────────────────────────────────────
