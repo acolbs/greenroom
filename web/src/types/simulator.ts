@@ -68,12 +68,11 @@ export interface RosterPlayer {
   /** 0–100 unified Talent Score (lib/talentScore.ts). */
   talentScore?: number;
   talentTier?: TalentTier;
-  /** Advanced stats that describe how he plays (USG%, AST%, 3PAr...), for player comps. */
-  style?: StyleStats;
+  /** 2025-26 play-style fingerprint for player comps (lib/playerStyle.ts). */
+  style?: number[];
+  /** 2025-26 minutes per game: how big a role he plays. */
+  mpg?: number;
 }
-
-/** Keyed by the master.csv column name; see STYLE_KEYS in lib/teamAnalysis.ts. */
-export type StyleStats = Record<string, number>;
 
 // ---------------------------------------------------------------------------
 // Free agency

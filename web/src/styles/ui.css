@@ -374,6 +374,17 @@
 .comp__arrow { color: var(--color-text-muted); font-family: var(--font-mono); font-size: 0.8rem; }
 .comp__name { font-weight: 600; }
 .comp__role { font-size: 0.8rem; color: var(--color-text-muted); }
+.comp__other {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+.comp__other b { color: var(--color-text-secondary); font-weight: 600; }
 .comp__match {
   margin-top: 0.9rem;
   padding-top: 0.9rem;
