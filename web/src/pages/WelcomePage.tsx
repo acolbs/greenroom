@@ -59,7 +59,7 @@ export default function WelcomePage() {
             <div className="how__n">2 · Blueprint</div>
             <h2 className="h3" style={{ marginTop: "0.5rem" }}>Pick a model</h2>
             <p>
-              Your rotation lined up player by player, by play style and role, against {BLUEPRINT_TEAMS.length} recent contenders, {champions} of
+              Your rotation lined up player by player, by play style, against {BLUEPRINT_TEAMS.length} recent contenders, {champions} of
               them champions. The roles you're missing become your draft targets.
             </p>
           </div>

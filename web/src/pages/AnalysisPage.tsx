@@ -109,7 +109,11 @@ export default function AnalysisPage() {
             <div>
               <div className="eyebrow">Player comps</div>
               <h2 className="display h2">
-                {leadComp ? `${leadComp.player.name} plays like ${leadComp.comp.name}` : "Who your stars play like"}
+                {leadComp
+                  ? leadComp.isSelf
+                    ? `${leadComp.player.name} plays like his ${leadComp.blueprint.season} self`
+                    : `${leadComp.player.name} plays like ${leadComp.comp.name}`
+                  : "Who your stars play like"}
               </h2>
             </div>
           </div>
@@ -125,8 +129,8 @@ export default function AnalysisPage() {
                 </div>
                 <div className="comp__match">
                   <div style={{ minWidth: 0 }}>
-                    <div className="comp__arrow">plays like</div>
-                    <div className="comp__name">{c.comp.name}</div>
+                    <div className="comp__arrow">{c.isSelf ? "plays like his" : "plays like"}</div>
+                    <div className="comp__name">{c.isSelf ? `${c.blueprint.season} self` : c.comp.name}</div>
                     <div className="comp__role">
                       {blueprintLabel(c.blueprint)} · {c.comp.position} · {roleLabel(c.comp)}
                     </div>
@@ -136,11 +140,19 @@ export default function AnalysisPage() {
                     {c.blueprint.champion && <span className="tag tag--champ">Champion</span>}
                   </div>
                 </div>
+                {c.other && (
+                  <div className="comp__other">
+                    <span>
+                      Closest other player: <b>{c.other.comp.name}</b>, {blueprintLabel(c.other.blueprint)}
+                    </span>
+                    <span className="num">{Math.round(c.other.similarity * 100)}%</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
           <p className="footnote" style={{ marginTop: "0.75rem" }}>
-            Match = 75% play style (usage, playmaking, shot profile, rebounding, defense and efficiency from that season's stats), 15% role, 10% position.
+            Match compares 20 play-style stats from each player's season (usage, playmaking, shot locations, rebounding, defense, efficiency, position). 100% = as alike as a player is to himself a year later; 0% = no more alike than two random NBA players.
           </p>
         </section>
 

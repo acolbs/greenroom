@@ -1,4 +1,4 @@
-import type { BlueprintMatchResult } from "../lib/teamAnalysis";
+import { FILLED_AT, type BlueprintMatchResult } from "../lib/teamAnalysis";
 import { roleLabel } from "../lib/format";
 
 interface Props {
@@ -6,15 +6,14 @@ interface Props {
   teamName: string;
 }
 
-const TIER_LABEL = { 1: "Star", 2: "Starter", 3: "Rotation" } as const;
-
 /**
- * The past contender's rotation on the left, the role-matched player from this
- * roster on the right, and how closely each pair lines up in between.
+ * The past contender's rotation on the left (with how much of that team's
+ * value each player carried), the best-fitting player from this roster on the
+ * right, and how closely their play styles line up in between.
  */
 export default function BlueprintOverlay({ match, teamName }: Props) {
   const bp = match.blueprint;
-  const filled = match.pairings.filter((p) => p.similarity >= 0.75).length;
+  const filled = match.pairings.filter((p) => p.similarity >= FILLED_AT).length;
 
   return (
     <div className="card card--flush">
@@ -37,21 +36,21 @@ export default function BlueprintOverlay({ match, teamName }: Props) {
 
       <div className="overlay__cols eyebrow">
         <span>{bp.abbrev} {bp.season.slice(2)}</span>
-        <span style={{ textAlign: "center" }}>Role match</span>
+        <span style={{ textAlign: "center" }}>Fit (style × role size)</span>
         <span style={{ textAlign: "right" }}>{teamName}</span>
       </div>
 
       {match.pairings.map((p) => {
-        const gap = p.similarity < 0.75;
+        const gap = p.similarity < FILLED_AT;
         return (
           <div key={p.blueprintPlayer.name} className={`overlay__row${gap ? " is-gap" : ""}`}>
             <div className="overlay__cell">
               <div className="overlay__player">{p.blueprintPlayer.name}</div>
               <div className="overlay__role">
-                {TIER_LABEL[p.blueprintPlayer.tier]} · {roleLabel(p.blueprintPlayer)}
+                <span className="num">{Math.round(p.weight * 100)}%</span> of team value · {roleLabel(p.blueprintPlayer)}
               </div>
             </div>
-            <div className="overlay__link" aria-label={`${Math.round(p.similarity * 100)}% role match`}>
+            <div className="overlay__link" aria-label={`${Math.round(p.similarity * 100)}% fit`}>
               <span className="overlay__bar"><span style={{ width: `${p.similarity * 100}%` }} /></span>
               <span className="overlay__pct">{Math.round(p.similarity * 100)}%</span>
             </div>

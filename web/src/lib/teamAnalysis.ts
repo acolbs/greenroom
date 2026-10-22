@@ -4,10 +4,11 @@
 // The pre-draft scouting report for one team:
 //   1. Stage — Contender / Middle / Rebuilding, from a visible 0–100 score
 //      (top-3 talent, 2025-26 win %, core age).
-//   2. Blueprint matches — how closely the roster's role mix resembles each of
-//      the 13 past contenders in blueprintTeams.json.
+//   2. Blueprint matches — how closely the roster lines up, player by player,
+//      with each of the 13 past contenders in blueprintTeams.json, with each
+//      slot weighted by how much that player mattered (minutes and impact).
 //   3. Star comps — which past-contender player each of the team's best
-//      players plays most like.
+//      players plays most like, by play style (lib/playerStyle.ts).
 //   4. Blueprint needs — the roles the chosen blueprint had that this roster
 //      doesn't, in the RosterDeficit shape the draft ranking already uses.
 //
@@ -20,12 +21,10 @@ import type {
   Position,
   RosterDeficit,
   RosterPlayer,
-  StyleStats,
   TeamStrengthLabel,
 } from "../types/simulator";
 import blueprintTeamsRaw from "../data/blueprintTeams.json";
-import styleScale from "../data/styleScale.json";
-import { normalizeName } from "../data/csvUtils";
+import { blueprintStyle, styleSimilarity, type BlueprintStyle } from "./playerStyle";
 
 // ---------------------------------------------------------------------------
 // Blueprint data
@@ -40,8 +39,8 @@ export interface BlueprintPlayer {
   tier: BlueprintTier;
   offensiveArchetype: OffensiveArchetype;
   defensiveRole: DefensiveRole;
-  /** Advanced stats from that season (see scripts/build_blueprints.mjs). */
-  style: StyleStats;
+  /** That season's play-style fingerprint, minutes and BPM. */
+  style?: BlueprintStyle;
 }
 
 export interface BlueprintTeam {
@@ -58,7 +57,9 @@ export interface BlueprintTeam {
 
 export const BLUEPRINT_TEAMS: BlueprintTeam[] = (blueprintTeamsRaw as BlueprintTeam[]).map((bp) => ({
   ...bp,
-  players: [...bp.players].sort((a, b) => a.tier - b.tier),
+  players: bp.players
+    .map((p) => ({ ...p, style: blueprintStyle(bp.id, p.name) }))
+    .sort((a, b) => a.tier - b.tier),
 }));
 
 export function blueprintById(id: string): BlueprintTeam | undefined {
@@ -127,38 +128,8 @@ export function roleSimilarity(a: Roles, b: Roles): number {
 }
 
 // ---------------------------------------------------------------------------
-// Play-style similarity
-//
-// Compares the advanced stats that describe how someone plays: how much he
-// uses the ball (USG%), creates for others (AST%), shoots threes (3PAr) or
-// gets to the line (FTr), rebounds, defends (STL%, BLK%), and how well (TS%,
-// BPM). Each stat is measured in league standard deviations, so a gap in
-// assist rate counts the same as an equally rare gap in block rate.
+// Player similarity
 // ---------------------------------------------------------------------------
-
-const STYLE_WEIGHT: Record<string, number> = {
-  "USG%": 1.5, "AST%": 1.5, "3PAr": 1.2, "FTr": 0.6, "ORB%": 0.8, "DRB%": 0.8,
-  "STL%": 0.6, "BLK%": 0.9, "TOV%": 0.4, "TS%": 0.6, "BPM": 1.0,
-};
-const SCALE = styleScale as Record<string, { mean: number; sd: number }>;
-/** Style distance (in SDs) at which similarity falls to about 50%. */
-const STYLE_SPREAD = 0.85;
-
-/** 0–1 play-style similarity, or null if either side has no stats. */
-export function styleSimilarity(a?: StyleStats, b?: StyleStats): number | null {
-  if (!a || !b) return null;
-  let sum = 0;
-  let wSum = 0;
-  for (const [k, w] of Object.entries(STYLE_WEIGHT)) {
-    const x = a[k];
-    const y = b[k];
-    if (!Number.isFinite(x) || !Number.isFinite(y) || !SCALE[k]?.sd) continue;
-    sum += w * ((x - y) / SCALE[k].sd) ** 2;
-    wSum += w;
-  }
-  if (wSum === 0) return null;
-  return Math.exp(-sum / wSum / (2 * STYLE_SPREAD ** 2));
-}
 
 const POSITION_ORDER: Position[] = ["PG", "SG", "SF", "PF", "C"];
 
@@ -168,16 +139,20 @@ function positionSimilarity(a: Position, b: Position): number {
   return d === 0 ? 1 : d === 1 ? 0.5 : 0;
 }
 
+/** True when the blueprint player is this same person in an earlier season. */
+export function isSamePlayer(p: RosterPlayer, b: BlueprintPlayer): boolean {
+  return !!b.style && b.style.id === p.id;
+}
+
 /**
- * 0–1 overall match between a current player and a blueprint player:
- * 75% play style, 15% role, 10% position. Falls back to role and position
- * when there are no stats (e.g. a drafted rookie).
+ * 0–1 match between a current player and a blueprint player, purely on play
+ * style (lib/playerStyle.ts). Players without 2025-26 stats (drafted rookies,
+ * anyone who missed the season) fall back to role and position, scaled down
+ * because labels alone can't show a close match.
  */
 export function playerSimilarity(p: RosterPlayer, b: BlueprintPlayer): number {
-  const role = roleSimilarity(p, b);
-  const pos = positionSimilarity(p.position, b.position);
-  const style = styleSimilarity(p.style, b.style);
-  return style === null ? 0.8 * role + 0.2 * pos : 0.75 * style + 0.15 * role + 0.1 * pos;
+  if (p.style && b.style) return styleSimilarity(p.style, b.style.z);
+  return 0.6 * (0.8 * roleSimilarity(p, b) + 0.2 * positionSimilarity(p.position, b.position));
 }
 
 // ---------------------------------------------------------------------------
@@ -297,12 +272,13 @@ export function computeStage(roster: RosterPlayer[], winPct: number | null): Sta
 // 2. Blueprint matching
 // ---------------------------------------------------------------------------
 
-/** How much each blueprint role counts toward the match, by that player's tier. */
+/** Fallback slot weight by tier, for a blueprint player without minutes data. */
 const TIER_WEIGHT: Record<BlueprintTier, number> = { 1: 1, 2: 0.75, 3: 0.5 };
 
 export interface SlotPairing {
   blueprintPlayer: BlueprintPlayer;
   slotIndex: number;
+  /** Share of the blueprint this slot is worth (all slots sum to 1). */
   weight: number;
   /** The roster player filling this blueprint role, or null if nobody fits. */
   player: RosterPlayer | null;
@@ -311,70 +287,140 @@ export interface SlotPairing {
 
 export interface BlueprintMatchResult {
   blueprint: BlueprintTeam;
-  /** 0–100 overall match. */
+  /** 0–100: importance-weighted average match across the blueprint's slots. */
   score: number;
-  /** 0–100 role-mix match across the whole rotation. */
-  rosterScore: number;
-  /** 0–100 match between the two teams' top players. */
+  /** 0–100 match on the blueprint's star slots alone. */
   starScore: number;
   pairings: SlotPairing[];
 }
 
-/** Below this, a blueprint role counts as unfilled. */
-const FILLED_AT = 0.75;
+/** At or above this, a blueprint slot counts as filled. */
+export const FILLED_AT = 0.6;
 
 /**
- * Pair each blueprint role with at most one roster player (and vice versa),
- * locking the best weighted fits first.
+ * How much each blueprint player mattered to that team: half his share of the
+ * rotation's minutes per game, half his share of its per-game impact
+ * (minutes x (BPM + 2), the per-game form of value over replacement).
+ * Per-game, so an injury-shortened season doesn't shrink a starter's role.
+ * Sums to 1 across the rotation.
  */
-function pairRoster(core: RosterPlayer[], bp: BlueprintTeam): SlotPairing[] {
-  const pairs: { pi: number; si: number; sim: number; score: number }[] = [];
-  bp.players.forEach((bpP, si) => {
-    core.forEach((p, pi) => {
-      const sim = playerSimilarity(p, bpP);
-      if (sim > 0) pairs.push({ pi, si, sim, score: sim * TIER_WEIGHT[bp.players[si].tier] });
-    });
-  });
-  pairs.sort((a, b) => b.score - a.score);
-
-  const usedP = new Set<number>();
-  const bySlot = new Map<number, { pi: number; sim: number }>();
-  for (const pr of pairs) {
-    if (usedP.has(pr.pi) || bySlot.has(pr.si)) continue;
-    bySlot.set(pr.si, { pi: pr.pi, sim: pr.sim });
-    usedP.add(pr.pi);
+export function slotWeights(bp: BlueprintTeam): number[] {
+  if (bp.players.some((p) => !p.style)) {
+    const total = bp.players.reduce((s, p) => s + TIER_WEIGHT[p.tier], 0);
+    return bp.players.map((p) => TIER_WEIGHT[p.tier] / total);
   }
+  const mpg = bp.players.map((p) => p.style!.mpg);
+  const impact = bp.players.map((p) => p.style!.mpg * Math.max(0, p.style!.bpm + 2));
+  const mpgSum = mpg.reduce((a, b) => a + b, 0);
+  const impactSum = impact.reduce((a, b) => a + b, 0);
+  return bp.players.map((_, i) => 0.5 * (mpg[i] / mpgSum) + 0.5 * (impactSum ? impact[i] / impactSum : mpg[i] / mpgSum));
+}
 
-  return bp.players.map((bpP, si) => {
-    const hit = bySlot.get(si);
+/**
+ * Minimum-cost assignment of rows to distinct columns (Hungarian algorithm,
+ * O(rows² x cols)). Requires rows <= cols. Returns the column for each row.
+ */
+function assign(cost: number[][]): number[] {
+  const n = cost.length;
+  const m = cost[0]?.length ?? 0;
+  const u = new Array(n + 1).fill(0);
+  const v = new Array(m + 1).fill(0);
+  const p = new Array(m + 1).fill(0); // p[col] = row assigned to col (1-based)
+  const way = new Array(m + 1).fill(0);
+  for (let i = 1; i <= n; i++) {
+    p[0] = i;
+    let j0 = 0;
+    const minv = new Array(m + 1).fill(Infinity);
+    const used = new Array(m + 1).fill(false);
+    do {
+      used[j0] = true;
+      const i0 = p[j0];
+      let delta = Infinity;
+      let j1 = 0;
+      for (let j = 1; j <= m; j++) {
+        if (used[j]) continue;
+        const cur = cost[i0 - 1][j - 1] - u[i0] - v[j];
+        if (cur < minv[j]) {
+          minv[j] = cur;
+          way[j] = j0;
+        }
+        if (minv[j] < delta) {
+          delta = minv[j];
+          j1 = j;
+        }
+      }
+      for (let j = 0; j <= m; j++) {
+        if (used[j]) {
+          u[p[j]] += delta;
+          v[j] -= delta;
+        } else minv[j] -= delta;
+      }
+      j0 = j1;
+    } while (p[j0] !== 0);
+    do {
+      const j1 = way[j0];
+      p[j0] = p[j1];
+      j0 = j1;
+    } while (j0);
+  }
+  const result = new Array(n).fill(-1);
+  for (let j = 1; j <= m; j++) if (p[j]) result[p[j] - 1] = j - 1;
+  return result;
+}
+
+/**
+ * How well a player can fill a blueprint slot: his play-style match, scaled
+ * down when his role is smaller than the slot's (a 15-minute bench player
+ * can't fully stand in for a 34-minute starter). Square root, so the penalty
+ * is gentle: half the minutes keeps ~71% of the match.
+ */
+export function slotFit(p: RosterPlayer, b: BlueprintPlayer): number {
+  const sim = playerSimilarity(p, b);
+  if (!p.mpg || !b.style?.mpg) return sim;
+  return sim * Math.min(1, Math.sqrt(p.mpg / b.style.mpg));
+}
+
+/**
+ * Assign roster players to blueprint slots, each player used at most once,
+ * to maximise the importance-weighted total fit. Exact (Hungarian
+ * algorithm), over the whole rotation, not just the most talented players.
+ */
+function pairRoster(rotation: RosterPlayer[], bp: BlueprintTeam): SlotPairing[] {
+  const weights = slotWeights(bp);
+  const sim = bp.players.map((b) => rotation.map((p) => slotFit(p, b)));
+  // Pad with empty "nobody" columns so every slot can be assigned.
+  const cols = Math.max(rotation.length, bp.players.length);
+  const cost = sim.map((row, si) => Array.from({ length: cols }, (_, pi) => -(weights[si] * (row[pi] ?? 0))));
+  const pick = assign(cost);
+  return bp.players.map((b, si) => {
+    const pi = pick[si];
+    const player = pi >= 0 && pi < rotation.length ? rotation[pi] : null;
     return {
-      blueprintPlayer: bpP,
+      blueprintPlayer: b,
       slotIndex: si,
-      weight: TIER_WEIGHT[bpP.tier],
-      player: hit ? core[hit.pi] : null,
-      similarity: hit?.sim ?? 0,
+      weight: weights[si],
+      player,
+      similarity: player ? sim[si][pi] : 0,
     };
   });
 }
 
-export function matchBlueprint(roster: RosterPlayer[], bp: BlueprintTeam): BlueprintMatchResult {
-  const core = coreRotation(roster);
-  const pairings = pairRoster(core, bp);
-  const totalW = pairings.reduce((s, p) => s + p.weight, 0);
-  const rosterScore = totalW ? pairings.reduce((s, p) => s + p.weight * p.similarity, 0) / totalW : 0;
+/** Everyone who plays real minutes: the candidates for blueprint slots. */
+function rotationPlayers(roster: RosterPlayer[]): RosterPlayer[] {
+  return roster.filter((p) => p.offensiveArchetype !== "Low Minute");
+}
 
-  // Star match: best fit between this team's top two players and the
-  // blueprint's stars.
-  let star = 0;
-  for (const p of core.slice(0, 2)) {
-    for (const b of bp.players.filter((x) => x.tier === 1)) star = Math.max(star, playerSimilarity(p, b));
-  }
+export function matchBlueprint(roster: RosterPlayer[], bp: BlueprintTeam): BlueprintMatchResult {
+  const pairings = pairRoster(rotationPlayers(roster), bp);
+  const score = pairings.reduce((s, p) => s + p.weight * p.similarity, 0);
+  const stars = pairings.filter((p) => p.blueprintPlayer.tier === 1);
+  const starW = stars.reduce((s, p) => s + p.weight, 0);
+  const starScore = starW ? stars.reduce((s, p) => s + p.weight * p.similarity, 0) / starW : 0;
 
   return {
     blueprint: bp,
-    score: Math.round((0.7 * rosterScore + 0.3 * star) * 100),
-    rosterScore: Math.round(rosterScore * 100),
-    starScore: Math.round(star * 100),
+    score: Math.round(score * 100),
+    starScore: Math.round(starScore * 100),
     pairings,
   };
 }
@@ -390,35 +436,49 @@ export function rankBlueprints(roster: RosterPlayer[]): BlueprintMatchResult[] {
 // 3. Star comps — "plays like"
 // ---------------------------------------------------------------------------
 
-export interface PlayerComp {
-  player: RosterPlayer;
+export interface CompMatch {
   comp: BlueprintPlayer;
   blueprint: BlueprintTeam;
   similarity: number;
 }
 
+export interface PlayerComp extends CompMatch {
+  player: RosterPlayer;
+  /** True when the closest match is this player's own earlier season. */
+  isSelf: boolean;
+  /** The closest match who is someone else, shown under a self-match. */
+  other?: CompMatch;
+}
+
 /**
- * For each of the team's top players, the most similar player from any past
- * contender, by play style, role and position. Ties go to champions. Never
- * compares a player to his own past self.
+ * For each of the team's top players, the closest blueprint player by play
+ * style. A player's own earlier season is allowed (and usually wins); when it
+ * does, the closest other player is returned too. Ties go to champions.
  */
 export function starComps(roster: RosterPlayer[], count = 3): PlayerComp[] {
   return coreRotation(roster, count).flatMap((player) => {
-    const self = normalizeName(player.name);
-    let best: PlayerComp | null = null;
-    let bestKey = -1;
+    const ranked: (CompMatch & { self: boolean })[] = [];
     for (const bp of BLUEPRINT_TEAMS) {
       for (const c of bp.players) {
-        if (normalizeName(c.name) === self) continue;
-        const similarity = playerSimilarity(player, c);
-        const key = similarity + (bp.champion ? 0.001 : 0);
-        if (key > bestKey) {
-          bestKey = key;
-          best = { player, comp: c, blueprint: bp, similarity };
-        }
+        ranked.push({ comp: c, blueprint: bp, similarity: playerSimilarity(player, c), self: isSamePlayer(player, c) });
       }
     }
-    return best ? [best] : [];
+    ranked.sort(
+      (a, b) => b.similarity - a.similarity || Number(b.blueprint.champion) - Number(a.blueprint.champion)
+    );
+    const top = ranked[0];
+    if (!top) return [];
+    const other = top.self ? ranked.find((r) => !r.self) : undefined;
+    return [
+      {
+        player,
+        comp: top.comp,
+        blueprint: top.blueprint,
+        similarity: top.similarity,
+        isSelf: top.self,
+        other: other && { comp: other.comp, blueprint: other.blueprint, similarity: other.similarity },
+      },
+    ];
   });
 }
 
@@ -431,7 +491,10 @@ export function starComps(roster: RosterPlayer[], count = 3): PlayerComp[] {
  * RosterDeficit list the draft ranking consumes.
  */
 export function blueprintNeeds(roster: RosterPlayer[], bp: BlueprintTeam): RosterDeficit[] {
-  return pairRoster(coreRotation(roster), bp)
+  const pairings = pairRoster(rotationPlayers(roster), bp);
+  // Scale so the blueprint's most important slot weighs 1 in the draft ranking.
+  const top = Math.max(...pairings.map((p) => p.weight));
+  return pairings
     .filter((p) => p.similarity < FILLED_AT)
     .sort((a, b) => b.weight - a.weight)
     .map((p) => ({
@@ -440,7 +503,7 @@ export function blueprintNeeds(roster: RosterPlayer[], bp: BlueprintTeam): Roste
       target: 1,
       current: 0,
       gap: 1,
-      weight: p.weight,
+      weight: p.weight / top,
     }));
 }
 
