@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 const GH_PAGES_BASE = "/greenroom/";
 
 export default defineConfig(({ mode }) => ({
-  // Dev: "/" so localhost works. Production: subpath for GitHub Pages project site.
-  base: mode === "production" ? GH_PAGES_BASE : "/",
+  // Dev and Vercel (served at the domain root): "/". GitHub Pages production build: repo subpath.
+  base: mode === "production" && !process.env.VERCEL ? GH_PAGES_BASE : "/",
   plugins: [react()]
 }));
